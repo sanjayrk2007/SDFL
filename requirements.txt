@@ -1,12 +1,12 @@
 torch
 torchvision
-flwr
+flwr[simulation]
 opacus
 cryptography
 opencv-python
 Pillow
 albumentations
-numpy
+numpy<2.0
 scikit-learn
 medpy
 tqdm
