@@ -1,23 +1,34 @@
-### Experiment E4 - DP-SGD Integration
+# Experiment E4 — DP-SGD Integration
 
-**Model:** ResUNet++ with BatchNorm2d converted to GroupNorm(num_groups=4) and inplace=False ReLU
-**Framework:** Flower (flwr) + Ray simulation backend + Opacus PrivacyEngine
-**Clients:** 3 (one per non-IID hospital split)
-**Rounds:** 1
-**Local epochs per round:** 3
-**Proximal term \mu:** 0.001 (from E3 best configuration/checkpoint)
-**Target Privacy Budget:** \delta = 10^-5
+## Configuration
 
-#### Sweep Configurations
-We performed a grid search over:
-- Gradient clipping norm C in {0.5, 1.0, 2.0}
-- Noise multiplier \sigma in {0.5, 1.0, 1.5}
+| Parameter | Value |
+|---|---|
+| **Model** | ResUNet++ with BatchNorm2d → GroupNorm(num_groups=4), inplace=False ReLU |
+| **Framework** | Flower (flwr) + Ray simulation backend + Opacus PrivacyEngine |
+| **Clients** | 3 (one per non-IID hospital split) |
+| **Rounds** | 1 |
+| **Local epochs per round** | 3 |
+| **Proximal term μ** | 0.001 (from E3 best configuration/checkpoint) |
+| **Target Privacy Budget** | δ = 10⁻⁵ |
 
-#### Sweep Results
-The validation metrics (Dice and IoU) and privacy spending (\epsilon) for 1 round of federated training are as follows:
+---
 
-| C | \u03c3 | val_dice | val_iou | \u03b5 (epsilon) |
-|---|---|---|---|---|
+## Sweep Configurations
+
+Grid search over:
+
+- Gradient clipping norm **C** ∈ {0.5, 1.0, 2.0}
+- Noise multiplier **σ** ∈ {0.5, 1.0, 1.5}
+
+---
+
+## Sweep Results
+
+Validation metrics (Dice and IoU) and privacy spending (ε) for 1 round of federated training:
+
+| C | σ | val_dice | val_iou | ε (epsilon) |
+|:---:|:---:|:---:|:---:|:---:|
 | 0.5 | 0.5 | 0.4305 | 0.3145 | 12.6931 |
 | 0.5 | 1.0 | 0.4276 | 0.3112 | 2.1410 |
 | 0.5 | 1.5 | 0.4283 | 0.3116 | 0.9793 |
@@ -26,14 +37,19 @@ The validation metrics (Dice and IoU) and privacy spending (\epsilon) for 1 roun
 | 1.0 | 1.5 | 0.4307 | 0.3139 | 0.9793 |
 | 2.0 | 0.5 | 0.4245 | 0.3086 | 12.6931 |
 | 2.0 | 1.0 | 0.4290 | 0.3126 | 2.1410 |
-| 2.0 | 1.5 | 0.4312 | 0.3145 | 0.9793 |
+| **2.0** | **1.5** | **0.4312** | **0.3145** | **0.9793** |
 
-#### Best Tradeoff Configuration
-- **Clipping Norm (C):** 2.0
-- **Noise Multiplier (\u03c3):** 1.5
-- **Validation Dice:** 0.4312
-- **Validation IoU:** 0.3145
-- **Epsilon (\u03b5):** 0.9793
-- **Delta (\u03b4):** 1e-5
+---
 
-**Status:** Sweep complete. The best tradeoff configuration provides sub-1.0 differential privacy (\u03b5 = 0.9793, \u03b4 = 1e-5) while maintaining a validation Dice score of 0.4312 after 1 round of federated learning starting from the E3 checkpoint.
+## Best Tradeoff Configuration
+
+| Parameter | Value |
+|---|---|
+| **Clipping Norm (C)** | 2.0 |
+| **Noise Multiplier (σ)** | 1.5 |
+| **Validation Dice** | 0.4312 |
+| **Validation IoU** | 0.3145 |
+| **Epsilon (ε)** | 0.9793 |
+| **Delta (δ)** | 1e-5 |
+
+**Status:** Sweep complete. The best tradeoff configuration provides sub-1.0 differential privacy (ε = 0.9793, δ = 1e-5) while maintaining a validation Dice score of 0.4312 after 1 round of federated learning starting from the E3 checkpoint. E3 checkpoint.
