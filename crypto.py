@@ -102,3 +102,25 @@ def write_audit_log(
         f.write(
             json.dumps(event) + "\n"
         )
+
+def client_encrypt(update_weights, round_key):
+    return encrypt_update(update_weights, round_key)
+
+def server_aggregate(list_of_ciphertexts, round_key):
+    import torch
+    import numpy as np
+
+    decrypted_updates = [decrypt_update(ct, round_key) for ct in list_of_ciphertexts]
+
+    if isinstance(decrypted_updates[0], torch.Tensor):
+        stacked = torch.stack(decrypted_updates)
+        return torch.mean(stacked, dim=0)
+    elif isinstance(decrypted_updates[0], list) and len(decrypted_updates[0]) > 0 and isinstance(decrypted_updates[0][0], np.ndarray):
+        num_clients = len(decrypted_updates)
+        aggregated = []
+        for layer_idx in range(len(decrypted_updates[0])):
+            layer_sum = sum(update[layer_idx] for update in decrypted_updates)
+            aggregated.append(layer_sum / num_clients)
+        return aggregated
+    else:
+        raise TypeError("Unsupported weight type for secure aggregation")
