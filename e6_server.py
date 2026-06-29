@@ -149,24 +149,31 @@ class SanitizedSecAggDPSGDHospitalClient(SecAggDPSGDHospitalClient):
         self.model.train()
         global_model.eval()
         total_loss, n_batches = 0.0, 0
+        from opacus.utils.batch_memory_manager import BatchMemoryManager
+
         for _ in range(self.local_epochs):
-            for batch in self.trainloader:
-                if batch is None:
-                    continue
-                images, masks = batch
-                images, masks = images.to(DEVICE), masks.to(DEVICE)
-                self.optimizer.zero_grad()
-                preds = self.model(images)
-                base_loss = self.loss_fn(preds, masks)
-                prox_loss = 0.0
-                if self.mu > 0.0:
-                    for lp, gp in zip(underlying_model.parameters(), global_model.parameters()):
-                        prox_loss += torch.sum((lp - gp.to(DEVICE)) ** 2)
-                loss = base_loss + (self.mu / 2.0) * prox_loss
-                loss.backward()
-                self.optimizer.step()
-                total_loss += loss.item()
-                n_batches += 1
+            with BatchMemoryManager(
+                data_loader=self.trainloader,
+                max_physical_batch_size=4,
+                optimizer=self.optimizer
+            ) as memory_safe_data_loader:
+                for batch in memory_safe_data_loader:
+                    if batch is None:
+                        continue
+                    images, masks = batch
+                    images, masks = images.to(DEVICE), masks.to(DEVICE)
+                    self.optimizer.zero_grad()
+                    preds = self.model(images)
+                    base_loss = self.loss_fn(preds, masks)
+                    prox_loss = 0.0
+                    if self.mu > 0.0:
+                        for lp, gp in zip(underlying_model.parameters(), global_model.parameters()):
+                            prox_loss += torch.sum((lp - gp.to(DEVICE)) ** 2)
+                    loss = base_loss + (self.mu / 2.0) * prox_loss
+                    loss.backward()
+                    self.optimizer.step()
+                    total_loss += loss.item()
+                    n_batches += 1
             # Clean up memory after each epoch to prevent accumulation
             import gc
             gc.collect()
@@ -234,8 +241,9 @@ class E6CheckpointingSecAgg(CheckpointingSecAgg):
         if avg_metrics is not None:
             val_dice = avg_metrics.get("val_dice", 0.0)
             val_iou = avg_metrics.get("val_iou", 0.0)
-            self.round_history.append((server_round, val_dice, val_iou))
-            print(f"Round {server_round:2d}/20 | val_loss {agg_loss:.4f} | "
+            loss_val = agg_loss if agg_loss is not None else 0.0
+            self.round_history.append((server_round, val_dice, val_iou, loss_val))
+            print(f"Round {server_round:2d}/20 | val_loss {loss_val:.4f} | "
                   f"val_dice {val_dice:.4f} | val_iou {val_iou:.4f}")
         return agg_loss, avg_metrics
 
@@ -335,6 +343,14 @@ def run_e6_simulation():
         with open(log_path, "r") as f:
             skipped_count = len(f.readlines())
     print(f"Total skipped samples: {skipped_count}")
+
+    return {
+        "val_dice": final_dice,
+        "val_iou": final_iou,
+        "epsilon": epsilon,
+        "skipped_count": skipped_count,
+        "history": strategy.round_history
+    }
 
 if __name__ == "__main__":
     run_e6_simulation()
