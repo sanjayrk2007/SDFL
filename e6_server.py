@@ -58,13 +58,27 @@ class SanitizedKvasirDataset(torch.utils.data.Dataset):
             
             clean_image, passed = sanitize(image)
             if not passed:
-                log_entry = {
-                    "filename": self.image_paths[idx],
-                    "reason": "PHI_gate",
-                    "timestamp": time.time()
-                }
-                with open(self.log_file, "a") as f:
-                    f.write(json.dumps(log_entry) + "\n")
+                filename = self.image_paths[idx]
+                already_logged = False
+                if os.path.exists(self.log_file):
+                    with open(self.log_file, "r") as f:
+                        for line in f:
+                            try:
+                                entry = json.loads(line.strip())
+                                if entry.get("filename") == filename:
+                                    already_logged = True
+                                    break
+                            except json.JSONDecodeError:
+                                pass
+                
+                if not already_logged:
+                    log_entry = {
+                        "filename": filename,
+                        "reason": "PHI_gate",
+                        "timestamp": time.time()
+                    }
+                    with open(self.log_file, "a") as f:
+                        f.write(json.dumps(log_entry) + "\n")
                 raise SkipSample()
                 
             if self.augment:
