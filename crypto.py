@@ -9,11 +9,11 @@ import pickle
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 def generate_round_key():
-    return AESGCM.generate_key(bit_length=256)
+    return bytearray(AESGCM.generate_key(bit_length=256))
 
 def encrypt_update(weights, round_key):
 
-    aesgcm = AESGCM(round_key)
+    aesgcm = AESGCM(bytes(round_key))
 
     nonce = os.urandom(12)
 
@@ -32,7 +32,7 @@ def encrypt_update(weights, round_key):
 
 def decrypt_update(encrypted_data, round_key):
 
-    aesgcm = AESGCM(round_key)
+    aesgcm = AESGCM(bytes(round_key))
 
     payload = aesgcm.decrypt(
         encrypted_data["nonce"],
@@ -89,8 +89,9 @@ def verify_certificate(
         expected
     )
 
-def destroy_round_key(round_key):
-
+def destroy_round_key(round_key: bytearray):
+    for i in range(len(round_key)):
+        round_key[i] = 0
     del round_key
 
 def write_audit_log(
