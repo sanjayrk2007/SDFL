@@ -1,4 +1,5 @@
 import os
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 import sys
 import json
 import time
@@ -138,9 +139,9 @@ class SanitizedSecAggDPSGDHospitalClient(SecAggDPSGDHospitalClient):
         underlying_model = self.model._module if hasattr(self.model, "_module") else self.model
         set_parameters(underlying_model, parameters)
         
-        global_model = ResUNetPlusPlus().to(DEVICE)
+        # Keep global_model on CPU to save GPU memory during concurrent Ray runs
+        global_model = ResUNetPlusPlus().to("cpu")
         fix_model_for_opacus(global_model)
-        global_model.to(DEVICE)
         set_parameters(global_model, parameters)
         for p in global_model.parameters():
             p.requires_grad = False
@@ -160,16 +161,23 @@ class SanitizedSecAggDPSGDHospitalClient(SecAggDPSGDHospitalClient):
                 prox_loss = 0.0
                 if self.mu > 0.0:
                     for lp, gp in zip(underlying_model.parameters(), global_model.parameters()):
-                        prox_loss += torch.sum((lp - gp) ** 2)
+                        prox_loss += torch.sum((lp - gp.to(DEVICE)) ** 2)
                 loss = base_loss + (self.mu / 2.0) * prox_loss
                 loss.backward()
                 self.optimizer.step()
                 total_loss += loss.item()
                 n_batches += 1
+            # Clean up memory after each epoch to prevent accumulation
+            import gc
+            gc.collect()
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
                 
         avg_loss = total_loss / max(n_batches, 1)
         epsilon = self.privacy_engine.get_epsilon(delta=1e-5)
         del global_model
+        import gc
+        gc.collect()
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
             
@@ -289,10 +297,13 @@ def run_e6_simulation():
         strategy=strategy,
         client_resources=client_resources,
         ray_init_args={
-            "runtime_env": {
-                "env_vars": {"PYTHONPATH": python_path}
+        "runtime_env": {
+            "env_vars": {
+                "PYTHONPATH": python_path,
+                "PYTORCH_CUDA_ALLOC_CONF": "expandable_segments:True"
             }
         }
+    }
     )
 
     # Save model to checkpoints/e6_best.pth
