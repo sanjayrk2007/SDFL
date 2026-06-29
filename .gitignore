@@ -1,0 +1,11 @@
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# PyTorch/Python temporary files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.ipynb_checkpoints/
