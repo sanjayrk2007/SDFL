@@ -162,8 +162,9 @@ class TemporalCheckpointingSecAgg(fl.server.strategy.FedAvg):
         ndarrays = fl.common.parameters_to_ndarrays(parameters)
         try:
             set_parameters(global_model, ndarrays)
-        except Exception:
-            pass
+        except Exception as e:
+            import logging
+            logging.warning(f"Could not load state dict in configure_fit: {e}")
         model_hash = compute_model_hash(global_model.state_dict())
         
         # 4. Participants (IDs of active clients)
@@ -237,71 +238,83 @@ class TemporalCheckpointingSecAgg(fl.server.strategy.FedAvg):
 
     def aggregate_fit(self, server_round, results, failures):
         current_time = time.time()
-        
-        # 1. Accept updates only if they satisfy validator rules
         list_of_ciphertexts = []
         epsilons = []
-        for client_proxy, fit_res in results:
-            is_valid, reason = self.validate_update(fit_res, current_time)
-            if not is_valid:
-                print(f"Aggregator rejected update from client {client_proxy.cid}: {reason}")
-                continue
+        
+        try:
+            # 1. Accept updates only if they satisfy validator rules
+            for client_proxy, fit_res in results:
+                is_valid, reason = self.validate_update(fit_res, current_time)
+                if not is_valid:
+                    print(f"Aggregator rejected update from client {client_proxy.cid}: {reason}")
+                    continue
+                    
+                nonce = bytes.fromhex(fit_res.metrics["nonce_hex"])
+                ciphertext = bytes.fromhex(fit_res.metrics["ciphertext_hex"])
+                list_of_ciphertexts.append({
+                    "nonce": nonce,
+                    "ciphertext": ciphertext
+                })
                 
-            nonce = bytes.fromhex(fit_res.metrics["nonce_hex"])
-            ciphertext = bytes.fromhex(fit_res.metrics["ciphertext_hex"])
-            list_of_ciphertexts.append({
-                "nonce": nonce,
-                "ciphertext": ciphertext
+                if "epsilon" in fit_res.metrics:
+                    epsilons.append(fit_res.metrics["epsilon"])
+
+            # Cache ciphertexts for this round
+            self.cached_ciphertexts[server_round] = list_of_ciphertexts
+
+            if epsilons:
+                self.latest_metrics["epsilon"] = max(epsilons)
+
+            # 2. Decrypt & Aggregate
+            aggregated_weights = None
+            round_key = self.round_keys.get(self.current_key_context_id)
+            
+            if list_of_ciphertexts and round_key is not None:
+                try:
+                    aggregated_weights = server_aggregate(list_of_ciphertexts, round_key)
+                except Exception as e:
+                    print(f"Decryption / Aggregation failed: {e}")
+
+            if aggregated_weights is None:
+                # Log distinct event for expired/failed aggregation round
+                write_audit_log(self.AUDIT_LOG_PATH, {
+                    "event": "round_expired_no_aggregation",
+                    "round_id": server_round,
+                    "reason": "no_valid_updates_or_decryption_failed",
+                    "timestamp": time.time()
+                })
+                return None, {}
+
+            # Convert and return parameters
+            params = fl.common.ndarrays_to_parameters(aggregated_weights)
+            self.latest_ndarrays = aggregated_weights
+            
+            # Log distinct event for successful round close
+            write_audit_log(self.AUDIT_LOG_PATH, {
+                "event": "round_close",
+                "round_id": server_round,
+                "timestamp": time.time()
             })
             
-            if "epsilon" in fit_res.metrics:
-                epsilons.append(fit_res.metrics["epsilon"])
+            return params, {}
 
-        # Cache ciphertexts for this round
-        self.cached_ciphertexts[server_round] = list_of_ciphertexts
-
-        if epsilons:
-            self.latest_metrics["epsilon"] = max(epsilons)
-
-        # 2. Decrypt & Aggregate
-        aggregated_weights = None
-        round_key = self.round_keys.get(self.current_key_context_id)
-        
-        if list_of_ciphertexts and round_key is not None:
-            try:
-                aggregated_weights = server_aggregate(list_of_ciphertexts, round_key)
-            except Exception as e:
-                print(f"Decryption / Aggregation failed: {e}")
-
-        # 3. Wipe and destroy ephemeral round key + cached ciphertexts at Tr/aggregation completion
-        if round_key is not None:
-            destroy_round_key(round_key)
-            self.round_keys.pop(self.current_key_context_id, None)
+        finally:
+            # 3. Wipe and destroy ephemeral round key + cached ciphertexts
+            # Guaranteed to execute even if exceptions are raised during aggregation
+            round_key = self.round_keys.get(self.current_key_context_id)
+            if round_key is not None:
+                destroy_round_key(round_key)
+                self.round_keys.pop(self.current_key_context_id, None)
+                
+            self.cached_ciphertexts.pop(server_round, None)
+            list_of_ciphertexts.clear()
             
-        self.cached_ciphertexts.pop(server_round, None)
-        list_of_ciphertexts.clear()
-        
-        # Audit Logs: round_close & key_destroyed
-        t_now = time.time()
-        write_audit_log(self.AUDIT_LOG_PATH, {
-            "event": "round_close",
-            "round_id": server_round,
-            "timestamp": t_now
-        })
-        write_audit_log(self.AUDIT_LOG_PATH, {
-            "event": "key_destroyed",
-            "round_id": server_round,
-            "timestamp": t_now
-        })
-
-        if aggregated_weights is None:
-            return None, {}
-
-        # Convert and return parameters
-        params = fl.common.ndarrays_to_parameters(aggregated_weights)
-        self.latest_ndarrays = aggregated_weights
-        
-        return params, {}
+            # Separate timestamp for key_destroyed event
+            write_audit_log(self.AUDIT_LOG_PATH, {
+                "event": "key_destroyed",
+                "round_id": server_round,
+                "timestamp": time.time()
+            })
 
     def aggregate_evaluate(self, server_round, results, failures):
         agg_loss, _ = super().aggregate_evaluate(server_round, results, failures)
@@ -336,10 +349,13 @@ def get_client_fn(mu, max_grad_norm, noise_multiplier):
 
 
 def run_e7_simulation(num_rounds=1):
-    # 1. Reset skipped samples log
+    # 1. Reset skipped samples log and audit log
     log_path = "skipped_samples.log"
     if os.path.exists(log_path):
         os.remove(log_path)
+    audit_log_path = "audit_log.jsonl"
+    if os.path.exists(audit_log_path):
+        os.remove(audit_log_path)
 
     # 2. Load E6 best checkpoint
     initial_model = ResUNetPlusPlus().to(DEVICE)
@@ -358,13 +374,18 @@ def run_e7_simulation(num_rounds=1):
     mu = 0.001
     C = 2.0
     sigma = 1.5
+    
+    # Profiled round duration safety margin:
+    # 1 epoch takes ~700 seconds on CPU. We set window_seconds = (epochs * 700) + 1200 seconds safety margin.
+    local_epochs = 1
+    window_seconds = (local_epochs * 700) + 1200
 
     strategy = TemporalCheckpointingSecAgg(
         mu=mu,
         C=C,
         sigma=sigma,
         secret_key=SECRET_KEY,
-        window_seconds=7200,
+        window_seconds=window_seconds,
         initial_parameters=initial_parameters,
         fraction_fit=1.0,
         fraction_evaluate=1.0,
@@ -374,9 +395,9 @@ def run_e7_simulation(num_rounds=1):
     )
 
     python_path = os.pathsep.join([ROOT_DIR, os.path.join(ROOT_DIR, "scripts")])
-    client_resources = {"num_cpus": 4, "num_gpus": 0.0}
+    client_resources = {"num_cpus": 1, "num_gpus": 0.0}
     if torch.cuda.is_available():
-        client_resources["num_gpus"] = 1.0
+        client_resources["num_gpus"] = 0.33
 
     print("Starting E7 Federated Learning simulation...")
     fl.simulation.start_simulation(
