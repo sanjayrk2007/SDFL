@@ -32,16 +32,19 @@ All 5 required security verification tests passed successfully before simulation
 
 ## Results
 
-Validation metrics from the E7 verification simulation (1 round):
+Validation metrics from the E7 verification simulation (3 rounds):
 
-| Experiment | val_loss | val_dice | val_iou | Checkpoint Saved |
+| Round | val_loss | val_dice | val_iou | Checkpoint Saved |
 |---|---|---|---|---|
-| **E7 (Temporal Key Destruction)** | 0.5180 | 0.3874 | 0.2755 | `checkpoints/e7_best.pth` |
+| **Round 1** | 0.4357 | 0.5342 | 0.4018 | |
+| **Round 2** | 0.4332 | 0.5323 | 0.4010 | |
+| **Round 3** | 0.4344 | 0.5338 | 0.4020 | `checkpoints/e7_best.pth` |
 
 ---
 
 ## Verification Log Analysis
 
 During the federated learning simulation, the temporal audit events were correctly appended to `audit_log.jsonl`:
-- **Round Start:** Coordinates round ID, model hash, active participant IDs, and the expiry timestamp `Tr`. Logs `round_open`.
-- **Round Completion:** Server aggregates ciphertexts, wipes the ephemeral round key from memory in-place, clears cached ciphertexts, and logs `round_close` and `key_destroyed`.
+- **Round Start:** Coordinates round ID, model hash, active participant IDs, and the dynamic expiry timestamp `Tr`. Logs `round_open`.
+- **Round Completion (Success):** Server successfully aggregates client updates, wipes the ephemeral round key from memory in-place, clears cached ciphertexts, logs `round_close` and then `key_destroyed` with distinct timestamps.
+- **Round Completion (Failure/Expiry):** If updates are late or invalid, strategy logs `round_expired_no_aggregation` instead of `round_close` and proceeds to destroy the key.
