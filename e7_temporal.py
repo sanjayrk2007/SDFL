@@ -107,6 +107,8 @@ class TemporalHospitalClient(SanitizedSecAggDPSGDHospitalClient):
         # Encrypt the updated weights using the round key
         ct = client_encrypt(weights, round_key)
         
+        destroy_round_key(round_key)
+        
         # WIPE client-side plaintext update buffer in-place immediately after encryption
         for w in weights:
             w.fill(0)

@@ -19,12 +19,21 @@ This report documents the final metrics of the E8 experiment, evaluating the ful
 ## 2. Privacy Guarantees
 
 * **Cumulative Differential Privacy budget (ε)**: `2.7720` (at $\delta = 1e-05$)
+> **Note:** ε is computed via a server-side RDP accountant
+> using client-reported sampling parameters. It may differ
+> slightly from Opacus's exact internal accounting, which
+> cannot persist across Ray simulation rounds.
 * **Post-Expiry Decryption Success Rate**: `0.0%` (Target: 0.0%)
 
 ## 3. Uncertainty & Failure Detection
 
 * **Expected Calibration Error (ECE)**: `0.0888` (pixel-level)
 * **Failure Detection ROC AUC**: `0.5052`
+> **Note:** AUC of 0.5052 is approximately random, indicating
+> MC Dropout uncertainty estimates are not yet informative for
+> failure detection at the current model performance level.
+> No test samples fell below the Dice < 0.5 hard-sample
+> threshold, making the classifier uninformative.
 
 ## 4. System Overhead (Per-Round Averages)
 

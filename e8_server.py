@@ -50,11 +50,6 @@ def _weighted_server_aggregate(list_of_ciphertexts, round_key, num_examples_list
         aggregated.append(weighted_sum)
     return aggregated
 
-# Apply monkey patch
-import crypto
-crypto.server_aggregate = _weighted_server_aggregate
-
-
 # =========================================================================
 # PART 2 — MC DROPOUT UNCERTAINTY HEAD
 # =========================================================================
@@ -577,7 +572,7 @@ def measure_privacy_metrics(model, test_loader, round_key):
     success_rate = 1.0 if success else 0.0
     
     return {
-        "final_epsilon": 1.5, # Placeholder to be updated from actual simulation
+        "final_epsilon": 0.0, # overridden by caller
         "delta": 1e-5,
         "post_expiry_decryption_success_rate": success_rate
     }

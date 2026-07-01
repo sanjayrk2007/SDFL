@@ -41,6 +41,7 @@ class SanitizedKvasirDataset(torch.utils.data.Dataset):
         self.mask_paths = mask_paths
         self.augment = augment
         self.log_file = log_file
+        self.already_logged = set()
         
         self.joint_transform_train = JointTransform(train=True)
         self.resize_img = T.Resize((256, 256), interpolation=T.InterpolationMode.BILINEAR)
@@ -58,27 +59,16 @@ class SanitizedKvasirDataset(torch.utils.data.Dataset):
             
             clean_image, passed = sanitize(image)
             if not passed:
-                filename = self.image_paths[idx]
-                already_logged = False
-                if os.path.exists(self.log_file):
-                    with open(self.log_file, "r") as f:
-                        for line in f:
-                            try:
-                                entry = json.loads(line.strip())
-                                if entry.get("filename") == filename:
-                                    already_logged = True
-                                    break
-                            except json.JSONDecodeError:
-                                pass
-                
-                if not already_logged:
+                image_path = self.image_paths[idx]
+                if str(image_path) not in self.already_logged:
                     log_entry = {
-                        "filename": filename,
+                        "filename": str(image_path),
                         "reason": "PHI_gate",
                         "timestamp": time.time()
                     }
                     with open(self.log_file, "a") as f:
                         f.write(json.dumps(log_entry) + "\n")
+                    self.already_logged.add(str(image_path))
                 raise SkipSample()
                 
             if self.augment:
