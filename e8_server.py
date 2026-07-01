@@ -119,8 +119,11 @@ class FullSDFLClient(TemporalHospitalClient):
         metrics["num_examples"] = num_examples
         
         # Track training steps and sample rate for cumulative privacy engine
-        steps = len(self.trainloader)
-        sample_rate = self.trainloader.batch_size / max(num_examples, 1)
+        steps = len(self.trainloader) if self.trainloader is not None else 0
+        batch_size = getattr(self.trainloader, "batch_size", 8)
+        if batch_size is None:
+            batch_size = 8
+        sample_rate = batch_size / max(num_examples, 1)
         metrics["steps_executed"] = steps
         metrics["sample_rate"] = sample_rate
         return dummy_weights, num_examples, metrics
