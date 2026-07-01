@@ -117,6 +117,12 @@ class FullSDFLClient(TemporalHospitalClient):
         # Inherit training and encryption logic, but pass num_examples back in metrics
         dummy_weights, num_examples, metrics = super().fit(parameters, config)
         metrics["num_examples"] = num_examples
+        
+        # Track training steps and sample rate for cumulative privacy engine
+        steps = len(self.trainloader)
+        sample_rate = self.trainloader.batch_size / max(num_examples, 1)
+        metrics["steps_executed"] = steps
+        metrics["sample_rate"] = sample_rate
         return dummy_weights, num_examples, metrics
 
 
@@ -128,6 +134,7 @@ class FullSDFLStrategy(TemporalCheckpointingSecAgg):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.AUDIT_LOG_PATH = os.path.join(ROOT_DIR, "audit_log.jsonl")
+        self.client_accountants = {}  # hospital_id -> RDPAccountant
 
     def aggregate_fit(self, server_round, results, failures):
         current_time = time.time()
@@ -153,8 +160,25 @@ class FullSDFLStrategy(TemporalCheckpointingSecAgg):
                 num_examples = fit_res.metrics.get("num_examples", fit_res.num_examples)
                 num_examples_list.append(num_examples)
                 
-                if "epsilon" in fit_res.metrics:
-                    epsilons.append(fit_res.metrics["epsilon"])
+                # Account for privacy budget cumulatively
+                hid = fit_res.metrics.get("hospital_id")
+                steps = fit_res.metrics.get("steps_executed", 0)
+                q = fit_res.metrics.get("sample_rate", 0.0)
+                
+                if hid is not None and steps > 0 and q > 0.0:
+                    if hid not in self.client_accountants:
+                        from opacus.accountants import RDPAccountant
+                        self.client_accountants[hid] = RDPAccountant()
+                    
+                    accountant = self.client_accountants[hid]
+                    for _ in range(steps):
+                        accountant.step(noise_multiplier=self.sigma, sample_rate=q)
+                    
+                    client_eps = accountant.get_epsilon(delta=1e-5)
+                    epsilons.append(client_eps)
+                else:
+                    if "epsilon" in fit_res.metrics:
+                        epsilons.append(fit_res.metrics["epsilon"])
 
             # Cache ciphertexts for this round
             self.cached_ciphertexts[server_round] = list_of_ciphertexts
@@ -453,7 +477,8 @@ def run_uncertainty_evaluation(model, test_loader, threshold=0.05):
     
     # ROC AUC: sample is "hard" if dice < 0.5
     y_true = np.array([1 if d < 0.5 else 0 for d in gt_dices])
-    y_score = np.array([1 if f else 0 for f in failure_flags])
+    # Use the continuous uncertainty score as the predictor for ROC AUC
+    y_score = np.array(mean_uncertainties)
     
     if len(np.unique(y_true)) < 2:
         failure_detection_auc = 0.5
@@ -732,6 +757,8 @@ def run_e8_simulation(num_rounds=20):
     print(f"  Expected Calibration Error (ECE): {results['uncertainty']['ece']:.4f}")
     print(f"  Failure Detection ROC AUC:        {results['uncertainty']['failure_detection_auc']:.4f}")
     print("="*80 + "\n")
+
+    return results
 
 
 if __name__ == "__main__":
