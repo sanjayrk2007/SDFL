@@ -44,13 +44,15 @@ We conducted 8 incremental ablation experiments (E1 to E8) to benchmark utility,
 | **E2** | Federated Baseline (FedAvg) | Non-IID client split | **Dice: 0.7712** \| **IoU: 0.6818** (Utility Drop) | Complete |
 | **E3** | FedProx Integration | Proximal term ($\mu$) | **Dice: 0.5782** \| **IoU: 0.4533** (Best: $\mu = 0.001$, Round 1) | Complete |
 | **E4** | DP-SGD Integration | Privacy Budget ($\epsilon$) | **Dice: 0.4312** \| **$\epsilon = 0.9793$** at $\delta = 10^{-5}$ ($C=2, \sigma=1.5$) | Complete |
-| **E5** | Secure Aggregation | Decryption Success | **Dice: 0.4271** \| **Decryption: 100%** (AES-GCM overhead: 0.08s) | Complete |
-| **E6** | Sanitization Pipeline | PHI removal + Contrast | **Dice: 0.5400** \| **IoU: 0.4081** (Jumps +11.3% absolute Dice) | Complete |
+| **E5** | AES-GCM Encrypted Transport | Decryption Success | **Dice: 0.4271** \| **Decryption: 100%** | Complete |
+| **E6** | Sanitization Pipeline | PHI removal + Contrast | **Dice: 0.5400** \| **IoU: 0.4081** (4 PHI leaks rejected) | Complete |
 | **E7** | Temporal Key Destruction | In-memory zeroing | **5/5 Verification Tests Passed** (Late uploads rejected) | Complete |
-| **E8** | Full SDFL Stack | Uncertainty / OOD | **$\epsilon = 2.7720$** \| **ID Dice: 0.4145** \| **OOD Dice: 0.4869** \| **ECE: 0.0888** | Complete |
+| **E8** | Full SDFL Stack | Uncertainty / OOD | **$\epsilon = 2.7720$ (RDP accountant approx.*)** \| **ID Dice: 0.4145** \| **OOD Dice: 0.4869** (AES-GCM overhead: 0.08s) \| **ECE: 0.0888** | Complete |
+
+\* *Note: $\epsilon = 2.7720$ in E8 is a server-side Renyi Differential Privacy (RDP) approximation based on client-reported parameters.*
 
 > [!IMPORTANT]
-> **Key Patent Insight (E6 Validation):** While differential privacy (DP-SGD) typically degrades model utility, incorporating client-side sanitization (CLAHE contrast normalization, overlay text inpainting, and metadata scrubbing) successfully filtered PHI leaks *and* restored performance—improving validation Dice by **+11.3% absolute points** under strict privacy budgets.
+> **Key Patent Insight (E6 Validation):** Client-side sanitization (CLAHE contrast normalization, overlay text inpainting, and metadata scrubbing) successfully blocked PHI leaks (4 samples rejected by the PHI gate) with zero model accuracy degradation. Extending the training duration to 20 rounds subsequently restored validation utility to a Dice of **0.5400** under strict local privacy constraints.
 
 ---
 
@@ -73,11 +75,17 @@ The workspace is organized into a modular design mapping data splits, network co
 ├── losses.py                         # DiceBCE custom loss function implementation
 ├── crypto.py                         # AES-GCM encryption, HMAC signing & zeroing
 ├── e2_server.py                      # Federated learning base server
+├── e3_fedprox.py                     # FedProx server implementation with proximal sweep
+├── e4_dpsgd.py                       # Client-side DP-SGD trainer using Opacus
+├── e5_secagg.py                      # AES-GCM encrypted transport & aggregation
 ├── e6_server.py                      # Sanitization pipeline & validation client/server
 ├── e7_temporal.py                    # Temporal strategy with verification tests
 ├── e8_server.py                      # Full stack simulation with uncertainty evaluation
 ├── skipped_samples.log               # Record of files rejected by local PHI Gate
 ├── audit_log.jsonl                   # Append-only secure timeline verification log
+├── splits.json                       # Centralized dataset splits (train/val/test)
+├── hospital_splits.json              # Non-IID clinical site dataset splits
+├── requirements.txt                  # Python dependencies
 ├── scripts/
 │   ├── setup_data.py                 # Kvasir-SEG dataset loader and download script
 │   ├── make_splits.py                # Stratified and non-IID hospital split generator
@@ -113,8 +121,9 @@ python scripts/visual_check.py --n 5
 ### 3. Running the Base System
 Train the centralized baseline model:
 ```bash
-# Runs the centralized training script
-python scripts/dataset.py  
+# Open and run the baseline Jupyter notebook: E1_Baseline.ipynb
+# (Alternatively, execute via command line using nbconvert):
+jupyter nbconvert --to notebook --execute E1_Baseline.ipynb
 ```
 
 ### 4. Running the Temporal Security Tests (E7 Verification)
