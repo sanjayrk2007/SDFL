@@ -242,6 +242,7 @@ class TemporalCheckpointingSecAgg(fl.server.strategy.FedAvg):
         current_time = time.time()
         list_of_ciphertexts = []
         epsilons = []
+        num_examples_list = []
         
         try:
             # 1. Accept updates only if they satisfy validator rules
@@ -257,6 +258,7 @@ class TemporalCheckpointingSecAgg(fl.server.strategy.FedAvg):
                     "nonce": nonce,
                     "ciphertext": ciphertext
                 })
+                num_examples_list.append(fit_res.num_examples)
                 
                 if "epsilon" in fit_res.metrics:
                     epsilons.append(fit_res.metrics["epsilon"])
@@ -273,7 +275,7 @@ class TemporalCheckpointingSecAgg(fl.server.strategy.FedAvg):
             
             if list_of_ciphertexts and round_key is not None:
                 try:
-                    aggregated_weights = server_aggregate(list_of_ciphertexts, round_key)
+                    aggregated_weights = server_aggregate(list_of_ciphertexts, round_key, num_examples_list)
                 except Exception as e:
                     print(f"Decryption / Aggregation failed: {e}")
 
@@ -494,8 +496,9 @@ def run_e7_tests():
             self.cid = cid
             
     class DummyFitRes:
-        def __init__(self, metrics):
+        def __init__(self, metrics, num_examples=100):
             self.metrics = metrics
+            self.num_examples = num_examples
             
     client_proxy = DummyClientProxy("client0")
     fit_res = DummyFitRes(fit_res_metrics)

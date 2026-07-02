@@ -26,9 +26,14 @@ graph TD
 ```
 
 ### The Three Pillars of SDFL (Patent Claims)
-1. **Round-Specific Ephemeral Cryptographic Context**: Each training round generates a unique AES-GCM key context and is bound to a coordinator-signed certificate carrying a dynamic expiry timestamp ($T_r$).
+1. **Round-Specific Ephemeral Cryptographic Context**: Each training round generates a unique AES-GCM key context and is bound to a coordinator-signed certificate carrying a dynamic expiry timestamp (T_r).
 2. **Bounded Aggregation Window Enforcement**: The server validates the round certificate and arrival time, strictly rejecting late submissions, replayed tokens, or context-mismatched uploads.
-3. **In-Memory Self-Destruction**: Once aggregation closes or the timestamp $T_r$ is reached, the server and clients execute in-place zeroing (`destroy_round_key`) of mutable key bytes and purge cached ciphertexts. The global model is updated, but individual updates are rendered mathematically unrecoverable.
+3. **In-Memory Self-Destruction**: Once aggregation closes or the timestamp T_r is reached, the server and clients execute in-place zeroing (`destroy_round_key`) of mutable key bytes and purge cached ciphertexts. The global model is updated, but individual updates are rendered mathematically unrecoverable.
+
+> [!NOTE]
+> **Threat Model & Cryptographic Recovery Scope:**
+> The claims of rendering updates "cryptographically unrecoverable" and "mathematically unrecoverable" apply specifically to **post-breach retrospective attacks**. Once the ephemeral key is zeroed in volatile memory and individual ciphertexts are purged from disk, an attacker accessing the physical storage, server logs, or network traffic transcript post-facto cannot reconstruct the local model updates.
+> * **Out of Scope:** This mechanism does *not* protect against active runtime compromises during the training window (e.g., an attacker obtaining root access and executing real-time memory dumps/RAM copying while the key is active in volatile memory) or physical hardware side-channel attacks.
 
 ---
 
@@ -42,16 +47,20 @@ We conducted 8 incremental ablation experiments (E1 to E8) to benchmark utility,
 | :--- | :--- | :--- | :--- | :--- |
 | **E1** | Centralized Baseline | Target Dice | **Dice: 0.7937** \| **IoU: 0.7159** (Upper Bound) | Complete |
 | **E2** | Federated Baseline (FedAvg) | Non-IID client split | **Dice: 0.7712** \| **IoU: 0.6818** (Utility Drop) | Complete |
-| **E3** | FedProx Integration | Proximal term ($\mu$) | **Dice: 0.5782** \| **IoU: 0.4533** (Best: $\mu = 0.001$, Round 1) | Complete |
-| **E4** | DP-SGD Integration | Privacy Budget ($\epsilon$) | **Dice: 0.4312** \| **$\epsilon = 0.9793$** at $\delta = 10^{-5}$ ($C=2, \sigma=1.5$) | Complete |
+| **E3** | FedProx Integration | Proximal term (μ) | **Dice: 0.5782** \| **IoU: 0.4533** (Best: μ = 0.001, Round 1) | Complete |
+| **E4** | DP-SGD Integration | Privacy Budget (ε) | **Dice: 0.4312** \| **ε = 0.9793** at δ = 10⁻⁵ (C = 2.0, σ = 1.5, Round 1) | Complete |
 | **E5** | AES-GCM Encrypted Transport | Decryption Success | **Dice: 0.4271** \| **Decryption: 100%** | Complete |
 | **E6** | Sanitization Pipeline | PHI removal + Contrast | **Dice: 0.5400** \| **IoU: 0.4081** (4 PHI leaks rejected) | Complete |
-| **E7** | Temporal Key Destruction | In-memory zeroing | **5/5 Verification Tests Passed** (Late uploads rejected) | Complete |
-| **E8** | Full SDFL Stack | Uncertainty / OOD | **$\epsilon = 2.7720$ (RDP accountant approx.*)** \| **ID Dice: 0.4145** \| **OOD Dice: 0.4869** (AES-GCM overhead: 0.08s) \| **ECE: 0.0888** | Complete |
+| **E7** | Temporal Key Destruction | In-memory zeroing | **5/5 Verification Tests Passed** (Late uploads rejected; Dice score omitted here as E7 is a security verification run, see E7_RESULTS.md) | Complete |
+| **E8** | Full SDFL Stack | Uncertainty / OOD | **ε = 2.7720 (RDP accountant approx.*)** \| **ID Dice: 0.4145** \| **OOD Dice: 0.4869** (AES-GCM overhead: 0.08s) \| **ECE: 0.0888** | Complete |
 
-\* *Note: $\epsilon = 2.7720$ in E8 is a server-side Renyi Differential Privacy (RDP) approximation based on client-reported parameters.*
+\* *Note: ε = 2.7720 in E8 is a server-side Renyi Differential Privacy (RDP) approximation based on client-reported parameters.*
 
 > [!IMPORTANT]
+> **Privacy Budget & Training Round Clarification:**
+> * In **E4**, the reported privacy budget (**ε = 0.9793**) covers exactly **1 training round** (3 local epochs) of DP-SGD.
+> * In **E8**, the reported privacy budget (**ε = 2.7720**) is computed cumulatively over **20 training rounds × 1 local epoch** (20 total local epochs).
+>
 > **Key Patent Insight (E6 Validation):** Client-side sanitization (CLAHE contrast normalization, overlay text inpainting, and metadata scrubbing) successfully blocked PHI leaks (4 samples rejected by the PHI gate) with zero model accuracy degradation. Extending the training duration to 20 rounds subsequently restored validation utility to a Dice of **0.5400** under strict local privacy constraints.
 
 ---

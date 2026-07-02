@@ -14,15 +14,15 @@ This report documents the final metrics of the E8 experiment, evaluating the ful
 | **HD95 (px)** | 84.17 | 78.66 | - |
 
 > [!NOTE]
-> The negative generalization gap (where OOD performance exceeds in-distribution performance) is due to the larger, well-defined polyps contained in the Hospital 2 cohort compared to the smaller, more challenging cases in Hospitals 0 and 1.
+> **Polyp Size Covariate Shift & Generalisation Gap:**
+> The negative generalization gap (OOD test Dice of 0.4869 vs. In-Distribution test Dice of 0.4145) is explained by the characteristics of the data splits:
+> 1. **Polyp Size and Segmentation Complexity:** Hospital 2 is biased towards large polyps (foreground area $\ge$ 30%), which are visually well-defined and mathematically far easier to segment. Larger targets yield significantly higher Dice/IoU scores because boundary pixel mismatch has a much lower relative impact. Conversely, Hospital 0 (small polyps, $< 10\%$ area) and Hospital 1 (medium polyps, $10-30\%$ area) contain small or subtle targets where even minor edge errors degrade Dice scores drastically.
+> 2. **Unseen Center Clarification:** Note that Hospital 2 was a training participant (Client 2) in the federated simulation, meaning its local training distribution was observed during optimization. Evaluating on the Hospital 2 test split represents center-level covariate shift (size distribution shift) on unseen test samples rather than evaluation on a strictly unseen center.
 
 ## 2. Privacy Guarantees
 
 * **Cumulative Differential Privacy budget (ε)**: `2.7720` (at $\delta = 1e-05$)
-> **Note:** ε is computed via a server-side RDP accountant
-> using client-reported sampling parameters. It may differ
-> slightly from Opacus's exact internal accounting, which
-> cannot persist across Ray simulation rounds.
+> **Note:** The epsilon value of 2.7720 represents the cumulative privacy spent over **20 training rounds × 1 local epoch** (20 total local epochs) and is computed via a server-side RDP accountant using client-reported sampling parameters. It may differ slightly from Opacus's exact internal accounting, which cannot persist across Ray simulation rounds.
 * **Post-Expiry Decryption Success Rate**: `0.0%` (Target: 0.0%)
 
 ## 3. Uncertainty & Failure Detection

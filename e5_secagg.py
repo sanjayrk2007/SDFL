@@ -88,6 +88,7 @@ class CheckpointingSecAgg(fl.server.strategy.FedAvg):
         # Extract the ciphertexts from client metrics
         list_of_ciphertexts = []
         epsilons = []
+        num_examples_list = []
         for client_proxy, fit_res in results:
             # E7 readiness check: validate update certificate and expiry
             if not self.validate_update(client_proxy.cid, fit_res):
@@ -101,14 +102,15 @@ class CheckpointingSecAgg(fl.server.strategy.FedAvg):
                 "nonce": nonce,
                 "ciphertext": ciphertext
             })
+            num_examples_list.append(fit_res.num_examples)
             if "epsilon" in fit_res.metrics:
                 epsilons.append(fit_res.metrics["epsilon"])
 
         if epsilons:
             self.latest_metrics["epsilon"] = max(epsilons)
 
-        # Decrypt and aggregate the updates using server_aggregate
-        aggregated_weights = server_aggregate(list_of_ciphertexts, self.current_round_key)
+        # Decrypt and aggregate the updates using server_aggregate with weighted averaging
+        aggregated_weights = server_aggregate(list_of_ciphertexts, self.current_round_key, num_examples_list)
         
         # Secure key destruction & cached ciphertext cleanup
         list_of_ciphertexts.clear()

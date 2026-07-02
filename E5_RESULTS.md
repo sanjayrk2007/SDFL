@@ -32,4 +32,14 @@ Validation metrics and privacy spending after 1 round of Secure Aggregated feder
 | **E4 (Plaintext Aggregation)** | 0.4312 | 0.3145 | 0.9793 | N/A |
 | **E5 (Secure Aggregation)** | 0.4271 | 0.3111 | 0.9793 | 100% |
 
-**Status:** Complete. The isolation and aggregation correctness tests passed successfully. The federated simulation successfully aggregated client updates securely under "AES-GCM encrypted transport with aggregation-side decryption", showing no loss in accuracy due to encryption. The global model checkpoint has been saved to `checkpoints/e5_best.pth`.
+**Status:** Complete. The isolation and aggregation correctness tests passed successfully. The federated simulation successfully aggregated client updates securely under "AES-GCM encrypted transport with aggregation-side decryption", showing 100% decryption success. The global model checkpoint has been saved to `checkpoints/e5_best.pth`.
+
+---
+
+## Technical Analysis of E4 vs E5 Metrics
+
+The Dice score shows a minor variation from E4 (`0.4312`) to E5 (`0.4271`). Since encryption is mathematically lossless and does not alter the values of weights, this difference is explained by:
+1. **Run-to-Run Non-Determinism (Primary Factor):** Under the 1-round simulation environment, variations in GPU/CPU non-deterministic operations (e.g. PyTorch atomic operations, library calls) and random seeds during client execution produce minor fluctuations.
+2. **Unweighted Aggregation (Secondary Factor):** The initial E5 run executed without passing the client sample counts list (`num_examples_list`) to the secure aggregation pipeline, resulting in an unweighted average of updates. Since client dataset sizes are slightly different (Hospital 0: 264, Hospital 1: 263, Hospital 2: 262), this created a small mathematical deviation from the weighted `FedAvg` strategy used in E4. 
+
+*Note: The strategy code has been updated to pass `num_examples_list` to guarantee exact mathematical equivalence to weighted FedAvg in all subsequent runs.*

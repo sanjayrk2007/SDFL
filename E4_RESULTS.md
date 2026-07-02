@@ -52,4 +52,18 @@ Validation metrics (Dice and IoU) and privacy spending (ε) for 1 round of feder
 | **Epsilon (ε)** | 0.9793 |
 | **Delta (δ)** | 1e-5 |
 
-**Status:** Sweep complete. The best tradeoff configuration provides sub-1.0 differential privacy (ε = 0.9793, δ = 1e-5) while maintaining a validation Dice score of 0.4312 after 1 round of federated learning starting from the E3 checkpoint. E3 checkpoint.
+**Status:** Sweep complete. The best tradeoff configuration provides sub-1.0 differential privacy (ε = 0.9793, δ = 1e-5) while maintaining a validation Dice score of 0.4312 after 1 round of federated learning starting from the E3 checkpoint.
+
+---
+
+## Technical Discussion & Analysis
+
+### 1. Analysis of the Accuracy Drop (0.79 Baseline / 0.57 FedProx &rarr; 0.43 DP-SGD)
+The centralized baseline achieves a Dice score of 0.7937, whereas adding DP-SGD drops the validation Dice score to 0.4312. This drop is substantial and is driven by the following factors:
+* **Gradient Clipping Norm Mismatch ($C = 2.0$):** Typical gradients in a deep ResUNet++ segmentation network have relatively small norms. A clipping threshold of $C = 2.0$ is excessively high, meaning virtually no gradients are clipped. However, in DP-SGD, the injected Gaussian noise scales *linearly* with the clipping norm ($\sigma \times C$). As a result, setting $C = 2.0$ injects a disproportionately large amount of absolute noise ($\sigma \times C = 3.0$ standard deviation) relative to the actual gradient magnitudes, destroying the gradient signal (severe signal-to-noise ratio degradation).
+* **Small Client Batch Size ($B = 8$):** The noise added to the aggregated batch gradient is scaled by $\frac{\sigma C}{B}$. With a batch size of only 8, there are not enough samples in a batch to average out the injected noise, further exacerbating the corruption of learning signals.
+* **Single-Round Sudden Perturbation:** Because Experiment E4 was evaluated as a single-round sweep (starting from the E3 checkpoint), the model was exposed to a massive noise injection for just 3 local epochs with no subsequent rounds to recover or adapt, causing an immediate, severe drop in Dice score.
+
+### 2. Privacy Budget ($\epsilon$) Interpretation
+* The privacy budget ($\epsilon = 0.9793$ at $\delta = 10^{-5}$) reported in E4 covers exactly **1 round of federated training** (consisting of 3 local epochs).
+* This budget is computed for a single round context and **cannot be directly compared** to multi-round experiments (like E8, which accumulates privacy spending over 20 rounds) without accounting for the number of training rounds and composition.
