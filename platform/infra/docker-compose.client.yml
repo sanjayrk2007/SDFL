@@ -1,0 +1,28 @@
+# For production: COORDINATOR_URL and FLOWER_SERVER_ADDRESS
+# must point to real coordinator hostname resolvable via DNS.
+# For local testing: extra_hosts maps coordinator-nginx to host machine.
+
+services:
+  client:
+    build:
+      context: ../..
+      dockerfile: platform/infra/client/Dockerfile
+    container_name: sdfl-client
+    ports:
+      - "8501:8501"
+    environment:
+      CLIENT_ID: ${CLIENT_ID:?err}
+      CLIENT_SECRET: ${CLIENT_SECRET:?err}
+      COORDINATOR_URL: ${COORDINATOR_URL:-http://coordinator-nginx}
+      FLOWER_SERVER_ADDRESS: ${FLOWER_SERVER_ADDRESS:-coordinator-nginx:8080}
+      EPSILON_KILL_THRESHOLD: ${EPSILON_KILL_THRESHOLD:-3.0}
+      LOCAL_INCOMING_DIR: /data/incoming
+      LOCAL_DB_PATH: /data/client.db
+    volumes:
+      - client_data:/data
+    extra_hosts:
+      - "coordinator-nginx:host-gateway"
+    restart: unless-stopped
+
+volumes:
+  client_data:

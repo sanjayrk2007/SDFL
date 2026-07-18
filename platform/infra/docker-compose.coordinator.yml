@@ -1,0 +1,50 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: sdfl-postgres
+    environment:
+      POSTGRES_USER: sdfl_admin
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
+      POSTGRES_DB: sdfl
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sdfl_admin -d sdfl"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  coordinator:
+    build:
+      context: ../..
+      dockerfile: platform/infra/coordinator/Dockerfile
+    container_name: sdfl-coordinator
+    ports:
+      - "8000:8000"
+    environment:
+      COORDINATOR_SECRET: ${COORDINATOR_SECRET:?err}
+      API_DASHBOARD_KEY: ${API_DASHBOARD_KEY:?err}
+      SETUP_TOKEN: ${SETUP_TOKEN:?err}
+      DATABASE_URL: postgresql+asyncpg://sdfl_admin:${POSTGRES_PASSWORD:?err}@postgres:5432/sdfl
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: sdfl-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./coordinator/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - coordinator
+    restart: unless-stopped
+
+volumes:
+  pgdata:
