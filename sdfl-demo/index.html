@@ -132,6 +132,21 @@
     0% { top: 0; opacity: 1; }
     100% { top: 100%; opacity: 0; }
   }
+  .spinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--panel-border);
+    border-top-color: var(--teal);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-left: 10px;
+    vertical-align: middle;
+  }
+  .spinner.active { display: inline-block; }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
 
   .metrics {
     display: flex;
@@ -181,6 +196,33 @@
     padding-top: 20px;
   }
   .legend b { color: var(--text); }
+  .hospital-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .field-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+  .hospital-input {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    padding: 8px 12px;
+    outline: none;
+    width: 240px;
+    transition: border-color 0.2s;
+  }
+  .hospital-input:focus { border-color: var(--teal); }
 </style>
 </head>
 <body>
@@ -190,13 +232,26 @@
     <div id="modeBadge" class="mode-badge">checking backend…</div>
   </header>
 
+  <div class="hospital-row">
+    <label class="field-label" for="hospitalId">Hospital ID</label>
+    <input
+      type="text"
+      id="hospitalId"
+      class="hospital-input"
+      placeholder="e.g. hospital-001"
+      value="demo-hospital"
+    />
+  </div>
   <div class="dropzone" id="dropzone">
     <div class="cta">Drop an endoscopy image here, or click to upload</div>
     <p>JPG or PNG · runs 20 MC Dropout passes per image</p>
     <input type="file" id="fileInput" accept="image/*" />
   </div>
 
-  <div class="status-line" id="status"></div>
+  <div class="status-line" id="status">
+    <span id="statusText"></span>
+    <span class="spinner" id="spinner"></span>
+  </div>
 
   <div class="grid">
     <div class="panel">
@@ -231,6 +286,46 @@
     </div>
   </div>
 
+  <div id="reviewBanner" style="display:none; margin-top:18px;
+    padding:14px 18px; border-radius:10px; font-family:'IBM Plex Mono',
+    monospace; font-size:13px; font-weight:500;">
+  </div>
+
+  <div id="modelStats" style="display:none; margin-top:18px;
+    background:var(--panel); border:1px solid var(--panel-border);
+    border-radius:10px; padding:14px 18px;">
+    <div class="k" style="font-family:'IBM Plex Mono',monospace;
+      font-size:10px; letter-spacing:0.08em; text-transform:uppercase;
+      color:var(--text-dim); margin-bottom:10px;">
+      Model · E8 Full SDFL Stack
+    </div>
+    <div id="statsContent" style="font-family:'IBM Plex Mono',monospace;
+      font-size:12px; color:var(--text-dim); line-height:2.0;"></div>
+  </div>
+
+  <div id="historySection" style="display:none; margin-top:32px;">
+    <div class="field-label" style="margin-bottom:12px;">
+      Recent Predictions
+    </div>
+    <div style="overflow-x:auto;">
+      <table id="historyTable" style="width:100%; border-collapse:collapse;
+        font-family:'IBM Plex Mono',monospace; font-size:11px;">
+        <thead>
+          <tr style="color:var(--text-dim); border-bottom:
+            1px solid var(--panel-border);">
+            <th style="text-align:left; padding:8px 10px;">Time</th>
+            <th style="text-align:left; padding:8px 10px;">Hospital</th>
+            <th style="text-align:left; padding:8px 10px;">Confidence</th>
+            <th style="text-align:left; padding:8px 10px;">Uncertainty</th>
+            <th style="text-align:left; padding:8px 10px;">Flag</th>
+            <th style="text-align:left; padding:8px 10px;">Mode</th>
+          </tr>
+        </thead>
+        <tbody id="historyBody"></tbody>
+      </table>
+    </div>
+  </div>
+
   <div class="legend">
     <b>Teal overlay</b> = predicted polyp region. <b>Amber heatmap</b> = per-pixel uncertainty across
     20 stochastic forward passes — brighter regions are where the model disagrees with itself most,
@@ -243,25 +338,57 @@
 const API_BASE = "http://localhost:8000";
 const dropzone = document.getElementById('dropzone');
 const fileInput = document.getElementById('fileInput');
-const statusEl = document.getElementById('status');
+const statusText = document.getElementById('statusText');
+const spinner = document.getElementById('spinner');
 const modeBadge = document.getElementById('modeBadge');
+const reviewBanner = document.getElementById('reviewBanner');
+const modelStats = document.getElementById('modelStats');
+const statsContent = document.getElementById('statsContent');
+const historySection = document.getElementById('historySection');
+const historyBody = document.getElementById('historyBody');
 
+// Check backend health and load model info on startup
 async function checkHealth() {
   try {
     const res = await fetch(`${API_BASE}/health`);
     const data = await res.json();
-    modeBadge.textContent = data.real_model_available ? "real model loaded" : "mock mode";
-    modeBadge.className = "mode-badge " + (data.real_model_available ? "real" : "mock");
+    modeBadge.textContent = data.real_model_available
+      ? "real model loaded" : "mock mode";
+    modeBadge.className = "mode-badge "
+      + (data.real_model_available ? "real" : "mock");
   } catch (e) {
     modeBadge.textContent = "backend offline";
     modeBadge.className = "mode-badge";
   }
 }
-checkHealth();
 
+async function loadModelInfo() {
+  try {
+    const res = await fetch(`${API_BASE}/model-info`);
+    const d = await res.json();
+    statsContent.innerHTML = `
+      Dataset: Kvasir-SEG &nbsp;|&nbsp;
+      Training rounds: ${d.training_rounds} &nbsp;|&nbsp;
+      val Dice: ${d.val_dice} &nbsp;|&nbsp;
+      ε = ${d.privacy_budget_epsilon}
+      (δ = ${d.privacy_budget_delta}) &nbsp;|&nbsp;
+      MC passes: ${d.mc_dropout_passes}
+    `;
+    modelStats.style.display = 'block';
+  } catch(e) { /* silently skip if endpoint not ready */ }
+}
+
+checkHealth();
+loadModelInfo();
+
+// Drag and drop
 dropzone.addEventListener('click', () => fileInput.click());
-dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
-dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+dropzone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  dropzone.classList.add('dragover');
+});
+dropzone.addEventListener('dragleave', () =>
+  dropzone.classList.remove('dragover'));
 dropzone.addEventListener('drop', (e) => {
   e.preventDefault();
   dropzone.classList.remove('dragover');
@@ -273,42 +400,136 @@ fileInput.addEventListener('change', (e) => {
 
 function showOriginal(file) {
   const url = URL.createObjectURL(file);
-  document.getElementById('boxOriginal').innerHTML = `<img src="${url}" />`;
+  document.getElementById('boxOriginal').innerHTML =
+    `<img src="${url}" />`;
+}
+
+function setStatus(msg, isError = false) {
+  statusText.textContent = msg;
+  statusText.style.color = isError ? 'var(--danger)' : '';
+}
+
+function setLoading(active) {
+  spinner.className = active ? 'spinner active' : 'spinner';
+  dropzone.style.pointerEvents = active ? 'none' : '';
+  dropzone.style.opacity = active ? '0.6' : '';
 }
 
 async function handleFile(file) {
+  // File type check
+  if (!file.type.startsWith('image/')) {
+    setStatus('Error: please upload a JPG or PNG image.', true);
+    return;
+  }
+
   showOriginal(file);
-  statusEl.textContent = 'running 20 MC dropout passes…';
-  statusEl.classList.remove('err');
+  setStatus('Running 20 MC Dropout passes…');
+  setLoading(true);
+  reviewBanner.style.display = 'none';
   document.getElementById('metrics').style.display = 'none';
+
+  const hospitalId = document.getElementById('hospitalId').value.trim()
+    || 'anonymous';
 
   const formData = new FormData();
   formData.append('file', file);
+  formData.append('hospital_id', hospitalId);
 
   try {
-    const res = await fetch(`${API_BASE}/predict`, { method: 'POST', body: formData });
+    const res = await fetch(`${API_BASE}/predict`,
+      { method: 'POST', body: formData });
+
+    if (res.status === 422) {
+      const err = await res.json();
+      setStatus(`Rejected: ${err.message}`, true);
+      setLoading(false);
+      return;
+    }
     if (!res.ok) throw new Error(`Server responded ${res.status}`);
+
     const data = await res.json();
 
+    // Update panels
     document.getElementById('boxMask').innerHTML =
       `<img src="data:image/png;base64,${data.overlay_png_base64}" />`;
     document.getElementById('boxUncertainty').innerHTML =
-      `<img src="data:image/png;base64,${data.heatmap_png_base64}" /><div class="scanline active"></div>`;
+      `<img src="data:image/png;base64,${data.heatmap_png_base64}" />
+       <div class="scanline active"></div>`;
 
-    document.getElementById('mPeak').textContent = data.peak_confidence;
-    document.getElementById('mUncert').textContent = data.mean_uncertainty;
+    // Update metrics
+    document.getElementById('mPeak').textContent =
+      data.peak_confidence.toFixed(3);
+    document.getElementById('mUncert').textContent =
+      data.mean_uncertainty.toFixed(4);
     document.getElementById('mPasses').textContent = data.n_mc_passes;
     document.getElementById('metrics').style.display = 'flex';
 
-    modeBadge.textContent = data.mode === 'real' ? "real model loaded" : "mock mode";
-    modeBadge.className = "mode-badge " + (data.mode === 'real' ? "real" : "mock");
+    // Review flag banner
+    if (data.failure_flag) {
+      reviewBanner.style.cssText =
+        'display:block; margin-top:18px; padding:14px 18px; ' +
+        'border-radius:10px; font-family:IBM Plex Mono,monospace; ' +
+        'font-size:13px; font-weight:500; ' +
+        'background:#2d1a00; border:1px solid var(--amber); ' +
+        'color:var(--amber);';
+      reviewBanner.textContent =
+        '⚠️  High uncertainty — Gastroenterologist review recommended.';
+    } else {
+      reviewBanner.style.cssText =
+        'display:block; margin-top:18px; padding:14px 18px; ' +
+        'border-radius:10px; font-family:IBM Plex Mono,monospace; ' +
+        'font-size:13px; font-weight:500; ' +
+        'background:#001a12; border:1px solid var(--teal); ' +
+        'color:var(--teal);';
+      reviewBanner.textContent = '✅  Result reliable.';
+    }
 
-    statusEl.textContent = data.mode === 'mock'
-      ? 'done (mock inference — plug in e8_final.pth for real predictions)'
-      : 'done';
+    // Update badge
+    modeBadge.textContent = data.mode === 'real'
+      ? "real model loaded" : "mock mode";
+    modeBadge.className = "mode-badge "
+      + (data.mode === 'real' ? "real" : "mock");
+
+    setStatus(data.mode === 'mock'
+      ? 'done (mock inference — add e8_final.pth for real predictions)'
+      : 'done');
+
+    // Refresh history
+    loadHistory(hospitalId);
+
   } catch (err) {
-    statusEl.textContent = `Error: ${err.message}. Is the backend running on ${API_BASE}?`;
-    statusEl.classList.add('err');
+    setStatus(
+      `Error: ${err.message}. Is the backend running on ${API_BASE}?`,
+      true
+    );
+  } finally {
+    setLoading(false);
+  }
+}
+
+async function loadHistory(hospitalId) {
+  try {
+    const url = hospitalId && hospitalId !== 'anonymous' 
+      ? `${API_BASE}/history?hospital_id=${encodeURIComponent(hospitalId)}`
+      : `${API_BASE}/history`;
+    const res = await fetch(url);
+    if (!res.ok) return;
+    const history = await res.json();
+    if (history.length > 0) {
+      historySection.style.display = 'block';
+      historyBody.innerHTML = history.map(h => `
+        <tr style="border-bottom: 1px solid var(--panel-border);">
+          <td style="padding:8px 10px;">${new Date(h.timestamp).toLocaleTimeString()}</td>
+          <td style="padding:8px 10px;">${h.hospital_id}</td>
+          <td style="padding:8px 10px;">${h.peak_confidence.toFixed(3)}</td>
+          <td style="padding:8px 10px;">${h.mean_uncertainty.toFixed(4)}</td>
+          <td style="padding:8px 10px;">${h.failure_flag ? '⚠️' : '✅'}</td>
+          <td style="padding:8px 10px;">${h.mode}</td>
+        </tr>
+      `).join('');
+    }
+  } catch (e) {
+    console.error('Failed to load history', e);
   }
 }
 </script>

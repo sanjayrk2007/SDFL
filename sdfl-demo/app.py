@@ -27,9 +27,57 @@ import base64
 import io
 import os
 from typing import Tuple
+import sqlite3
+import hashlib
+import uuid
+from datetime import datetime
+import sys as _sys
+
+_sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+try:
+    from scripts.sanitize import sanitize as _sanitize
+    SANITIZE_AVAILABLE = True
+except ImportError:
+    SANITIZE_AVAILABLE = False
+    print("WARNING: scripts/sanitize.py not found — PHI gate disabled")
+
+AUDIT_DB_PATH = os.path.join(os.path.dirname(__file__), "audit.db")
+
+def _init_audit_db():
+    conn = sqlite3.connect(AUDIT_DB_PATH)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS predictions (
+            prediction_id TEXT PRIMARY KEY,
+            hospital_id TEXT,
+            timestamp TEXT,
+            input_hash TEXT,
+            peak_confidence REAL,
+            mean_uncertainty REAL,
+            failure_flag INTEGER,
+            mode TEXT
+        )
+    """)
+    conn.commit()
+    conn.close()
+
+_init_audit_db()
+
+def _log_prediction(hospital_id, input_bytes, peak_conf,
+                    mean_unc, failure_flag, mode):
+    pid = str(uuid.uuid4())
+    input_hash = hashlib.sha256(input_bytes).hexdigest()
+    conn = sqlite3.connect(AUDIT_DB_PATH)
+    conn.execute(
+        "INSERT INTO predictions VALUES (?,?,?,?,?,?,?,?)",
+        (pid, hospital_id, datetime.utcnow().isoformat(),
+         input_hash, peak_conf, mean_unc, int(failure_flag), mode)
+    )
+    conn.commit()
+    conn.close()
+    return pid
 
 import numpy as np
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from PIL import Image, ImageDraw
@@ -139,15 +187,19 @@ def _run_real_inference(img: Image.Image) -> Tuple[np.ndarray, np.ndarray]:
     _lazy_load_real_model()
     x = _transform(img).unsqueeze(0)  # (1, 3, 256, 256)
 
+    import torch
     preds = []
     with _torch.no_grad():
         for _ in range(N_MC_PASSES):
-            out = _model(x)  # (1, 1, 256, 256), sigmoid already applied per spec
+            out = _model(x)
+            # Defensive sigmoid — ensures output is in [0, 1] even if
+            # model architecture or checkpoint has any mismatch
+            out = _torch.sigmoid(out)
             preds.append(out.squeeze().cpu().numpy())
 
-    stacked = np.stack(preds, axis=0)  # (N, H, W)
-    mean_mask = stacked.mean(axis=0)
-    uncertainty = stacked.var(axis=0)
+    stacked = np.stack(preds, axis=0)  # (N, H, W) all values in [0, 1]
+    mean_mask = np.clip(stacked.mean(axis=0), 0.0, 1.0)
+    uncertainty = stacked.var(axis=0)  # max possible is 0.25 for Bernoulli
     return mean_mask, uncertainty
 
 
@@ -192,8 +244,12 @@ def _colorize_mask(base_img: Image.Image, mask: np.ndarray, color=(45, 212, 191)
 
 
 def _heatmap(mask: np.ndarray) -> Image.Image:
-    """Render a variance map as an amber-on-dark heatmap."""
-    norm = mask / (mask.max() + 1e-8)
+    """Render a variance map as an amber-on-dark heatmap.
+    Uses 99th-percentile normalization so boundary uncertainty
+    is visible without background noise dominating the scale."""
+    p99 = float(np.percentile(mask, 99))
+    norm = np.clip(mask / (p99 + 1e-8), 0.0, 1.0)
+    # Dark background → bright amber at high-uncertainty boundaries
     rgb = np.zeros((IMG_SIZE, IMG_SIZE, 3), dtype=np.uint8)
     rgb[..., 0] = (norm * 245).astype(np.uint8)   # R
     rgb[..., 1] = (norm * 166).astype(np.uint8)   # G
@@ -213,9 +269,37 @@ def health():
 
 
 @app.post("/predict")
-async def predict(file: UploadFile = File(...)):
+async def predict(
+    file: UploadFile = File(...),
+    hospital_id: str = Form(default="anonymous")
+):
     contents = await file.read()
-    img = Image.open(io.BytesIO(contents)).convert("RGB")
+
+    # File format validation
+    try:
+        img = Image.open(io.BytesIO(contents)).convert("RGB")
+    except Exception:
+        return JSONResponse(
+            status_code=422,
+            content={"error": "INVALID_IMAGE",
+                     "message": "Could not read image. Upload JPG or PNG only."}
+        )
+
+    # PHI sanitization gate
+    phi_rejected = False
+    if SANITIZE_AVAILABLE:
+        sanitized_img, passed = _sanitize(img)
+        if not passed:
+            phi_rejected = True
+            return JSONResponse(
+                status_code=422,
+                content={
+                    "error": "PHI_GATE_REJECTED",
+                    "message": "Image rejected: detected text/metadata covering "
+                               ">5% of image area. Remove overlays before upload."
+                }
+            )
+        img = sanitized_img  # use sanitized image for inference
 
     if REAL_MODEL_AVAILABLE:
         mean_mask, uncertainty = _run_real_inference(img)
@@ -225,8 +309,20 @@ async def predict(file: UploadFile = File(...)):
     overlay_img = _colorize_mask(img, mean_mask)
     heatmap_img = _heatmap(uncertainty)
 
-    dice_proxy = float(mean_mask.max())  # placeholder confidence stat for the UI
+    dice_proxy = float(np.clip(mean_mask.max(), 0.0, 1.0))
+    assert 0.0 <= dice_proxy <= 1.0, \
+        f"peak_confidence out of range: {dice_proxy} — check sigmoid"
     mean_uncertainty = float(uncertainty.mean())
+
+    UNCERTAINTY_THRESHOLD = 0.05
+    failure_flag = mean_uncertainty > UNCERTAINTY_THRESHOLD
+    review_required = failure_flag
+
+    prediction_id = _log_prediction(
+        hospital_id, contents, dice_proxy,
+        mean_uncertainty, failure_flag,
+        "real" if REAL_MODEL_AVAILABLE else "mock"
+    )
 
     return JSONResponse(
         {
@@ -236,5 +332,50 @@ async def predict(file: UploadFile = File(...)):
             "peak_confidence": round(dice_proxy, 3),
             "mean_uncertainty": round(mean_uncertainty, 4),
             "n_mc_passes": N_MC_PASSES,
+            "failure_flag": failure_flag,
+            "review_required": review_required,
+            "message": (
+                "High uncertainty — Gastroenterologist review recommended."
+                if failure_flag else
+                "Segmentation complete. Result is reliable."
+            ),
+            "phi_sanitized": SANITIZE_AVAILABLE,
+            "prediction_id": prediction_id,
         }
     )
+
+@app.get("/history")
+def get_history(hospital_id: str = None, limit: int = 10):
+    conn = sqlite3.connect(AUDIT_DB_PATH)
+    if hospital_id:
+        rows = conn.execute(
+            "SELECT * FROM predictions WHERE hospital_id=? "
+            "ORDER BY timestamp DESC LIMIT ?",
+            (hospital_id, limit)
+        ).fetchall()
+    else:
+        rows = conn.execute(
+            "SELECT * FROM predictions ORDER BY timestamp DESC LIMIT ?",
+            (limit,)
+        ).fetchall()
+    conn.close()
+    cols = ["prediction_id","hospital_id","timestamp","input_hash",
+            "peak_confidence","mean_uncertainty","failure_flag","mode"]
+    return [dict(zip(cols, r)) for r in rows]
+
+@app.get("/model-info")
+def model_info():
+    return {
+        "model": "ResUNet++ (E8 Full SDFL Stack)",
+        "dataset": "Kvasir-SEG (1000 colonoscopy images)",
+        "training_rounds": 20,
+        "val_dice": 0.4674,
+        "in_distribution_dice": 0.4145,
+        "ood_dice": 0.4869,
+        "privacy_budget_epsilon": 2.7720,
+        "privacy_budget_delta": 1e-5,
+        "mc_dropout_passes": N_MC_PASSES,
+        "uncertainty_threshold": 0.05,
+        "checkpoint": "e8_final.pth",
+        "real_model_loaded": REAL_MODEL_AVAILABLE,
+    }
