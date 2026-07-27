@@ -314,7 +314,8 @@ async def predict(
         f"peak_confidence out of range: {dice_proxy} — check sigmoid"
     mean_uncertainty = float(uncertainty.mean())
 
-    UNCERTAINTY_THRESHOLD = 0.05
+    # Threshold recalibrated to 0.00040 to match the squashed sigmoid variance distribution observed empirically (0.00036-0.00044)
+    UNCERTAINTY_THRESHOLD = 0.00040
     failure_flag = mean_uncertainty > UNCERTAINTY_THRESHOLD
     review_required = failure_flag
 
@@ -330,7 +331,7 @@ async def predict(
             "overlay_png_base64": _to_base64_png(overlay_img),
             "heatmap_png_base64": _to_base64_png(heatmap_img),
             "peak_confidence": round(dice_proxy, 3),
-            "mean_uncertainty": round(mean_uncertainty, 4),
+            "mean_uncertainty": round(mean_uncertainty, 6),
             "n_mc_passes": N_MC_PASSES,
             "failure_flag": failure_flag,
             "review_required": review_required,
