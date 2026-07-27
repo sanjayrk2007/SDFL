@@ -450,6 +450,10 @@ async function handleFile(file) {
     const data = await res.json();
 
     // Update panels
+    if (data.sanitized_png_base64) {
+      document.getElementById('origImg').src =
+        'data:image/png;base64,' + data.sanitized_png_base64;
+    }
     document.getElementById('boxMask').innerHTML =
       `<img src="data:image/png;base64,${data.overlay_png_base64}" />`;
     document.getElementById('boxUncertainty').innerHTML =
@@ -459,8 +463,11 @@ async function handleFile(file) {
     // Update metrics
     document.getElementById('mPeak').textContent =
       data.peak_confidence.toFixed(3);
-    document.getElementById('mUncert').textContent =
-      data.mean_uncertainty.toFixed(4);
+    const mu =
+        data.mean_uncertainty !== undefined
+          ? data.mean_uncertainty.toFixed(6)
+          : "N/A";
+    document.getElementById('mUncert').textContent = mu;
     document.getElementById('mPasses').textContent = data.n_mc_passes;
     document.getElementById('metrics').style.display = 'flex';
 
@@ -522,7 +529,7 @@ async function loadHistory(hospitalId) {
           <td style="padding:8px 10px;">${new Date(h.timestamp).toLocaleTimeString()}</td>
           <td style="padding:8px 10px;">${h.hospital_id}</td>
           <td style="padding:8px 10px;">${h.peak_confidence.toFixed(3)}</td>
-          <td style="padding:8px 10px;">${h.mean_uncertainty.toFixed(4)}</td>
+          <td style="padding:8px 10px;">${h.mean_uncertainty.toFixed(6)}</td>
           <td style="padding:8px 10px;">${h.failure_flag ? '⚠️' : '✅'}</td>
           <td style="padding:8px 10px;">${h.mode}</td>
         </tr>

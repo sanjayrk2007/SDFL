@@ -33,7 +33,7 @@ import uuid
 from datetime import datetime
 import sys as _sys
 
-_sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
+_sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 try:
     from scripts.sanitize import sanitize as _sanitize
     SANITIZE_AVAILABLE = True
@@ -288,7 +288,13 @@ async def predict(
     # PHI sanitization gate
     phi_rejected = False
     if SANITIZE_AVAILABLE:
+        import hashlib
+        img_bytes_before = img.tobytes()
+        hash_before = hashlib.sha256(img_bytes_before).hexdigest()
         sanitized_img, passed = _sanitize(img)
+        img_bytes_after = sanitized_img.tobytes()
+        hash_after = hashlib.sha256(img_bytes_after).hexdigest()
+        print(f"[DEBUG] sanitize() invoked. Passed: {passed}. Image modified: {hash_before != hash_after}")
         if not passed:
             phi_rejected = True
             return JSONResponse(
@@ -328,6 +334,7 @@ async def predict(
     return JSONResponse(
         {
             "mode": "real" if REAL_MODEL_AVAILABLE else "mock",
+            "sanitized_png_base64": _to_base64_png(img),
             "overlay_png_base64": _to_base64_png(overlay_img),
             "heatmap_png_base64": _to_base64_png(heatmap_img),
             "peak_confidence": round(dice_proxy, 3),
