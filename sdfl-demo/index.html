@@ -455,8 +455,8 @@ async function handleFile(file) {
 
     // Update panels
     if (data.sanitized_png_base64) {
-      document.getElementById('origImg').src =
-        'data:image/png;base64,' + data.sanitized_png_base64;
+      document.getElementById('boxOriginal').innerHTML =
+        `<img src="data:image/png;base64,${data.sanitized_png_base64}" />`;
     }
     document.getElementById('boxMask').innerHTML =
       `<img src="data:image/png;base64,${data.overlay_png_base64}" />`;
