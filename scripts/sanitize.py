@@ -36,7 +36,7 @@ def sanitize(image: PIL.Image.Image) -> tuple[PIL.Image.Image, bool]:
     contours, _ = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     for c in contours:
         x, y, w, h = cv2.boundingRect(c)
-        if w > 20 and h > 10:
+        if w > 20 and h > 10 and h < 50:
             kept_rects.append((x, y, w, h))
             total_inpaint_pixels += w * h
 
