@@ -295,6 +295,8 @@ async def predict(
         img_bytes_after = sanitized_img.tobytes()
         hash_after = hashlib.sha256(img_bytes_after).hexdigest()
         print(f"[DEBUG] sanitize() invoked. Passed: {passed}. Image modified: {hash_before != hash_after}")
+        sanitized_img.save("/tmp/sanitized_debug.png")
+        print("[DEBUG] Saved sanitized image to /tmp/sanitized_debug.png")
         if not passed:
             phi_rejected = True
             return JSONResponse(

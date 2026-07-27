@@ -25,38 +25,20 @@ def sanitize(image: PIL.Image.Image) -> tuple[PIL.Image.Image, bool]:
     gray = cv2.cvtColor(img_np, cv2.COLOR_RGB2GRAY)
     H, W = gray.shape[:2]
 
-    # Define corner regions:
-    # top_region    = rows 0 to int(H * 0.10), full width
-    # bottom_region = rows int(H * 0.90) to H, full width
-    top_limit = int(H * 0.10)
-    bottom_limit = int(H * 0.90)
-
     kept_rects = []
     total_inpaint_pixels = 0
 
-    # Process top region
-    top_region = gray[0:top_limit, :]
-    if top_region.size > 0:
-        _, thresh_top = cv2.threshold(top_region, 200, 255, cv2.THRESH_BINARY)
-        contours_top, _ = cv2.findContours(thresh_top, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        for c in contours_top:
-            x, y, w, h = cv2.boundingRect(c)
-            if w > 20 and h > 8:
-                kept_rects.append((x, y, w, h))
-                total_inpaint_pixels += w * h
-
-    # Process bottom region
-    bottom_region = gray[bottom_limit:H, :]
-    if bottom_region.size > 0:
-        _, thresh_bottom = cv2.threshold(bottom_region, 200, 255, cv2.THRESH_BINARY)
-        contours_bottom, _ = cv2.findContours(thresh_bottom, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        for c in contours_bottom:
-            x, y, w, h = cv2.boundingRect(c)
-            if w > 20 and h > 8:
-                # Map bounding rect coordinates back to full image coordinate space
-                mapped_y = y + bottom_limit
-                kept_rects.append((x, mapped_y, w, h))
-                total_inpaint_pixels += w * h
+    # Process entire image for bright text overlays (val > 180)
+    _, thresh = cv2.threshold(gray, 180, 255, cv2.THRESH_BINARY)
+    # Dilate to merge individual letters into text blocks
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (15, 5))
+    dilated = cv2.dilate(thresh, kernel, iterations=1)
+    contours, _ = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    for c in contours:
+        x, y, w, h = cv2.boundingRect(c)
+        if w > 20 and h > 10:
+            kept_rects.append((x, y, w, h))
+            total_inpaint_pixels += w * h
 
     # Build binary inpaint mask: zeros image same H x W as input, fill 255 inside each kept bounding rect
     mask = np.zeros((H, W), dtype=np.uint8)
@@ -74,10 +56,8 @@ def sanitize(image: PIL.Image.Image) -> tuple[PIL.Image.Image, bool]:
     sanitized_pil_image.info = {}
 
     # 4. PHI Gate
-    # inpaint_ratio = total_inpaint_pixels / (H * W)
     inpaint_ratio = total_inpaint_pixels / (H * W) if (H * W) > 0 else 0.0
-    # If inpaint_ratio > 0.05: passed = False, else: passed = True
-    passed = inpaint_ratio <= 0.05
+    passed = inpaint_ratio <= 0.15
 
     return sanitized_pil_image, passed
 

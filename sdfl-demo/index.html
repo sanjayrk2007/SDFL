@@ -448,6 +448,10 @@ async function handleFile(file) {
     if (!res.ok) throw new Error(`Server responded ${res.status}`);
 
     const data = await res.json();
+    console.log("[DEBUG] Raw fetch response data:", data);
+    console.log("[DEBUG] Raw mean_uncertainty from JSON:", data.mean_uncertainty);
+    const mu = data.mean_uncertainty !== undefined ? data.mean_uncertainty.toFixed(6) : "N/A";
+    console.log("[DEBUG] Formatted mean_uncertainty (toFixed(6)):", mu);
 
     // Update panels
     if (data.sanitized_png_base64) {
