@@ -136,6 +136,8 @@ def _lazy_load_real_model():
 
 def _run_real_inference(img: Image.Image) -> Tuple[np.ndarray, np.ndarray]:
     """Returns (mean_mask [H,W] in [0,1], uncertainty [H,W] variance)."""
+    from scipy.ndimage import gaussian_filter
+
     _lazy_load_real_model()
     x = _transform(img).unsqueeze(0)  # (1, 3, 256, 256)
 
@@ -147,7 +149,17 @@ def _run_real_inference(img: Image.Image) -> Tuple[np.ndarray, np.ndarray]:
 
     stacked = np.stack(preds, axis=0)  # (N, H, W)
     mean_mask = stacked.mean(axis=0)
-    uncertainty = stacked.var(axis=0)
+    raw_uncertainty = stacked.var(axis=0)
+
+    # Apply spatial Gaussian filter to smooth high-frequency dropout noise
+    smoothed_unc = gaussian_filter(raw_uncertainty, sigma=2.0)
+
+    # Focus uncertainty on predicted lesion regions & boundaries (gradient-weighted spatial calibration)
+    grad_y, grad_x = np.gradient(mean_mask)
+    boundary_weight = np.abs(grad_y) + np.abs(grad_x)
+    boundary_weight = boundary_weight / (boundary_weight.max() + 1e-8)
+
+    uncertainty = smoothed_unc * (0.1 + 0.9 * (mean_mask + boundary_weight))
     return mean_mask, uncertainty
 
 
@@ -212,20 +224,51 @@ def health():
     return {"status": "ok", "real_model_available": REAL_MODEL_AVAILABLE}
 
 
+@app.get("/metrics")
+def get_metrics():
+    metrics_path = os.path.join(os.path.dirname(__file__), "..", "results", "e8_metrics.json")
+    if os.path.exists(metrics_path):
+        import json
+        with open(metrics_path, "r") as f:
+            return json.load(f)
+    return {"error": "metrics_file_not_found"}
+
+
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
     contents = await file.read()
-    img = Image.open(io.BytesIO(contents)).convert("RGB")
+    try:
+        img = Image.open(io.BytesIO(contents)).convert("RGB")
+    except Exception:
+        return JSONResponse(
+            status_code=400,
+            content={"detail": "Invalid or corrupted image file uploaded."}
+        )
 
     if REAL_MODEL_AVAILABLE:
         mean_mask, uncertainty = _run_real_inference(img)
     else:
         mean_mask, uncertainty = _run_mock_inference(img)
 
+    # Ensure mask is strictly bounded in [0, 1]
+    mean_mask = np.clip(mean_mask, 0.0, 1.0)
+
+    # Apply spatial Gaussian smoothing to reduce high-frequency pixel noise
+    from scipy.ndimage import gaussian_filter
+    uncertainty = gaussian_filter(uncertainty, sigma=2.5)
+    uncertainty = uncertainty / (uncertainty.max() + 1e-8)
+
     overlay_img = _colorize_mask(img, mean_mask)
     heatmap_img = _heatmap(uncertainty)
 
-    dice_proxy = float(mean_mask.max())  # placeholder confidence stat for the UI
+    # Confidence calculation: Mean probability of predicted lesion foreground (where probability > 0.3)
+    # If no region exceeds 0.3 threshold (weak prediction), fall back to top 2% mean
+    foreground = mean_mask[mean_mask > 0.3]
+    if foreground.size > 0:
+        dice_proxy = float(np.mean(foreground))
+    else:
+        top_pixels = np.sort(mean_mask.ravel())[-int(mean_mask.size * 0.02):]
+        dice_proxy = float(np.mean(top_pixels)) if top_pixels.size > 0 else 0.0
     mean_uncertainty = float(uncertainty.mean())
 
     return JSONResponse(
@@ -238,3 +281,4 @@ async def predict(file: UploadFile = File(...)):
             "n_mc_passes": N_MC_PASSES,
         }
     )
+
