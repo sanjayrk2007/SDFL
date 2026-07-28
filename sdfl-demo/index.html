@@ -326,11 +326,20 @@
     </div>
   </div>
 
+  <div id="modelMetricsPanel" style="margin-top:24px; background: var(--panel); border: 1px solid var(--panel-border); border-radius: 10px; padding: 18px;">
+    <div style="font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:12px;">Model Evaluation Summary (e8_metrics.json)</div>
+    <div style="display:flex; gap:24px; flex-wrap:wrap; font-size:13px;">
+      <div>In-Dist Dice: <b id="e8IdDice" style="color:var(--teal)">0.4145</b></div>
+      <div>OOD Dice: <b id="e8OodDice" style="color:var(--teal)">0.4869</b></div>
+      <div>Privacy ($\epsilon$): <b id="e8Eps" style="color:var(--teal)">2.77</b></div>
+      <div>Failure Detection AUC: <b id="e8Auc" style="color:var(--amber)">0.5052 (Experimental)</b></div>
+    </div>
+  </div>
+
   <div class="legend">
     <b>Teal overlay</b> = predicted polyp region. <b>Amber heatmap</b> = per-pixel uncertainty across
-    20 stochastic forward passes — brighter regions are where the model disagrees with itself most,
-    typically at ambiguous or lesion boundaries. High mean uncertainty on a case is a signal to flag
-    it for clinician review rather than trust the mask outright.
+    20 stochastic forward passes. <br/>
+    <span style="color:var(--amber); font-weight:500;">⚠️ Notice:</span> Uncertainty review flagging is currently <i>experimental / under research</i> (Failure Detection AUC ≈ 0.505). High uncertainty maps provide spatial variance visualization but should not be relied upon live as an automated clinical filter.
   </div>
 </div>
 

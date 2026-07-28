@@ -268,6 +268,16 @@ def health():
     return {"status": "ok", "real_model_available": REAL_MODEL_AVAILABLE}
 
 
+@app.get("/metrics")
+def get_metrics():
+    metrics_path = os.path.join(os.path.dirname(__file__), "..", "results", "e8_metrics.json")
+    if os.path.exists(metrics_path):
+        import json
+        with open(metrics_path, "r") as f:
+            return json.load(f)
+    return {"error": "metrics_file_not_found"}
+
+
 @app.post("/predict")
 async def predict(
     file: UploadFile = File(...),
@@ -314,10 +324,25 @@ async def predict(
     else:
         mean_mask, uncertainty = _run_mock_inference(img)
 
+    # Ensure mask is strictly bounded in [0, 1]
+    mean_mask = np.clip(mean_mask, 0.0, 1.0)
+
+    # Apply spatial Gaussian smoothing to reduce high-frequency pixel noise
+    from scipy.ndimage import gaussian_filter
+    uncertainty = gaussian_filter(uncertainty, sigma=2.5)
+    uncertainty = uncertainty / (uncertainty.max() + 1e-8)
+
     overlay_img = _colorize_mask(img, mean_mask)
     heatmap_img = _heatmap(uncertainty)
 
-    dice_proxy = float(np.clip(mean_mask.max(), 0.0, 1.0))
+    # Confidence calculation: Mean probability of predicted lesion foreground (where probability > 0.3)
+    # If no region exceeds 0.3 threshold (weak prediction), fall back to top 2% mean
+    foreground = mean_mask[mean_mask > 0.3]
+    if foreground.size > 0:
+        dice_proxy = float(np.mean(foreground))
+    else:
+        top_pixels = np.sort(mean_mask.ravel())[-int(mean_mask.size * 0.02):]
+        dice_proxy = float(np.mean(top_pixels)) if top_pixels.size > 0 else 0.0
     assert 0.0 <= dice_proxy <= 1.0, \
         f"peak_confidence out of range: {dice_proxy} — check sigmoid"
     mean_uncertainty = float(uncertainty.mean())
