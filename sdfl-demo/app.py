@@ -184,22 +184,31 @@ def _lazy_load_real_model():
 
 def _run_real_inference(img: Image.Image) -> Tuple[np.ndarray, np.ndarray]:
     """Returns (mean_mask [H,W] in [0,1], uncertainty [H,W] variance)."""
+    from scipy.ndimage import gaussian_filter
+
     _lazy_load_real_model()
     x = _transform(img).unsqueeze(0)  # (1, 3, 256, 256)
 
-    import torch
     preds = []
     with _torch.no_grad():
         for _ in range(N_MC_PASSES):
             out = _model(x)
-            # Defensive sigmoid — ensures output is in [0, 1] even if
-            # model architecture or checkpoint has any mismatch
             out = _torch.sigmoid(out)
             preds.append(out.squeeze().cpu().numpy())
 
     stacked = np.stack(preds, axis=0)  # (N, H, W) all values in [0, 1]
     mean_mask = np.clip(stacked.mean(axis=0), 0.0, 1.0)
-    uncertainty = stacked.var(axis=0)  # max possible is 0.25 for Bernoulli
+    raw_uncertainty = stacked.var(axis=0)  # max possible is 0.25 for Bernoulli
+
+    # Apply spatial Gaussian filter to smooth high-frequency dropout noise
+    smoothed_unc = gaussian_filter(raw_uncertainty, sigma=2.0)
+
+    # Focus uncertainty on predicted lesion regions & boundaries (gradient-weighted spatial calibration)
+    grad_y, grad_x = np.gradient(mean_mask)
+    boundary_weight = np.abs(grad_y) + np.abs(grad_x)
+    boundary_weight = boundary_weight / (boundary_weight.max() + 1e-8)
+
+    uncertainty = smoothed_unc * (0.1 + 0.9 * (mean_mask + boundary_weight))
     return mean_mask, uncertainty
 
 
@@ -324,31 +333,30 @@ async def predict(
     else:
         mean_mask, uncertainty = _run_mock_inference(img)
 
-    # Ensure mask is strictly bounded in [0, 1]
-    mean_mask = np.clip(mean_mask, 0.0, 1.0)
+    # Keep raw un-normalized variance for accurate scientific metrics & thresholding
+    raw_mean_uncertainty = float(uncertainty.mean())
 
-    # Apply spatial Gaussian smoothing to reduce high-frequency pixel noise
+    # Create normalized copy only for rendering visual heatmap
     from scipy.ndimage import gaussian_filter
-    uncertainty = gaussian_filter(uncertainty, sigma=2.5)
-    uncertainty = uncertainty / (uncertainty.max() + 1e-8)
+    vis_uncertainty = gaussian_filter(uncertainty, sigma=2.5)
+    vis_uncertainty = vis_uncertainty / (vis_uncertainty.max() + 1e-8)
 
     overlay_img = _colorize_mask(img, mean_mask)
-    heatmap_img = _heatmap(uncertainty)
+    heatmap_img = _heatmap(vis_uncertainty)
 
     # Confidence calculation: Mean probability of predicted lesion foreground (where probability > 0.3)
-    # If no region exceeds 0.3 threshold (weak prediction), fall back to top 2% mean
     foreground = mean_mask[mean_mask > 0.3]
     if foreground.size > 0:
         dice_proxy = float(np.mean(foreground))
     else:
         top_pixels = np.sort(mean_mask.ravel())[-int(mean_mask.size * 0.02):]
         dice_proxy = float(np.mean(top_pixels)) if top_pixels.size > 0 else 0.0
-    assert 0.0 <= dice_proxy <= 1.0, \
-        f"peak_confidence out of range: {dice_proxy} — check sigmoid"
-    mean_uncertainty = float(uncertainty.mean())
+    assert 0.0 <= dice_proxy <= 1.0, f"peak_confidence out of range: {dice_proxy}"
 
-    # Threshold recalibrated to 0.00040 to match the squashed sigmoid variance distribution observed empirically (0.00036-0.00044)
-    UNCERTAINTY_THRESHOLD = 0.00040
+    mean_uncertainty = raw_mean_uncertainty
+
+    # Threshold for flagging review on un-normalized MC dropout variance (~0.015)
+    UNCERTAINTY_THRESHOLD = 0.015
     failure_flag = mean_uncertainty > UNCERTAINTY_THRESHOLD
     review_required = failure_flag
 
