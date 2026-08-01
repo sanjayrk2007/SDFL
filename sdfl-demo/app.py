@@ -354,8 +354,8 @@ async def predict(
 
     mean_uncertainty = raw_mean_uncertainty
 
-    # Threshold for flagging review on calibrated spatial-weighted uncertainty (~0.00030)
-    UNCERTAINTY_THRESHOLD = 0.00030
+    # Threshold for flagging review on calibrated spatial-weighted uncertainty (0.00295)
+    UNCERTAINTY_THRESHOLD = 0.00295
     uncertainty_flag = bool(mean_uncertainty > UNCERTAINTY_THRESHOLD)
 
     # Independent flag condition based on foreground area fraction
