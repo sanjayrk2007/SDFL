@@ -355,8 +355,8 @@ async def predict(
 
     mean_uncertainty = raw_mean_uncertainty
 
-    # Threshold for flagging review on un-normalized MC dropout variance (~0.015)
-    UNCERTAINTY_THRESHOLD = 0.015
+    # Threshold for flagging review on calibrated spatial-weighted uncertainty (~0.00030)
+    UNCERTAINTY_THRESHOLD = 0.00030
     failure_flag = mean_uncertainty > UNCERTAINTY_THRESHOLD
     review_required = failure_flag
 
