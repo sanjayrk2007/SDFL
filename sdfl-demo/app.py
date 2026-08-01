@@ -193,7 +193,6 @@ def _run_real_inference(img: Image.Image) -> Tuple[np.ndarray, np.ndarray]:
     with _torch.no_grad():
         for _ in range(N_MC_PASSES):
             out = _model(x)
-            out = _torch.sigmoid(out)
             preds.append(out.squeeze().cpu().numpy())
 
     stacked = np.stack(preds, axis=0)  # (N, H, W) all values in [0, 1]
