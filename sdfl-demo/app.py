@@ -357,8 +357,24 @@ async def predict(
 
     # Threshold for flagging review on calibrated spatial-weighted uncertainty (~0.00030)
     UNCERTAINTY_THRESHOLD = 0.00030
-    failure_flag = mean_uncertainty > UNCERTAINTY_THRESHOLD
+    uncertainty_flag = bool(mean_uncertainty > UNCERTAINTY_THRESHOLD)
+
+    # Independent flag condition based on foreground area fraction
+    foreground_area_fraction = float((mean_mask > 0.3).sum() / mean_mask.size)
+    MINIMUM_FOREGROUND_FRACTION = 0.02
+    low_foreground_flag = bool(foreground_area_fraction < MINIMUM_FOREGROUND_FRACTION)
+
+    failure_flag = bool(uncertainty_flag or low_foreground_flag)
     review_required = failure_flag
+
+    if uncertainty_flag and low_foreground_flag:
+        flag_reason = "both"
+    elif uncertainty_flag:
+        flag_reason = "high_uncertainty"
+    elif low_foreground_flag:
+        flag_reason = "low_foreground"
+    else:
+        flag_reason = None
 
     prediction_id = _log_prediction(
         hospital_id, contents, dice_proxy,
@@ -374,9 +390,11 @@ async def predict(
             "heatmap_png_base64": _to_base64_png(heatmap_img),
             "peak_confidence": round(dice_proxy, 3),
             "mean_uncertainty": round(mean_uncertainty, 6),
+            "foreground_area_fraction": round(foreground_area_fraction, 4),
             "n_mc_passes": N_MC_PASSES,
             "failure_flag": failure_flag,
             "review_required": review_required,
+            "flag_reason": flag_reason,
             "message": (
                 "High uncertainty — Gastroenterologist review recommended."
                 if failure_flag else
