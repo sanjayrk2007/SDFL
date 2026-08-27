@@ -34,10 +34,13 @@ from dataset import get_dataloaders, KvasirSegDataset
 # PART 1 — WEIGHTED AVERAGING FIX IN crypto.py (MONKEY-PATCH)
 # =========================================================================
 
-def _weighted_server_aggregate(list_of_ciphertexts, round_key, num_examples_list):
+def _weighted_server_aggregate(list_of_ciphertexts, round_key, num_examples_list, aad_list=None):
     import numpy as np
     from crypto import decrypt_update
-    decrypted_updates = [decrypt_update(ct, round_key) for ct in list_of_ciphertexts]
+    decrypted_updates = []
+    for i, ct in enumerate(list_of_ciphertexts):
+        aad = aad_list[i] if aad_list is not None else None
+        decrypted_updates.append(decrypt_update(ct, round_key, aad))
     total = sum(num_examples_list)
     if total == 0:
         total = 1
@@ -137,6 +140,7 @@ class FullSDFLStrategy(TemporalCheckpointingSecAgg):
     def aggregate_fit(self, server_round, results, failures):
         current_time = time.time()
         list_of_ciphertexts = []
+        aad_list = []
         num_examples_list = []
         epsilons = []
         
@@ -154,6 +158,21 @@ class FullSDFLStrategy(TemporalCheckpointingSecAgg):
                     "nonce": nonce,
                     "ciphertext": ciphertext
                 })
+                
+                # Construct client-specific AAD bytes
+                cert_str = fit_res.metrics.get("certificate")
+                signature = fit_res.metrics.get("signature")
+                uid = fit_res.metrics.get("UID_r")
+                aad_data = {
+                    "cert": json.loads(cert_str),
+                    "signature": signature,
+                    "UID_r": uid
+                }
+                aad_bytes = json.dumps(aad_data, sort_keys=True).encode()
+                aad_list.append(aad_bytes)
+                
+                # Mark UID as consumed
+                self.consumed_uids.add(uid)
                 
                 num_examples = fit_res.metrics.get("num_examples", fit_res.num_examples)
                 num_examples_list.append(num_examples)
@@ -184,14 +203,14 @@ class FullSDFLStrategy(TemporalCheckpointingSecAgg):
             if epsilons:
                 self.latest_metrics["epsilon"] = max(epsilons)
 
-            # 2. Decrypt & Aggregate using weighted server aggregate
+            # 2. Decrypt & Aggregate using weighted server aggregate and AAD list
             aggregated_weights = None
             round_key = self.round_keys.get(self.current_key_context_id)
             
             if list_of_ciphertexts and round_key is not None:
                 try:
-                    # Use weighted average aggregation
-                    aggregated_weights = _weighted_server_aggregate(list_of_ciphertexts, round_key, num_examples_list)
+                    # Use weighted average aggregation with AAD list
+                    aggregated_weights = _weighted_server_aggregate(list_of_ciphertexts, round_key, num_examples_list, aad_list=aad_list)
                 except Exception as e:
                     print(f"Decryption / Aggregation failed: {e}")
 
@@ -760,5 +779,9 @@ def run_e8_simulation(num_rounds=20):
 
 
 if __name__ == "__main__":
-    # Standard simulation executes 20 rounds
-    run_e8_simulation(num_rounds=20)
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--rounds", type=int, default=20, help="Number of FL rounds to run")
+    args = parser.parse_args()
+    
+    run_e8_simulation(num_rounds=args.rounds)

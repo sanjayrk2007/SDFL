@@ -104,8 +104,22 @@ class TemporalHospitalClient(SanitizedSecAggDPSGDHospitalClient):
         # Get plaintext weights
         weights = get_parameters(underlying_model)
         
-        # Encrypt the updated weights using the round key
-        ct = client_encrypt(weights, round_key)
+        # Generate unique update transaction ID
+        uid = str(uuid.uuid4())
+        
+        # Build AAD binding context
+        import json
+        cert = json.loads(config["certificate"])
+        signature = config["signature"]
+        aad_data = {
+            "cert": cert,
+            "signature": signature,
+            "UID_r": uid
+        }
+        aad_bytes = json.dumps(aad_data, sort_keys=True).encode()
+        
+        # Encrypt the updated weights using the round key and AAD binding
+        ct = client_encrypt(weights, round_key, aad=aad_bytes)
         
         destroy_round_key(round_key)
         
@@ -123,7 +137,8 @@ class TemporalHospitalClient(SanitizedSecAggDPSGDHospitalClient):
             "ciphertext_hex": ct["ciphertext"].hex(),
             "certificate": config["certificate"],
             "signature": config["signature"],
-            "key_context_id": config["key_context_id"]
+            "key_context_id": config["key_context_id"],
+            "UID_r": uid
         }
         
         dummy_weights = [np.zeros(1) for _ in range(len(parameters))]
@@ -147,8 +162,12 @@ class TemporalCheckpointingSecAgg(fl.server.strategy.FedAvg):
         self.current_key_context_id = None
         self.current_Tr = None
         self.AUDIT_LOG_PATH = "audit_log.jsonl"
+        self.consumed_uids = set()      # Replay protection ledger
 
     def configure_fit(self, server_round, parameters, client_manager):
+        # Reset consumed UIDs ledger for the new round
+        self.consumed_uids.clear()
+        
         # 1. Ephemeral Key Generation (fresh each round)
         self.current_key_context_id = str(uuid.uuid4())
         round_key = generate_round_key()
@@ -208,6 +227,7 @@ class TemporalCheckpointingSecAgg(fl.server.strategy.FedAvg):
             1. Certificate HMAC signature is valid
             2. current_time < Tr
             3. update's key_context_id matches certificate
+            4. update has a unique transaction ID and is not a replay
         """
         if current_time is None:
             current_time = time.time()
@@ -216,9 +236,14 @@ class TemporalCheckpointingSecAgg(fl.server.strategy.FedAvg):
             cert_str = fit_res.metrics.get("certificate")
             signature = fit_res.metrics.get("signature")
             key_context_id = fit_res.metrics.get("key_context_id")
+            uid = fit_res.metrics.get("UID_r")
             
-            if not cert_str or not signature or not key_context_id:
+            if not cert_str or not signature or not key_context_id or not uid:
                 return False, "missing_certificate_fields"
+                
+            # Replay Protection: Check if UID has already been consumed
+            if uid in self.consumed_uids:
+                return False, "replay_detected"
                 
             cert = json.loads(cert_str)
             
@@ -241,6 +266,7 @@ class TemporalCheckpointingSecAgg(fl.server.strategy.FedAvg):
     def aggregate_fit(self, server_round, results, failures):
         current_time = time.time()
         list_of_ciphertexts = []
+        aad_list = []
         epsilons = []
         num_examples_list = []
         
@@ -260,6 +286,21 @@ class TemporalCheckpointingSecAgg(fl.server.strategy.FedAvg):
                 })
                 num_examples_list.append(fit_res.num_examples)
                 
+                # Construct client-specific AAD bytes
+                cert_str = fit_res.metrics.get("certificate")
+                signature = fit_res.metrics.get("signature")
+                uid = fit_res.metrics.get("UID_r")
+                aad_data = {
+                    "cert": json.loads(cert_str),
+                    "signature": signature,
+                    "UID_r": uid
+                }
+                aad_bytes = json.dumps(aad_data, sort_keys=True).encode()
+                aad_list.append(aad_bytes)
+                
+                # Mark UID as consumed
+                self.consumed_uids.add(uid)
+                
                 if "epsilon" in fit_res.metrics:
                     epsilons.append(fit_res.metrics["epsilon"])
 
@@ -275,7 +316,7 @@ class TemporalCheckpointingSecAgg(fl.server.strategy.FedAvg):
             
             if list_of_ciphertexts and round_key is not None:
                 try:
-                    aggregated_weights = server_aggregate(list_of_ciphertexts, round_key, num_examples_list)
+                    aggregated_weights = server_aggregate(list_of_ciphertexts, round_key, num_examples_list=num_examples_list, aad_list=aad_list)
                 except Exception as e:
                     print(f"Decryption / Aggregation failed: {e}")
 
@@ -481,14 +522,23 @@ def run_e7_tests():
     key = generate_round_key()
     strategy.round_keys[key_context_id] = key
     dummy_weights = torch.ones(10)
-    ct = client_encrypt(dummy_weights, key)
+    
+    uid = str(uuid.uuid4())
+    aad_data = {
+        "cert": cert,
+        "signature": signature,
+        "UID_r": uid
+    }
+    aad_bytes = json.dumps(aad_data, sort_keys=True).encode()
+    ct = client_encrypt(dummy_weights, key, aad=aad_bytes)
     
     fit_res_metrics = {
         "nonce_hex": ct["nonce"].hex(),
         "ciphertext_hex": ct["ciphertext"].hex(),
         "certificate": json.dumps(cert),
         "signature": signature,
-        "key_context_id": key_context_id
+        "key_context_id": key_context_id,
+        "UID_r": uid
     }
     
     class DummyClientProxy:
@@ -528,7 +578,7 @@ def run_e7_tests():
     # Overwrite the key bytearray in-place with zeroes to simulate destruction
     destroy_round_key(key)
     try:
-        decrypt_update(ct, key)
+        decrypt_update(ct, key, aad=aad_bytes)
         raise AssertionError("Test 4 failed: Decryption succeeded with destroyed key!")
     except InvalidTag:
         print("Test 4 passed: Attempted decryption with destroyed key raised InvalidTag.")
@@ -556,14 +606,22 @@ def run_e7_tests():
     
     # Encrypt the dummy weights using the generated round key
     round_key = bytearray(bytes.fromhex(key_hex))
-    fresh_ct = client_encrypt(dummy_weights, round_key)
+    fresh_uid = str(uuid.uuid4())
+    fresh_aad_data = {
+        "cert": json.loads(cert_str),
+        "signature": sig,
+        "UID_r": fresh_uid
+    }
+    fresh_aad_bytes = json.dumps(fresh_aad_data, sort_keys=True).encode()
+    fresh_ct = client_encrypt(dummy_weights, round_key, aad=fresh_aad_bytes)
     
     fresh_fit_res_metrics = {
         "nonce_hex": fresh_ct["nonce"].hex(),
         "ciphertext_hex": fresh_ct["ciphertext"].hex(),
         "certificate": cert_str,
         "signature": sig,
-        "key_context_id": ctx_id
+        "key_context_id": ctx_id,
+        "UID_r": fresh_uid
     }
     fit_results = [(client_proxy, DummyFitRes(fresh_fit_res_metrics))]
     
@@ -578,11 +636,46 @@ def run_e7_tests():
     assert "round_close" in events, "Missing round_close in audit log"
     assert "key_destroyed" in events, "Missing key_destroyed in audit log"
     print("Test 5 passed: All 3 event types present in audit log.")
+
+    # Test 6: Replay attack protection (UID validation)
+    print("Running Test 6: Submit replayed UID update -> rejected...")
+    # Register the UID as consumed in strategy
+    strategy.consumed_uids.add(fresh_uid)
+    is_valid, reason = strategy.validate_update(DummyFitRes(fresh_fit_res_metrics), current_time=expiry_timestamp - 1.0)
+    assert not is_valid and reason == "replay_detected", f"Test 6 failed: expected 'replay_detected', got {reason}"
+    print("Test 6 passed: Replay attack rejected.")
+
+    # Test 7: Certificate tampering (AAD failure) -> decryption raises InvalidTag
+    print("Running Test 7: Tampered certificate AAD decryption -> throws InvalidTag...")
+    tampered_cert = json.loads(cert_str)
+    tampered_cert["round_id"] = 999  # Tampering
+    tampered_aad_data = {
+        "cert": tampered_cert,
+        "signature": sig,
+        "UID_r": fresh_uid
+    }
+    tampered_aad_bytes = json.dumps(tampered_aad_data, sort_keys=True).encode()
     
+    # Generate fresh key and ciphertext
+    temp_key = generate_round_key()
+    valid_aad_data = {
+        "cert": json.loads(cert_str),
+        "signature": sig,
+        "UID_r": fresh_uid
+    }
+    valid_aad_bytes = json.dumps(valid_aad_data, sort_keys=True).encode()
+    temp_ct = client_encrypt(dummy_weights, temp_key, aad=valid_aad_bytes)
+    
+    try:
+        decrypt_update(temp_ct, temp_key, aad=tampered_aad_bytes)
+        raise AssertionError("Test 7 failed: Decryption succeeded with tampered certificate AAD!")
+    except InvalidTag:
+        print("Test 7 passed: Decryption with tampered certificate AAD correctly failed with InvalidTag.")
+
     if os.path.exists(AUDIT_LOG_PATH):
         os.remove(AUDIT_LOG_PATH)
         
-    print("All E7 verification tests passed successfully!\n")
+    print("All SDFL protocol verification tests passed successfully!\n")
 
 
 def main():
