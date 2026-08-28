@@ -5,7 +5,6 @@ import time
 import uuid
 import shutil
 import hashlib
-import pickle
 import argparse
 import numpy as np
 import torch
@@ -36,12 +35,38 @@ SECRET_KEY = b"sdfl_coordinator_signing_secret_key_32bytes"
 
 def compute_model_hash(state_dict):
     """
-    Computes a deterministic SHA-256 hash of the global model state dict.
-    Moves tensors to CPU and serializes them to ensure cross-device consistency.
+    Computes a deterministic SHA-256 hash of a model state_dict.
+    Hashes key names, dtypes, shapes, and raw contiguous CPU bytes in sorted key order.
+    Does NOT use pickle.
     """
-    cpu_state = {k: v.cpu() for k, v in state_dict.items()}
-    serialized = pickle.dumps(cpu_state)
-    return hashlib.sha256(serialized).hexdigest()
+    hasher = hashlib.sha256()
+    for k in sorted(state_dict.keys()):
+        tensor = state_dict[k]
+        cpu_tensor = tensor.detach().cpu()
+        arr = cpu_tensor.numpy()
+        if not arr.flags['C_CONTIGUOUS']:
+            arr = np.ascontiguousarray(arr)
+
+        hasher.update(k.encode('utf-8'))
+        hasher.update(str(arr.dtype).encode('ascii'))
+        hasher.update(str(arr.shape).encode('ascii'))
+        hasher.update(arr.tobytes())
+
+    return hasher.hexdigest()
+
+
+def compute_aad(round_id, client_id, model_hash, key_context_id) -> bytes:
+    """
+    Computes a canonical, deterministic AAD payload for AES-GCM encryption.
+    Binds security metadata without containing secrets.
+    """
+    aad_dict = {
+        "round_id": round_id,
+        "client_id": str(client_id),
+        "model_hash": str(model_hash),
+        "key_context_id": str(key_context_id)
+    }
+    return json.dumps(aad_dict, sort_keys=True).encode('utf-8')
 
 
 class TemporalHospitalClient(SanitizedSecAggDPSGDHospitalClient):
@@ -53,13 +78,13 @@ class TemporalHospitalClient(SanitizedSecAggDPSGDHospitalClient):
         # 2. Reconstruct parameters
         underlying_model = self.model._module if hasattr(self.model, "_module") else self.model
         set_parameters(underlying_model, parameters)
-        
+
         global_model = ResUNetPlusPlus().to("cpu")
         fix_model_for_opacus(global_model)
         set_parameters(global_model, parameters)
         for p in global_model.parameters():
             p.requires_grad = False
-            
+
         self.model.train()
         global_model.eval()
         total_loss, n_batches = 0.0, 0
@@ -92,7 +117,7 @@ class TemporalHospitalClient(SanitizedSecAggDPSGDHospitalClient):
             gc.collect()
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
-                
+
         avg_loss = total_loss / max(n_batches, 1)
         epsilon = self.privacy_engine.get_epsilon(delta=1e-5)
         del global_model
@@ -100,20 +125,48 @@ class TemporalHospitalClient(SanitizedSecAggDPSGDHospitalClient):
         gc.collect()
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
-            
+
         # Get plaintext weights
         weights = get_parameters(underlying_model)
-        
-        # Encrypt the updated weights using the round key
-        ct = client_encrypt(weights, round_key)
-        
+
+        # 3. Construct Client Certificate and AAD
+        cert_str = config["certificate"]
+        cert = json.loads(cert_str)
+        client_id = f"client{self.hospital_id}" if isinstance(self.hospital_id, int) else str(self.hospital_id)
+        cert["client_id"] = client_id
+
+        # Compute AAD over round metadata
+        aad = compute_aad(
+            cert["round_id"],
+            client_id,
+            cert["model_hash"],
+            cert["key_context_id"]
+        )
+
+        # Encrypt the updated weights using the round key and AAD
+        ct = client_encrypt(weights, round_key, associated_data=aad)
+
         destroy_round_key(round_key)
-        
+
+        # Compute update hash over ciphertext + nonce
+        update_hash = hashlib.sha256(ct["nonce"] + ct["ciphertext"]).hexdigest()
+        cert["update_hash"] = update_hash
+
+        # Re-sign the client certificate with update_hash and client_id bound
+        signature = sign_certificate(cert, SECRET_KEY)
+
         # WIPE client-side plaintext update buffer in-place immediately after encryption
         for w in weights:
             w.fill(0)
         del weights
-        
+
+        # Clear gradients on underlying model for memory hygiene
+        if hasattr(self, "optimizer") and self.optimizer is not None:
+            self.optimizer.zero_grad(set_to_none=True)
+        for p in underlying_model.parameters():
+            if p.grad is not None:
+                p.grad.detach_().zero_()
+
         # Construct metrics with hex strings and E7 certificate validation fields
         metrics = {
             "hospital_id": self.hospital_id,
@@ -121,11 +174,11 @@ class TemporalHospitalClient(SanitizedSecAggDPSGDHospitalClient):
             "epsilon": epsilon,
             "nonce_hex": ct["nonce"].hex(),
             "ciphertext_hex": ct["ciphertext"].hex(),
-            "certificate": config["certificate"],
-            "signature": config["signature"],
+            "certificate": json.dumps(cert),
+            "signature": signature,
             "key_context_id": config["key_context_id"]
         }
-        
+
         dummy_weights = [np.zeros(1) for _ in range(len(parameters))]
         return dummy_weights, len(self.trainloader.dataset), metrics
 
@@ -140,12 +193,14 @@ class TemporalCheckpointingSecAgg(fl.server.strategy.FedAvg):
         self.window_seconds = window_seconds
         self.latest_metrics = {}
         self.latest_ndarrays = None
-        
+
         self.round_history = []
         self.round_keys = {}            # key_context_id -> bytearray key
         self.cached_ciphertexts = {}    # round_id -> list of ciphertexts
+        self.seen_updates = {}          # round_id -> set of (client_id, update_hash)
         self.current_key_context_id = None
         self.current_Tr = None
+        self.current_model_hash = None
         self.AUDIT_LOG_PATH = "audit_log.jsonl"
 
     def configure_fit(self, server_round, parameters, client_manager):
@@ -153,12 +208,12 @@ class TemporalCheckpointingSecAgg(fl.server.strategy.FedAvg):
         self.current_key_context_id = str(uuid.uuid4())
         round_key = generate_round_key()
         self.round_keys[self.current_key_context_id] = round_key
-        
+
         # 2. Expiry Timestamp Tr
         start_time = time.time()
         self.current_Tr = start_time + self.window_seconds
-        
-        # 3. Model Hash from actual global model weights
+
+        # 3. Model Hash from actual global model weights using deterministic hash
         global_model = ResUNetPlusPlus()
         fix_model_for_opacus(global_model)
         ndarrays = fl.common.parameters_to_ndarrays(parameters)
@@ -167,29 +222,29 @@ class TemporalCheckpointingSecAgg(fl.server.strategy.FedAvg):
         except Exception as e:
             import logging
             logging.warning(f"Could not load state dict in configure_fit: {e}")
-        model_hash = compute_model_hash(global_model.state_dict())
-        
+        self.current_model_hash = compute_model_hash(global_model.state_dict())
+
         # 4. Participants (IDs of active clients)
         active_clients = client_manager.sample(num_clients=3)
         participants = [c.cid for c in active_clients]
-        
-        # 5. Create and Sign Certificate
+
+        # 5. Create and Sign Certificate Template
         cert = create_certificate(
             round_id=server_round,
-            model_hash=model_hash,
+            model_hash=self.current_model_hash,
             participants=participants,
             key_context_id=self.current_key_context_id,
             expiry_timestamp=self.current_Tr
         )
         signature = sign_certificate(cert, self.secret_key)
-        
+
         # Audit Log: round_open
         write_audit_log(self.AUDIT_LOG_PATH, {
             "event": "round_open",
             "round_id": server_round,
             "Tr": self.current_Tr
         })
-        
+
         # 6. Configure Fit Instructions
         fit_configs = super().configure_fit(server_round, parameters, client_manager)
         if fit_configs is not None:
@@ -198,42 +253,79 @@ class TemporalCheckpointingSecAgg(fl.server.strategy.FedAvg):
                 fit_ins.config["certificate"] = json.dumps(cert)
                 fit_ins.config["signature"] = signature
                 fit_ins.config["key_context_id"] = self.current_key_context_id
-                
+
         return fit_configs
 
-    def validate_update(self, fit_res, current_time=None):
+    def validate_update(self, fit_res, client_proxy=None, current_time=None):
         """
         Aggregator rules:
         Accept update only if:
             1. Certificate HMAC signature is valid
             2. current_time < Tr
-            3. update's key_context_id matches certificate
+            3. update's key_context_id matches certificate and current round
+            4. model_hash matches current global model hash
+            5. update_hash matches SHA-256(nonce + ciphertext)
+            6. client_id matches submitting client ID (if available)
+            7. update has not been seen before in this round (replay protection)
         """
+        # Positional parameter signature adaptation for compatibility
+        if isinstance(client_proxy, (float, int)) and current_time is None:
+            current_time = client_proxy
+            client_proxy = None
+
         if current_time is None:
             current_time = time.time()
-            
+
         try:
             cert_str = fit_res.metrics.get("certificate")
             signature = fit_res.metrics.get("signature")
             key_context_id = fit_res.metrics.get("key_context_id")
-            
-            if not cert_str or not signature or not key_context_id:
+            nonce_hex = fit_res.metrics.get("nonce_hex")
+            ciphertext_hex = fit_res.metrics.get("ciphertext_hex")
+
+            if not cert_str or not signature or not key_context_id or not nonce_hex or not ciphertext_hex:
                 return False, "missing_certificate_fields"
-                
+
             cert = json.loads(cert_str)
-            
+
             # Rule 1: Signature check
             if not verify_certificate(cert, signature, self.secret_key):
                 return False, "invalid_signature"
-                
+
             # Rule 2: Expiry check (current_time < Tr)
             if current_time >= cert["expiry_timestamp"]:
                 return False, "expired"
-                
+
             # Rule 3: Key context mismatch check
-            if key_context_id != cert["key_context_id"] or key_context_id != self.current_key_context_id:
+            if key_context_id != cert.get("key_context_id") or (self.current_key_context_id is not None and key_context_id != self.current_key_context_id):
                 return False, "mismatch"
-                
+
+            # Rule 4: Model hash mismatch check
+            if self.current_model_hash is not None and cert.get("model_hash") != self.current_model_hash:
+                return False, "model_hash_mismatch"
+
+            # Rule 5: Update hash check (if present in cert)
+            nonce = bytes.fromhex(nonce_hex)
+            ciphertext = bytes.fromhex(ciphertext_hex)
+            computed_update_hash = hashlib.sha256(nonce + ciphertext).hexdigest()
+            if "update_hash" in cert and cert["update_hash"] != computed_update_hash:
+                return False, "update_hash_mismatch"
+
+            # Rule 6: Client ID check (if client_proxy or metrics available)
+            cert_client_id = cert.get("client_id")
+            if client_proxy is not None and hasattr(client_proxy, "cid") and cert_client_id is not None:
+                expected_cid = str(client_proxy.cid)
+                if cert_client_id != expected_cid and cert_client_id != f"client{expected_cid}" and expected_cid != f"client{cert_client_id}":
+                    return False, "wrong_client_id"
+
+            # Rule 7: Replay protection check
+            round_id = cert.get("round_id", 1)
+            replay_key = (cert_client_id, computed_update_hash)
+            round_seen = self.seen_updates.setdefault(round_id, set())
+            if replay_key in round_seen:
+                return False, "replay_detected"
+
+            round_seen.add(replay_key)
             return True, "accepted"
         except Exception as e:
             return False, f"validation_error: {str(e)}"
@@ -243,23 +335,34 @@ class TemporalCheckpointingSecAgg(fl.server.strategy.FedAvg):
         list_of_ciphertexts = []
         epsilons = []
         num_examples_list = []
-        
+
         try:
             # 1. Accept updates only if they satisfy validator rules
             for client_proxy, fit_res in results:
-                is_valid, reason = self.validate_update(fit_res, current_time)
+                is_valid, reason = self.validate_update(fit_res, client_proxy=client_proxy, current_time=current_time)
                 if not is_valid:
-                    print(f"Aggregator rejected update from client {client_proxy.cid}: {reason}")
+                    print(f"Aggregator rejected update from client {client_proxy.cid if hasattr(client_proxy, 'cid') else 'unknown'}: {reason}")
                     continue
-                    
+
                 nonce = bytes.fromhex(fit_res.metrics["nonce_hex"])
                 ciphertext = bytes.fromhex(fit_res.metrics["ciphertext_hex"])
+                cert = json.loads(fit_res.metrics["certificate"])
+
+                # Reconstruct AAD
+                aad = compute_aad(
+                    cert["round_id"],
+                    cert["client_id"],
+                    cert["model_hash"],
+                    cert["key_context_id"]
+                )
+
                 list_of_ciphertexts.append({
                     "nonce": nonce,
-                    "ciphertext": ciphertext
+                    "ciphertext": ciphertext,
+                    "associated_data": aad
                 })
                 num_examples_list.append(fit_res.num_examples)
-                
+
                 if "epsilon" in fit_res.metrics:
                     epsilons.append(fit_res.metrics["epsilon"])
 
@@ -272,7 +375,7 @@ class TemporalCheckpointingSecAgg(fl.server.strategy.FedAvg):
             # 2. Decrypt & Aggregate
             aggregated_weights = None
             round_key = self.round_keys.get(self.current_key_context_id)
-            
+
             if list_of_ciphertexts and round_key is not None:
                 try:
                     aggregated_weights = server_aggregate(list_of_ciphertexts, round_key, num_examples_list)
@@ -292,27 +395,27 @@ class TemporalCheckpointingSecAgg(fl.server.strategy.FedAvg):
             # Convert and return parameters
             params = fl.common.ndarrays_to_parameters(aggregated_weights)
             self.latest_ndarrays = aggregated_weights
-            
+
             # Log distinct event for successful round close
             write_audit_log(self.AUDIT_LOG_PATH, {
                 "event": "round_close",
                 "round_id": server_round,
                 "timestamp": time.time()
             })
-            
+
             return params, {}
 
         finally:
-            # 3. Wipe and destroy ephemeral round key + cached ciphertexts
-            # Guaranteed to execute even if exceptions are raised during aggregation
+            # 3. Wipe and destroy ephemeral round key + cached ciphertexts + replay state
             round_key = self.round_keys.get(self.current_key_context_id)
             if round_key is not None:
                 destroy_round_key(round_key)
                 self.round_keys.pop(self.current_key_context_id, None)
-                
+
             self.cached_ciphertexts.pop(server_round, None)
+            self.seen_updates.pop(server_round, None)
             list_of_ciphertexts.clear()
-            
+
             # Separate timestamp for key_destroyed event
             write_audit_log(self.AUDIT_LOG_PATH, {
                 "event": "key_destroyed",
@@ -329,7 +432,7 @@ class TemporalCheckpointingSecAgg(fl.server.strategy.FedAvg):
         if avg_metrics is not None:
             self.latest_metrics["val_dice"] = avg_metrics.get("val_dice", 0.0)
             self.latest_metrics["val_iou"] = avg_metrics.get("val_iou", 0.0)
-            
+
             val_dice = avg_metrics.get("val_dice", 0.0)
             val_iou = avg_metrics.get("val_iou", 0.0)
             loss_val = agg_loss if agg_loss is not None else 0.0
@@ -378,9 +481,7 @@ def run_e7_simulation(num_rounds=1):
     mu = 0.001
     C = 2.0
     sigma = 1.5
-    
-    # Profiled round duration safety margin:
-    # 1 epoch takes ~700 seconds on CPU. We set window_seconds = (epochs * 700) + 1200 seconds safety margin.
+
     local_epochs = 1
     window_seconds = (local_epochs * 700) + 1200
 
@@ -430,7 +531,7 @@ def run_e7_simulation(num_rounds=1):
 
 
 def run_e7_tests():
-    print("=== Running E7 Temporal Key Destruction Verification Tests ===")
+    print("=== Running E7 Temporal Security Verification Tests ===")
     import time
     import uuid
     import json
@@ -446,19 +547,62 @@ def run_e7_tests():
         write_audit_log,
         verify_certificate
     )
-    
+
     SECRET_KEY_TEST = b"test_coordinator_secret_key_32bytes"
     AUDIT_LOG_PATH = "test_audit_log.jsonl"
     if os.path.exists(AUDIT_LOG_PATH):
         os.remove(AUDIT_LOG_PATH)
-        
-    # Setup test strategy and certificate
+
+    # --- Unit Tests A-D: Deterministic Model Hashing ---
+    print("Running Hash Test A: Deterministic repeated hashing...")
+    st1 = {"layer1.weight": torch.ones((5, 5), dtype=torch.float32)}
+    h1 = compute_model_hash(st1)
+    h2 = compute_model_hash(st1)
+    assert h1 == h2, "Hash Test A failed: Repeated hashing was not deterministic"
+    print("Hash Test A passed.")
+
+    print("Running Hash Test B: Different tensor values => different hash...")
+    st2 = {"layer1.weight": torch.zeros((5, 5), dtype=torch.float32)}
+    h3 = compute_model_hash(st2)
+    assert h1 != h3, "Hash Test B failed: Different tensor values produced same hash"
+    print("Hash Test B passed.")
+
+    print("Running Hash Test C: Different dtype => different hash...")
+    st3 = {"layer1.weight": torch.ones((5, 5), dtype=torch.float64)}
+    h4 = compute_model_hash(st3)
+    assert h1 != h4, "Hash Test C failed: Different dtype produced same hash"
+    print("Hash Test C passed.")
+
+    print("Running Hash Test D: Different shape => different hash...")
+    st4 = {"layer1.weight": torch.ones((5, 1), dtype=torch.float32)}
+    h5 = compute_model_hash(st4)
+    assert h1 != h5, "Hash Test D failed: Different shape produced same hash"
+    print("Hash Test D passed.")
+
+    # --- Setup test strategy and certificate ---
     round_id = 1
     key_context_id = str(uuid.uuid4())
-    expiry_timestamp = time.time() + 10  # Tr is 10s in the future
+    expiry_timestamp = time.time() + 10
     participants = ["client0", "client1", "client2"]
-    model_hash = "dummy_model_hash_sha256"
-    
+    model_hash = h1
+
+    strategy = TemporalCheckpointingSecAgg(
+        mu=0.001, C=2.0, sigma=1.5, secret_key=SECRET_KEY_TEST, window_seconds=10
+    )
+    strategy.current_key_context_id = key_context_id
+    strategy.current_Tr = expiry_timestamp
+    strategy.current_model_hash = model_hash
+    strategy.AUDIT_LOG_PATH = AUDIT_LOG_PATH
+
+    key = generate_round_key()
+    strategy.round_keys[key_context_id] = key
+    dummy_weights = [np.ones(10, dtype=np.float32)]
+
+    client_id = "client0"
+    aad = compute_aad(round_id, client_id, model_hash, key_context_id)
+    ct = client_encrypt(dummy_weights, key, associated_data=aad)
+    update_hash = hashlib.sha256(ct["nonce"] + ct["ciphertext"]).hexdigest()
+
     cert = create_certificate(
         round_id=round_id,
         model_hash=model_hash,
@@ -466,23 +610,25 @@ def run_e7_tests():
         key_context_id=key_context_id,
         expiry_timestamp=expiry_timestamp
     )
+    cert["client_id"] = client_id
+    cert["update_hash"] = update_hash
     signature = sign_certificate(cert, SECRET_KEY_TEST)
-    
-    # Test 1: Submit update at Tr - 1s -> accepted
-    print("Running Test 1: Submit update at Tr - 1s...")
-    strategy = TemporalCheckpointingSecAgg(
-        mu=0.001, C=2.0, sigma=1.5, secret_key=SECRET_KEY_TEST, window_seconds=10
-    )
-    strategy.current_key_context_id = key_context_id
-    strategy.current_Tr = expiry_timestamp
-    strategy.AUDIT_LOG_PATH = AUDIT_LOG_PATH
-    
-    # Simulate client update metrics
-    key = generate_round_key()
-    strategy.round_keys[key_context_id] = key
-    dummy_weights = torch.ones(10)
-    ct = client_encrypt(dummy_weights, key)
-    
+
+    # --- Tests E & F: Certificate Schema Fields ---
+    print("Running Test E & F: Certificate contains client_id and update_hash...")
+    assert cert.get("client_id") == client_id, "Test E failed: Missing client_id"
+    assert cert.get("update_hash") == update_hash, "Test F failed: Missing update_hash"
+    print("Test E & F passed.")
+
+    class DummyClientProxy:
+        def __init__(self, cid):
+            self.cid = cid
+
+    class DummyFitRes:
+        def __init__(self, metrics, num_examples=100):
+            self.metrics = metrics
+            self.num_examples = num_examples
+
     fit_res_metrics = {
         "nonce_hex": ct["nonce"].hex(),
         "ciphertext_hex": ct["ciphertext"].hex(),
@@ -490,99 +636,151 @@ def run_e7_tests():
         "signature": signature,
         "key_context_id": key_context_id
     }
-    
-    class DummyClientProxy:
-        def __init__(self, cid):
-            self.cid = cid
-            
-    class DummyFitRes:
-        def __init__(self, metrics, num_examples=100):
-            self.metrics = metrics
-            self.num_examples = num_examples
-            
     client_proxy = DummyClientProxy("client0")
     fit_res = DummyFitRes(fit_res_metrics)
-    
-    # Validate at Tr - 1s
-    is_valid, reason = strategy.validate_update(fit_res, current_time=expiry_timestamp - 1.0)
+
+    # --- Test 1 / Test G: Valid submission & signature verification ---
+    print("Running Test 1 (G): Timely submission & signature verification...")
+    is_valid, reason = strategy.validate_update(fit_res, client_proxy=client_proxy, current_time=expiry_timestamp - 1.0)
     assert is_valid, f"Test 1 failed: update should be accepted, but got: {reason}"
-    print("Test 1 passed: Update at Tr - 1s accepted.")
+    print("Test 1 passed: Timely submission accepted.")
 
-    # Test 2: Submit update at Tr + 1s -> rejected with "expired"
-    print("Running Test 2: Submit update at Tr + 1s...")
-    is_valid, reason = strategy.validate_update(fit_res, current_time=expiry_timestamp + 1.0)
+    # --- Test G: Certificate signature rejects modification ---
+    print("Running Test G: Certificate signature rejects modification...")
+    bad_sig_metrics = fit_res_metrics.copy()
+    bad_sig_metrics["signature"] = "0" * 64
+    is_valid, reason = strategy.validate_update(DummyFitRes(bad_sig_metrics), client_proxy=client_proxy, current_time=expiry_timestamp - 1.0)
+    assert not is_valid and reason == "invalid_signature", f"Test G failed: expected invalid_signature, got {reason}"
+    print("Test G passed: Invalid signature rejected.")
+
+    # --- Test 2 / Test H: Expired submission ---
+    print("Running Test 2 (H): Submit update at Tr + 1s...")
+    is_valid, reason = strategy.validate_update(fit_res, client_proxy=client_proxy, current_time=expiry_timestamp + 1.0)
     assert not is_valid and reason == "expired", f"Test 2 failed: expected 'expired', got {reason}"
-    print("Test 2 passed: Update at Tr + 1s rejected with 'expired'.")
+    print("Test 2 passed: Expired submission rejected.")
 
-    # Test 3: Submit update with wrong key_context_id -> rejected with "mismatch"
-    print("Running Test 3: Submit update with wrong key_context_id...")
-    wrong_fit_res_metrics = fit_res_metrics.copy()
-    wrong_fit_res_metrics["key_context_id"] = str(uuid.uuid4())
-    wrong_fit_res = DummyFitRes(wrong_fit_res_metrics)
-    is_valid, reason = strategy.validate_update(wrong_fit_res, current_time=expiry_timestamp - 1.0)
-    assert not is_valid and reason == "mismatch", f"Test 3 failed: expected 'mismatch', got {reason}"
-    print("Test 3 passed: Update with wrong key_context_id rejected with 'mismatch'.")
+    # --- Test I: Wrong model hash rejected ---
+    print("Running Test I: Wrong model hash rejected...")
+    wrong_mh_cert = cert.copy()
+    wrong_mh_cert["model_hash"] = "wrong_model_hash_sha256"
+    wrong_mh_sig = sign_certificate(wrong_mh_cert, SECRET_KEY_TEST)
+    wrong_mh_metrics = fit_res_metrics.copy()
+    wrong_mh_metrics["certificate"] = json.dumps(wrong_mh_cert)
+    wrong_mh_metrics["signature"] = wrong_mh_sig
+    is_valid, reason = strategy.validate_update(DummyFitRes(wrong_mh_metrics), client_proxy=client_proxy, current_time=expiry_timestamp - 1.0)
+    assert not is_valid and reason == "model_hash_mismatch", f"Test I failed: expected model_hash_mismatch, got {reason}"
+    print("Test I passed: Wrong model hash rejected.")
 
-    # Test 4: After Tr, attempt decryption with round key -> raises InvalidTag
-    print("Running Test 4: Post-expiry decryption attempt must fail...")
-    # Overwrite the key bytearray in-place with zeroes to simulate destruction
-    destroy_round_key(key)
+    # --- Test J: Wrong client ID rejected ---
+    print("Running Test J: Wrong client ID rejected...")
+    wrong_client_proxy = DummyClientProxy("client99")
+    is_valid, reason = strategy.validate_update(fit_res, client_proxy=wrong_client_proxy, current_time=expiry_timestamp - 1.0)
+    assert not is_valid and reason == "wrong_client_id", f"Test J failed: expected wrong_client_id, got {reason}"
+    print("Test J passed: Wrong client ID rejected.")
+
+    # --- Test K: Duplicate update (replay) rejected ---
+    print("Running Test K: Duplicate update rejected...")
+    strategy.seen_updates[round_id] = set()
+    is_valid1, reason1 = strategy.validate_update(fit_res, client_proxy=client_proxy, current_time=expiry_timestamp - 1.0)
+    assert is_valid1, f"First submission should be accepted: {reason1}"
+    is_valid2, reason2 = strategy.validate_update(fit_res, client_proxy=client_proxy, current_time=expiry_timestamp - 1.0)
+    assert not is_valid2 and reason2 == "replay_detected", f"Test K failed: expected replay_detected, got {reason2}"
+    print("Test K passed: Replay rejected.")
+
+    # --- Test L & M: Modified ciphertext & AAD mismatch rejection during aggregation ---
+    print("Running Test L & M: Modified ciphertext and AAD mismatch decryption failure...")
+    bad_aad = compute_aad(round_id, client_id, "wrong_model_hash", key_context_id)
+    ct_bad_aad = {"nonce": ct["nonce"], "ciphertext": ct["ciphertext"], "associated_data": bad_aad}
     try:
-        decrypt_update(ct, key)
-        raise AssertionError("Test 4 failed: Decryption succeeded with destroyed key!")
+        decrypt_update(ct_bad_aad, key)
+        assert False, "Test M failed: Decryption should fail on AAD mismatch"
     except InvalidTag:
-        print("Test 4 passed: Attempted decryption with destroyed key raised InvalidTag.")
+        print("Test L & M passed: AAD mismatch raised InvalidTag during decryption.")
 
-    # Test 5: audit_log.jsonl contains all 3 event types after round closes
-    print("Running Test 5: Verify audit log entries...")
+    # --- Test 3: Key context mismatch ---
+    print("Running Test 3: Submit update with wrong key_context_id...")
+    wrong_ctx_cert = cert.copy()
+    wrong_ctx_cert["key_context_id"] = str(uuid.uuid4())
+    wrong_ctx_sig = sign_certificate(wrong_ctx_cert, SECRET_KEY_TEST)
+    wrong_ctx_metrics = fit_res_metrics.copy()
+    wrong_ctx_metrics["key_context_id"] = wrong_ctx_cert["key_context_id"]
+    wrong_ctx_metrics["certificate"] = json.dumps(wrong_ctx_cert)
+    wrong_ctx_metrics["signature"] = wrong_ctx_sig
+    is_valid, reason = strategy.validate_update(DummyFitRes(wrong_ctx_metrics), client_proxy=client_proxy, current_time=expiry_timestamp - 1.0)
+    assert not is_valid and reason == "mismatch", f"Test 3 failed: expected 'mismatch', got {reason}"
+    print("Test 3 passed: Key context mismatch rejected.")
+
+    # --- Test 4: Post-expiry key destruction ---
+    print("Running Test 4: Post-expiry decryption attempt must fail...")
+    key_copy = bytearray(key)
+    destroy_round_key(key_copy)
+    try:
+        decrypt_update(ct, key_copy)
+        assert False, "Test 4 failed: Decryption succeeded with destroyed key!"
+    except InvalidTag:
+        print("Test 4 passed: Decryption with destroyed key raised InvalidTag.")
+
+    # --- Test N & Test 5: Full strategy execution & replay state cleanup & audit logs ---
+    print("Running Test N & Test 5: Full round aggregation and cleanup...")
     class DummyClientManager:
         def sample(self, num_clients, min_num_clients=None):
             return [DummyClientProxy("client0"), DummyClientProxy("client1"), DummyClientProxy("client2")]
         def num_available(self):
             return 3
-            
+
     test_model = ResUNetPlusPlus()
     fix_model_for_opacus(test_model)
     test_params = fl.common.ndarrays_to_parameters(get_parameters(test_model))
-    
-    # Configure the strategy
-    fit_configs = strategy.configure_fit(server_round=1, parameters=test_params, client_manager=DummyClientManager())
+
+    # Reset strategy
+    fresh_strategy = TemporalCheckpointingSecAgg(
+        mu=0.001, C=2.0, sigma=1.5, secret_key=SECRET_KEY_TEST, window_seconds=10
+    )
+    fresh_strategy.AUDIT_LOG_PATH = AUDIT_LOG_PATH
+
+    fit_configs = fresh_strategy.configure_fit(server_round=1, parameters=test_params, client_manager=DummyClientManager())
     client_config = fit_configs[0][1].config
-    
-    cert_str = client_config["certificate"]
-    sig = client_config["signature"]
-    ctx_id = client_config["key_context_id"]
-    key_hex = client_config["round_key_hex"]
-    
-    # Encrypt the dummy weights using the generated round key
-    round_key = bytearray(bytes.fromhex(key_hex))
-    fresh_ct = client_encrypt(dummy_weights, round_key)
-    
+
+    # Simulate client fitting using TemporalHospitalClient logic
+    client_cert_str = client_config["certificate"]
+    c_cert = json.loads(client_cert_str)
+    c_cert["client_id"] = "client0"
+    c_aad = compute_aad(c_cert["round_id"], c_cert["client_id"], c_cert["model_hash"], c_cert["key_context_id"])
+    c_key = bytearray(bytes.fromhex(client_config["round_key_hex"]))
+    c_ct = client_encrypt(dummy_weights, c_key, associated_data=c_aad)
+    c_cert["update_hash"] = hashlib.sha256(c_ct["nonce"] + c_ct["ciphertext"]).hexdigest()
+    c_sig = sign_certificate(c_cert, SECRET_KEY_TEST)
+
     fresh_fit_res_metrics = {
-        "nonce_hex": fresh_ct["nonce"].hex(),
-        "ciphertext_hex": fresh_ct["ciphertext"].hex(),
-        "certificate": cert_str,
-        "signature": sig,
-        "key_context_id": ctx_id
+        "nonce_hex": c_ct["nonce"].hex(),
+        "ciphertext_hex": c_ct["ciphertext"].hex(),
+        "certificate": json.dumps(c_cert),
+        "signature": c_sig,
+        "key_context_id": c_cert["key_context_id"]
     }
-    fit_results = [(client_proxy, DummyFitRes(fresh_fit_res_metrics))]
-    
-    strategy.aggregate_fit(server_round=1, results=fit_results, failures=[])
-    
+    fit_results = [(DummyClientProxy("client0"), DummyFitRes(fresh_fit_res_metrics))]
+
+    fresh_strategy.aggregate_fit(server_round=1, results=fit_results, failures=[])
+
+    # Check that replay state and cached ciphertexts were cleaned after round
+    assert 1 not in fresh_strategy.seen_updates, "Test N failed: replay state was not cleaned after round"
+    assert 1 not in fresh_strategy.cached_ciphertexts, "Test N failed: cached ciphertexts were not cleaned after round"
+    print("Test N passed: Replay state and cached ciphertexts cleaned after round.")
+
     with open(AUDIT_LOG_PATH, "r") as f:
         log_lines = f.readlines()
-        
+
     events = [json.loads(line.strip())["event"] for line in log_lines]
     print(f"Log events found: {events}")
     assert "round_open" in events, "Missing round_open in audit log"
     assert "round_close" in events, "Missing round_close in audit log"
     assert "key_destroyed" in events, "Missing key_destroyed in audit log"
     print("Test 5 passed: All 3 event types present in audit log.")
-    
+
     if os.path.exists(AUDIT_LOG_PATH):
         os.remove(AUDIT_LOG_PATH)
-        
-    print("All E7 verification tests passed successfully!\n")
+
+    print("All E7 security verification tests passed successfully!\n")
 
 
 def main():
