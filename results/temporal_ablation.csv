@@ -1,0 +1,7 @@
+config_code,config_name,timely_acceptance_pct,expired_acceptance_pct,replay_acceptance_pct,cert_tampering_acceptance_pct,cross_round_acceptance_pct,post_round_decryption_success_pct,key_state,val_dice,val_iou,runtime_seconds
+A,Plain FedAvg,100.0,100.0,100.0,100.0,100.0,100.0,No Key (Unencrypted Plaintext),0.1225,0.0721,9.49
+B,AES-GCM (Persistent Key),100.0,100.0,100.0,100.0,100.0,100.0,Persistent Key Retained,0.1225,0.0721,9.11
+C,AES-GCM + Signed Cert/AAD (Persistent Key),100.0,100.0,0.0,0.0,100.0,100.0,Persistent Key Retained,0.1225,0.0721,8.83
+D,AES-GCM + Cert/AAD + Expiry (Persistent Key),100.0,0.0,0.0,0.0,100.0,100.0,Persistent Key Retained,0.1225,0.0721,8.85
+E,AES-GCM + Rotation + Expiry (Key Retained),100.0,0.0,0.0,0.0,0.0,100.0,Round Key Retained in Memory,0.1225,0.0721,8.94
+F,Full SDFL (Rotation + Expiry + Destruction),100.0,0.0,0.0,0.0,0.0,0.0,Round Key Zeroed in Memory (Self-Destructed),0.1225,0.0721,8.92
