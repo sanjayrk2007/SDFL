@@ -1,0 +1,129 @@
+{
+    "experiment_name": "experiment",
+    "timestamp": 1788556202.780802,
+    "git_commit_hash": "e5fe450f1a351badc790233f5f058364dbbbf4e0",
+    "branch": "hospital-demo-fixes-threshold-fix",
+    "seed": 42,
+    "configuration": {
+        "exp_name": "experiment",
+        "seed": 42,
+        "num_rounds": 5,
+        "local_epochs": 1,
+        "num_clients": 3,
+        "hospital_split": "hospital_splits.json",
+        "dp_params": {
+            "mu": 0.001,
+            "C": 2.0,
+            "sigma": 1.5
+        },
+        "temporal_window": 10.0,
+        "checkpoint_path": "checkpoints",
+        "output_path": "results",
+        "dry_run": false,
+        "smoke_test": false
+    },
+    "hardware_info": {
+        "system": "Darwin",
+        "release": "22.4.0",
+        "machine": "arm64",
+        "python_version": "3.11.11",
+        "pytorch_version": "2.11.0",
+        "cuda_available": false
+    },
+    "runtime": 994.8721921443939,
+    "status": "completed",
+    "errors": [],
+    "results": [
+        {
+            "window_seconds": 182.77126161253545,
+            "p50_latency": 353.7932986249216,
+            "p95_latency": 365.5425232250709,
+            "legitimate_accepted": false,
+            "legitimate_reason": "expired",
+            "at_expiry_accepted": false,
+            "at_expiry_reason": "expired",
+            "after_expiry_accepted": false,
+            "after_expiry_reason": "expired",
+            "security_lifetime": 182.77126161253545,
+            "protocol_overhead_sec": 0.05
+        },
+        {
+            "window_seconds": 328.98827090256384,
+            "p50_latency": 353.7932986249216,
+            "p95_latency": 365.5425232250709,
+            "legitimate_accepted": false,
+            "legitimate_reason": "expired",
+            "at_expiry_accepted": false,
+            "at_expiry_reason": "expired",
+            "after_expiry_accepted": false,
+            "after_expiry_reason": "expired",
+            "security_lifetime": 328.98827090256384,
+            "protocol_overhead_sec": 0.05
+        },
+        {
+            "window_seconds": 365.5425232250709,
+            "p50_latency": 353.7932986249216,
+            "p95_latency": 365.5425232250709,
+            "legitimate_accepted": true,
+            "legitimate_reason": "accepted",
+            "at_expiry_accepted": false,
+            "at_expiry_reason": "expired",
+            "after_expiry_accepted": false,
+            "after_expiry_reason": "expired",
+            "security_lifetime": 365.5425232250709,
+            "protocol_overhead_sec": 0.05
+        },
+        {
+            "window_seconds": 402.09677554757803,
+            "p50_latency": 353.7932986249216,
+            "p95_latency": 365.5425232250709,
+            "legitimate_accepted": true,
+            "legitimate_reason": "accepted",
+            "at_expiry_accepted": false,
+            "at_expiry_reason": "expired",
+            "after_expiry_accepted": false,
+            "after_expiry_reason": "expired",
+            "security_lifetime": 402.09677554757803,
+            "protocol_overhead_sec": 0.05
+        },
+        {
+            "window_seconds": 548.3137848376064,
+            "p50_latency": 353.7932986249216,
+            "p95_latency": 365.5425232250709,
+            "legitimate_accepted": true,
+            "legitimate_reason": "accepted",
+            "at_expiry_accepted": false,
+            "at_expiry_reason": "expired",
+            "after_expiry_accepted": false,
+            "after_expiry_reason": "expired",
+            "security_lifetime": 548.3137848376064,
+            "protocol_overhead_sec": 0.05
+        },
+        {
+            "window_seconds": 731.0850464501418,
+            "p50_latency": 353.7932986249216,
+            "p95_latency": 365.5425232250709,
+            "legitimate_accepted": true,
+            "legitimate_reason": "accepted",
+            "at_expiry_accepted": false,
+            "at_expiry_reason": "expired",
+            "after_expiry_accepted": false,
+            "after_expiry_reason": "expired",
+            "security_lifetime": 731.0850464501418,
+            "protocol_overhead_sec": 0.05
+        },
+        {
+            "window_seconds": 60.0,
+            "p50_latency": 353.7932986249216,
+            "p95_latency": 365.5425232250709,
+            "legitimate_accepted": false,
+            "legitimate_reason": "expired",
+            "at_expiry_accepted": false,
+            "at_expiry_reason": "expired",
+            "after_expiry_accepted": false,
+            "after_expiry_reason": "expired",
+            "security_lifetime": 60.0,
+            "protocol_overhead_sec": 0.05
+        }
+    ]
+}

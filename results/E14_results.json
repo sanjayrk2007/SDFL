@@ -1,0 +1,94 @@
+{
+    "experiment_name": "E14",
+    "timestamp": 1788594399.367713,
+    "git_commit_hash": "e5fe450f1a351badc790233f5f058364dbbbf4e0",
+    "branch": "hospital-demo-fixes-threshold-fix",
+    "seed": 42,
+    "configuration": {
+        "exp_name": "E14",
+        "seed": 42,
+        "num_rounds": 5,
+        "local_epochs": 1,
+        "num_clients": 3,
+        "hospital_split": "hospital_splits.json",
+        "dp_params": {
+            "mu": 0.001,
+            "C": 2.0,
+            "sigma": 1.5
+        },
+        "temporal_window": 10.0,
+        "checkpoint_path": "checkpoints",
+        "output_path": "results",
+        "dry_run": false,
+        "smoke_test": false
+    },
+    "hardware_info": {
+        "system": "Darwin",
+        "release": "22.4.0",
+        "machine": "arm64",
+        "python_version": "3.11.11",
+        "pytorch_version": "2.11.0",
+        "cuda_available": false
+    },
+    "runtime": 15189.08208489418,
+    "status": "completed",
+    "errors": [],
+    "results": [
+        {
+            "num_clients": 3,
+            "is_real_hospital": true,
+            "evaluation_type": "real",
+            "server_cert_time": 0.00032287510111927986,
+            "client_train_time_mean": 344.35841966661,
+            "client_enc_time_mean": 0.050079583345601954,
+            "client_memory_mean": 119681899.66666667,
+            "server_val_time": 0.004756083013489842,
+            "server_dec_time": 0.19942691619507968,
+            "server_key_dest_time": 4.166038706898689e-06,
+            "avg_ciphertext_size_bytes": 26367806.0,
+            "total_rx_bytes": 79103418
+        },
+        {
+            "num_clients": 5,
+            "is_real_hospital": false,
+            "evaluation_type": "simulated_scaling",
+            "server_cert_time": 0.0001927921548485756,
+            "client_train_time_mean": 299.99150416683403,
+            "client_enc_time_mean": 0.04645173316821456,
+            "client_memory_mean": 119563252.4,
+            "server_val_time": 0.004072417039424181,
+            "server_dec_time": 0.404296750202775,
+            "server_key_dest_time": 3.4158583730459213e-06,
+            "avg_ciphertext_size_bytes": 26367806.0,
+            "total_rx_bytes": 131839030
+        },
+        {
+            "num_clients": 10,
+            "is_real_hospital": false,
+            "evaluation_type": "simulated_scaling",
+            "server_cert_time": 0.0002664579078555107,
+            "client_train_time_mean": 387.4503416502383,
+            "client_enc_time_mean": 0.06708403737284244,
+            "client_memory_mean": 119563989.4,
+            "server_val_time": 0.004739374853670597,
+            "server_dec_time": 1.0388053329661489,
+            "server_key_dest_time": 4.250090569257736e-06,
+            "avg_ciphertext_size_bytes": 26367806.0,
+            "total_rx_bytes": 263678060
+        },
+        {
+            "num_clients": 20,
+            "is_real_hospital": false,
+            "evaluation_type": "simulated_scaling",
+            "server_cert_time": 0.00022054207511246204,
+            "client_train_time_mean": 375.49802240625723,
+            "client_enc_time_mean": 0.05633771661669016,
+            "client_memory_mean": 119562654.4,
+            "server_val_time": 0.004657583078369498,
+            "server_dec_time": 2.380190582945943,
+            "server_key_dest_time": 1.3375189155340195e-05,
+            "avg_ciphertext_size_bytes": 26367806.0,
+            "total_rx_bytes": 527356120
+        }
+    ]
+}

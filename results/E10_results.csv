@@ -1,0 +1,8 @@
+window_seconds,p50_latency,p95_latency,legitimate_accepted,legitimate_reason,at_expiry_accepted,at_expiry_reason,after_expiry_accepted,after_expiry_reason,security_lifetime,protocol_overhead_sec
+182.77126161253545,353.7932986249216,365.5425232250709,False,expired,False,expired,False,expired,182.77126161253545,0.05
+328.98827090256384,353.7932986249216,365.5425232250709,False,expired,False,expired,False,expired,328.98827090256384,0.05
+365.5425232250709,353.7932986249216,365.5425232250709,True,accepted,False,expired,False,expired,365.5425232250709,0.05
+402.09677554757803,353.7932986249216,365.5425232250709,True,accepted,False,expired,False,expired,402.09677554757803,0.05
+548.3137848376064,353.7932986249216,365.5425232250709,True,accepted,False,expired,False,expired,548.3137848376064,0.05
+731.0850464501418,353.7932986249216,365.5425232250709,True,accepted,False,expired,False,expired,731.0850464501418,0.05
+60.0,353.7932986249216,365.5425232250709,False,expired,False,expired,False,expired,60.0,0.05
