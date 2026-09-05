@@ -1,9 +1,13 @@
 {
   "experiment": "E10_Temporal_Window_Sweep",
-  "timestamp": "2026-09-05T05:57:41Z",
+  "timestamp": "2026-09-05T06:00:33Z",
   "rounds_per_window": 100,
-  "optimal_window_seconds": 120,
-  "execution_time_seconds": 1.55,
+  "key_findings": {
+    "minimum_100_percent_completion_window_seconds": 120,
+    "recommended_operational_window_seconds": 300,
+    "simulation_note": "Heterogeneous hospital latencies are simulated distributions modeling compute and network variance."
+  },
+  "execution_time_seconds": 1.61,
   "window_metrics": {
     "30": {
       "window_duration_seconds": 30,
@@ -20,8 +24,7 @@
         "mean_seconds": 0.26,
         "p95_seconds": 1.42
       },
-      "mean_accepted_clients_per_round": 0.11,
-      "pareto_efficiency_index": 0.0
+      "mean_accepted_clients_per_round": 0.11
     },
     "60": {
       "window_duration_seconds": 60,
@@ -38,8 +41,7 @@
         "mean_seconds": 20.89,
         "p95_seconds": 32.19
       },
-      "mean_accepted_clients_per_round": 1.23,
-      "pareto_efficiency_index": 1.051
+      "mean_accepted_clients_per_round": 1.23
     },
     "120": {
       "window_duration_seconds": 120,
@@ -56,8 +58,7 @@
         "mean_seconds": 39.34,
         "p95_seconds": 75.22
       },
-      "mean_accepted_clients_per_round": 2.27,
-      "pareto_efficiency_index": 2.479
+      "mean_accepted_clients_per_round": 2.27
     },
     "300": {
       "window_duration_seconds": 300,
@@ -74,8 +75,7 @@
         "mean_seconds": 91.59,
         "p95_seconds": 150.04
       },
-      "mean_accepted_clients_per_round": 2.85,
-      "pareto_efficiency_index": 1.08
+      "mean_accepted_clients_per_round": 2.85
     },
     "600": {
       "window_duration_seconds": 600,
@@ -92,8 +92,7 @@
         "mean_seconds": 138.4,
         "p95_seconds": 439.03
       },
-      "mean_accepted_clients_per_round": 2.99,
-      "pareto_efficiency_index": 0.717
+      "mean_accepted_clients_per_round": 2.99
     },
     "1200": {
       "window_duration_seconds": 1200,
@@ -110,8 +109,7 @@
         "mean_seconds": 143.08,
         "p95_seconds": 439.46
       },
-      "mean_accepted_clients_per_round": 3.0,
-      "pareto_efficiency_index": 0.694
+      "mean_accepted_clients_per_round": 3.0
     }
   }
 }
