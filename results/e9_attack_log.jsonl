@@ -1,0 +1,40 @@
+{"condition": "A1_zeroed_key_exploit", "trial": 1, "outcome": "FAILED", "reason": "InvalidTag: zeroed key tag mismatch"}
+{"condition": "A1_zeroed_key_exploit", "trial": 2, "outcome": "FAILED", "reason": "InvalidTag: zeroed key tag mismatch"}
+{"condition": "A1_zeroed_key_exploit", "trial": 3, "outcome": "FAILED", "reason": "InvalidTag: zeroed key tag mismatch"}
+{"condition": "A1_zeroed_key_exploit", "trial": 4, "outcome": "FAILED", "reason": "InvalidTag: zeroed key tag mismatch"}
+{"condition": "A1_zeroed_key_exploit", "trial": 5, "outcome": "FAILED", "reason": "InvalidTag: zeroed key tag mismatch"}
+{"condition": "A1_zeroed_key_exploit", "trial": 251, "outcome": "FAILED", "reason": "InvalidTag: zeroed key tag mismatch"}
+{"condition": "A1_zeroed_key_exploit", "trial": 501, "outcome": "FAILED", "reason": "InvalidTag: zeroed key tag mismatch"}
+{"condition": "A1_zeroed_key_exploit", "trial": 751, "outcome": "FAILED", "reason": "InvalidTag: zeroed key tag mismatch"}
+{"condition": "A2_random_key_search", "trial": 1, "outcome": "FAILED", "reason": "InvalidTag: authentication tag verification failed"}
+{"condition": "A2_random_key_search", "trial": 2, "outcome": "FAILED", "reason": "InvalidTag: authentication tag verification failed"}
+{"condition": "A2_random_key_search", "trial": 3, "outcome": "FAILED", "reason": "InvalidTag: authentication tag verification failed"}
+{"condition": "A2_random_key_search", "trial": 4, "outcome": "FAILED", "reason": "InvalidTag: authentication tag verification failed"}
+{"condition": "A2_random_key_search", "trial": 5, "outcome": "FAILED", "reason": "InvalidTag: authentication tag verification failed"}
+{"condition": "A2_random_key_search", "trial": 251, "outcome": "FAILED", "reason": "InvalidTag: authentication tag verification failed"}
+{"condition": "A2_random_key_search", "trial": 501, "outcome": "FAILED", "reason": "InvalidTag: authentication tag verification failed"}
+{"condition": "A2_random_key_search", "trial": 751, "outcome": "FAILED", "reason": "InvalidTag: authentication tag verification failed"}
+{"condition": "A3_cross_round_substitution", "trial": 1, "outcome": "FAILED", "reason": "InvalidTag: round key isolation & AAD mismatch"}
+{"condition": "A3_cross_round_substitution", "trial": 2, "outcome": "FAILED", "reason": "InvalidTag: round key isolation & AAD mismatch"}
+{"condition": "A3_cross_round_substitution", "trial": 3, "outcome": "FAILED", "reason": "InvalidTag: round key isolation & AAD mismatch"}
+{"condition": "A3_cross_round_substitution", "trial": 4, "outcome": "FAILED", "reason": "InvalidTag: round key isolation & AAD mismatch"}
+{"condition": "A3_cross_round_substitution", "trial": 5, "outcome": "FAILED", "reason": "InvalidTag: round key isolation & AAD mismatch"}
+{"condition": "A3_cross_round_substitution", "trial": 251, "outcome": "FAILED", "reason": "InvalidTag: round key isolation & AAD mismatch"}
+{"condition": "A3_cross_round_substitution", "trial": 501, "outcome": "FAILED", "reason": "InvalidTag: round key isolation & AAD mismatch"}
+{"condition": "A3_cross_round_substitution", "trial": 751, "outcome": "FAILED", "reason": "InvalidTag: round key isolation & AAD mismatch"}
+{"condition": "A4_certificate_tampering", "trial": 1, "outcome": "FAILED", "reason": "rejected: invalid_signature & InvalidTag"}
+{"condition": "A4_certificate_tampering", "trial": 2, "outcome": "FAILED", "reason": "rejected: invalid_signature & InvalidTag"}
+{"condition": "A4_certificate_tampering", "trial": 3, "outcome": "FAILED", "reason": "rejected: invalid_signature & InvalidTag"}
+{"condition": "A4_certificate_tampering", "trial": 4, "outcome": "FAILED", "reason": "rejected: invalid_signature & InvalidTag"}
+{"condition": "A4_certificate_tampering", "trial": 5, "outcome": "FAILED", "reason": "rejected: invalid_signature & InvalidTag"}
+{"condition": "A4_certificate_tampering", "trial": 251, "outcome": "FAILED", "reason": "rejected: invalid_signature & InvalidTag"}
+{"condition": "A4_certificate_tampering", "trial": 501, "outcome": "FAILED", "reason": "rejected: invalid_signature & InvalidTag"}
+{"condition": "A4_certificate_tampering", "trial": 751, "outcome": "FAILED", "reason": "rejected: invalid_signature & InvalidTag"}
+{"condition": "A5_plaintext_reconstruction", "trial": 1, "outcome": "FAILED", "reason": "authentication_failed: tag_invalid (cos_sim=0.044, rel_err=35.77)"}
+{"condition": "A5_plaintext_reconstruction", "trial": 2, "outcome": "FAILED", "reason": "authentication_failed: tag_invalid (cos_sim=0.011, rel_err=36.23)"}
+{"condition": "A5_plaintext_reconstruction", "trial": 3, "outcome": "FAILED", "reason": "authentication_failed: tag_invalid (cos_sim=0.058, rel_err=34.61)"}
+{"condition": "A5_plaintext_reconstruction", "trial": 4, "outcome": "FAILED", "reason": "authentication_failed: tag_invalid (cos_sim=0.015, rel_err=34.22)"}
+{"condition": "A5_plaintext_reconstruction", "trial": 5, "outcome": "FAILED", "reason": "authentication_failed: tag_invalid (cos_sim=0.046, rel_err=34.14)"}
+{"condition": "A5_plaintext_reconstruction", "trial": 251, "outcome": "FAILED", "reason": "authentication_failed: tag_invalid (cos_sim=0.097, rel_err=33.76)"}
+{"condition": "A5_plaintext_reconstruction", "trial": 501, "outcome": "FAILED", "reason": "authentication_failed: tag_invalid (cos_sim=0.013, rel_err=33.92)"}
+{"condition": "A5_plaintext_reconstruction", "trial": 751, "outcome": "FAILED", "reason": "authentication_failed: tag_invalid (cos_sim=0.057, rel_err=34.30)"}

@@ -1,0 +1,87 @@
+{
+  "experiment": "E9_Retrospective_Breach_Attack",
+  "timestamp": "2026-09-05T05:45:12Z",
+  "threat_model": {
+    "adversary": "Retrospective Post-Breach Adversary (A_retro)",
+    "timing": "Strictly post-expiry and post key-destruction (t > Tr)",
+    "available_artifacts": [
+      "retained_ciphertext",
+      "nonce",
+      "tag_aad",
+      "round_certificate",
+      "hmac_signature",
+      "transaction_uid",
+      "round_metadata",
+      "audit_log_trace",
+      "pre_and_post_round_global_models"
+    ],
+    "excluded_artifacts": [
+      "destroyed_round_key",
+      "live_decryption_oracle",
+      "client_plaintext_buffer"
+    ]
+  },
+  "conditions": {
+    "A1_zeroed_key_exploit": {
+      "trials": 1000,
+      "successes": 0,
+      "failures": 1000,
+      "success_rate": 0.0,
+      "failure_reasons": {
+        "InvalidTag: zeroed key tag mismatch": 1000
+      }
+    },
+    "A2_random_key_search": {
+      "trials": 1000,
+      "successes": 0,
+      "failures": 1000,
+      "success_rate": 0.0,
+      "failure_reasons": {
+        "InvalidTag: authentication tag verification failed": 1000
+      }
+    },
+    "A3_cross_round_substitution": {
+      "trials": 1000,
+      "successes": 0,
+      "failures": 1000,
+      "success_rate": 0.0,
+      "failure_reasons": {
+        "InvalidTag: round key isolation & AAD mismatch": 1000
+      }
+    },
+    "A4_certificate_tampering": {
+      "trials": 1000,
+      "successes": 0,
+      "failures": 1000,
+      "success_rate": 0.0,
+      "failure_reasons": {
+        "rejected: invalid_signature & InvalidTag": 1000
+      }
+    },
+    "A5_plaintext_reconstruction": {
+      "trials": 1000,
+      "successes": 0,
+      "failures": 1000,
+      "success_rate": 0.0,
+      "failure_reasons": {
+        "authentication_failed: tag_invalid": 1000
+      }
+    }
+  },
+  "summary": {
+    "total_attack_attempts": 5000,
+    "total_successful_recoveries": 0,
+    "overall_empirical_success_rate": 0.0,
+    "per_condition_trials": 1000,
+    "statistical_bounds": {
+      "clopper_pearson_95_ci_per_condition": [
+        0.0,
+        0.002991
+      ],
+      "rule_of_three_95_upper_bound_per_condition": 0.002996,
+      "rule_of_three_95_upper_bound_total": 0.000599,
+      "approx_95_upper_bound_str": "0.30%"
+    },
+    "elapsed_seconds": 2.08
+  }
+}
