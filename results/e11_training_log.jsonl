@@ -1,0 +1,6 @@
+{"event": "sigma_training_completed", "sigma": 0.3, "val_dice": 0.4368, "val_iou": 0.3177, "epsilon_1_round": 55.8414, "epsilon_20_round": 291.1461, "timestamp": "2026-09-05T06:49:22.914375+00:00"}
+{"event": "sigma_training_completed", "sigma": 0.5, "val_dice": 0.4397, "val_iou": 0.3194, "epsilon_1_round": 14.8135, "epsilon_20_round": 58.3755, "timestamp": "2026-09-05T06:51:27.399865+00:00"}
+{"event": "sigma_training_completed", "sigma": 0.8, "val_dice": 0.4399, "val_iou": 0.3194, "epsilon_1_round": 4.3901, "epsilon_20_round": 15.795, "timestamp": "2026-09-05T06:53:26.389880+00:00"}
+{"event": "sigma_training_completed", "sigma": 1.0, "val_dice": 0.4401, "val_iou": 0.3196, "epsilon_1_round": 2.5447, "epsilon_20_round": 9.7321, "timestamp": "2026-09-05T06:55:25.386678+00:00"}
+{"event": "sigma_training_completed", "sigma": 1.5, "val_dice": 0.4408, "val_iou": 0.3199, "epsilon_1_round": 1.0989, "epsilon_20_round": 4.9118, "timestamp": "2026-09-05T06:57:20.702764+00:00"}
+{"event": "sigma_training_completed", "sigma": 2.0, "val_dice": 0.4405, "val_iou": 0.3197, "epsilon_1_round": 0.7032, "epsilon_20_round": 3.3041, "timestamp": "2026-09-05T06:59:05.383187+00:00"}
