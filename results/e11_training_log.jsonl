@@ -1,6 +1,6 @@
-{"event": "sigma_training_completed", "sigma": 0.3, "val_dice": 0.4368, "val_iou": 0.3177, "epsilon_1_round": 55.8414, "epsilon_20_round": 291.1461, "timestamp": "2026-09-05T06:49:22.914375+00:00"}
-{"event": "sigma_training_completed", "sigma": 0.5, "val_dice": 0.4397, "val_iou": 0.3194, "epsilon_1_round": 14.8135, "epsilon_20_round": 58.3755, "timestamp": "2026-09-05T06:51:27.399865+00:00"}
-{"event": "sigma_training_completed", "sigma": 0.8, "val_dice": 0.4399, "val_iou": 0.3194, "epsilon_1_round": 4.3901, "epsilon_20_round": 15.795, "timestamp": "2026-09-05T06:53:26.389880+00:00"}
-{"event": "sigma_training_completed", "sigma": 1.0, "val_dice": 0.4401, "val_iou": 0.3196, "epsilon_1_round": 2.5447, "epsilon_20_round": 9.7321, "timestamp": "2026-09-05T06:55:25.386678+00:00"}
-{"event": "sigma_training_completed", "sigma": 1.5, "val_dice": 0.4408, "val_iou": 0.3199, "epsilon_1_round": 1.0989, "epsilon_20_round": 4.9118, "timestamp": "2026-09-05T06:57:20.702764+00:00"}
-{"event": "sigma_training_completed", "sigma": 2.0, "val_dice": 0.4405, "val_iou": 0.3197, "epsilon_1_round": 0.7032, "epsilon_20_round": 3.3041, "timestamp": "2026-09-05T06:59:05.383187+00:00"}
+{"event": "sigma_evaluated", "sigma": 0.3, "val_dice": 0.4368, "val_iou": 0.3177, "eps_executed": 45.8882, "eps_e8": 141.7312, "eps_nominal": 291.1461, "timestamp": "2026-09-05T07:07:46.731139+00:00"}
+{"event": "sigma_evaluated", "sigma": 0.5, "val_dice": 0.4397, "val_iou": 0.3194, "eps_executed": 12.7075, "eps_e8": 32.0718, "eps_nominal": 58.3755, "timestamp": "2026-09-05T07:08:25.134735+00:00"}
+{"event": "sigma_evaluated", "sigma": 0.8, "val_dice": 0.4399, "val_iou": 0.3194, "eps_executed": 3.8402, "eps_e8": 9.0155, "eps_nominal": 15.795, "timestamp": "2026-09-05T07:08:59.380917+00:00"}
+{"event": "sigma_evaluated", "sigma": 1.0, "val_dice": 0.4401, "val_iou": 0.3196, "eps_executed": 2.213, "eps_e8": 5.4868, "eps_nominal": 9.7321, "timestamp": "2026-09-05T07:09:31.507518+00:00"}
+{"event": "sigma_evaluated", "sigma": 1.5, "val_dice": 0.4408, "val_iou": 0.3199, "eps_executed": 0.9075, "eps_e8": 2.726, "eps_nominal": 4.9118, "timestamp": "2026-09-05T07:09:59.413065+00:00"}
+{"event": "sigma_evaluated", "sigma": 2.0, "val_dice": 0.4405, "val_iou": 0.3197, "eps_executed": 0.5566, "eps_e8": 1.8307, "eps_nominal": 3.3041, "timestamp": "2026-09-05T07:10:26.329692+00:00"}
