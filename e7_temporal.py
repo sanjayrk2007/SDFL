@@ -224,9 +224,11 @@ class TemporalCheckpointingSecAgg(fl.server.strategy.FedAvg):
             logging.warning(f"Could not load state dict in configure_fit: {e}")
         self.current_model_hash = compute_model_hash(global_model.state_dict())
 
-        # 4. Participants (IDs of active clients)
+        # 4. Participants: SDFL logical client identities.
+        # Flower cids are runtime identifiers and must not be used as
+        # the protocol-level client identities.
         active_clients = client_manager.sample(num_clients=3)
-        participants = [c.cid for c in active_clients]
+        participants = [f"client{i}" for i in range(len(active_clients))]
 
         # 5. Create and Sign Certificate Template
         cert = create_certificate(
@@ -311,12 +313,24 @@ class TemporalCheckpointingSecAgg(fl.server.strategy.FedAvg):
             if "update_hash" in cert and cert["update_hash"] != computed_update_hash:
                 return False, "update_hash_mismatch"
 
-            # Rule 6: Client ID check (if client_proxy or metrics available)
+            # Rule 6: Validate SDFL logical client identity.
+            # hospital_id is the stable application-level identity; Flower's
+            # client_proxy.cid is only a runtime transport identifier.
             cert_client_id = cert.get("client_id")
-            if client_proxy is not None and hasattr(client_proxy, "cid") and cert_client_id is not None:
-                expected_cid = str(client_proxy.cid)
-                if cert_client_id != expected_cid and cert_client_id != f"client{expected_cid}" and expected_cid != f"client{cert_client_id}":
-                    return False, "wrong_client_id"
+            hospital_id = fit_res.metrics.get("hospital_id")
+
+            if cert_client_id is None or hospital_id is None:
+                return False, "missing_client_identity"
+
+            expected_client_id = f"client{hospital_id}"
+            if cert_client_id != expected_client_id:
+                return False, "wrong_client_id"
+
+            # The logical client must also be an authorized participant
+            # for this round.
+            participants = cert.get("participants", [])
+            if cert_client_id not in participants:
+                return False, "unauthorized_client"
 
             # Rule 7: Replay protection check
             round_id = cert.get("round_id", 1)
@@ -630,6 +644,7 @@ def run_e7_tests():
             self.num_examples = num_examples
 
     fit_res_metrics = {
+        "hospital_id": 0,
         "nonce_hex": ct["nonce"].hex(),
         "ciphertext_hex": ct["ciphertext"].hex(),
         "certificate": json.dumps(cert),
@@ -672,11 +687,24 @@ def run_e7_tests():
     print("Test I passed: Wrong model hash rejected.")
 
     # --- Test J: Wrong client ID rejected ---
-    print("Running Test J: Wrong client ID rejected...")
-    wrong_client_proxy = DummyClientProxy("client99")
-    is_valid, reason = strategy.validate_update(fit_res, client_proxy=wrong_client_proxy, current_time=expiry_timestamp - 1.0)
-    assert not is_valid and reason == "wrong_client_id", f"Test J failed: expected wrong_client_id, got {reason}"
-    print("Test J passed: Wrong client ID rejected.")
+    # --- Test J: Mismatched logical client identity rejected ---
+    print("Running Test J: Mismatched client ID rejected...")
+    wrong_client_metrics = fit_res_metrics.copy()
+    wrong_client_cert = cert.copy()
+    wrong_client_cert["client_id"] = "client1"
+    wrong_client_metrics["certificate"] = json.dumps(wrong_client_cert)
+    wrong_client_metrics["hospital_id"] = 0
+    wrong_client_metrics["signature"] = sign_certificate(
+        wrong_client_cert, SECRET_KEY_TEST
+    )
+    is_valid, reason = strategy.validate_update(
+        DummyFitRes(wrong_client_metrics),
+        client_proxy=client_proxy,
+        current_time=expiry_timestamp - 1.0
+    )
+    assert not is_valid and reason == "wrong_client_id", \
+        f"Test J failed: expected wrong_client_id, got {reason}"
+    print("Test J passed: Mismatched logical client ID rejected.")
 
     # --- Test K: Duplicate update (replay) rejected ---
     print("Running Test K: Duplicate update rejected...")
@@ -752,6 +780,7 @@ def run_e7_tests():
     c_sig = sign_certificate(c_cert, SECRET_KEY_TEST)
 
     fresh_fit_res_metrics = {
+        "hospital_id": 0,
         "nonce_hex": c_ct["nonce"].hex(),
         "ciphertext_hex": c_ct["ciphertext"].hex(),
         "certificate": json.dumps(c_cert),
