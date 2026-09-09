@@ -1,0 +1,6 @@
+{"event": "sigma_sweep", "sigma": 0.3, "epsilon_final": 291.146054, "dice": null, "iou": null, "dice_iou_source": "theoretical projection pending actual training", "timestamp": "2026-09-05T06:14:56.861702+00:00"}
+{"event": "sigma_sweep", "sigma": 0.5, "epsilon_final": 58.375469, "dice": null, "iou": null, "dice_iou_source": "theoretical projection pending actual training", "timestamp": "2026-09-05T06:15:01.072792+00:00"}
+{"event": "sigma_sweep", "sigma": 0.8, "epsilon_final": 15.794986, "dice": null, "iou": null, "dice_iou_source": "theoretical projection pending actual training", "timestamp": "2026-09-05T06:15:04.065982+00:00"}
+{"event": "sigma_sweep", "sigma": 1.0, "epsilon_final": 9.732069, "dice": null, "iou": null, "dice_iou_source": "theoretical projection pending actual training", "timestamp": "2026-09-05T06:15:06.073993+00:00"}
+{"event": "sigma_sweep", "sigma": 1.5, "epsilon_final": 4.911783, "dice": null, "iou": null, "dice_iou_source": "theoretical projection pending actual training", "timestamp": "2026-09-05T06:15:06.834663+00:00"}
+{"event": "sigma_sweep", "sigma": 2.0, "epsilon_final": 3.304053, "dice": null, "iou": null, "dice_iou_source": "theoretical projection pending actual training", "timestamp": "2026-09-05T06:15:07.410713+00:00"}
