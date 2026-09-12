@@ -1,0 +1,166 @@
+{
+  "experiment": "E14 Security Layer Client Scalability",
+  "timestamp_start": "2026-09-12T09:41:03.723641+00:00",
+  "completed_at": "2026-09-12T09:41:51.439349+00:00",
+  "benchmark_rounds_per_k": 5,
+  "model_parameters_count": 6591841,
+  "model_raw_bytes": 26367364,
+  "cohorts": {
+    "3": {
+      "client_count_K": 3,
+      "client_encryption_ms": {
+        "mean": 62.579,
+        "std": 10.304
+      },
+      "cert_signing_ms": {
+        "mean": 0.1522,
+        "std": 0.1831
+      },
+      "cert_verification_total_ms": {
+        "mean": 0.1068,
+        "std": 0.0196,
+        "per_client_ms": 0.0356
+      },
+      "server_aggregation_ms": {
+        "mean": 117.117,
+        "std": 12.147
+      },
+      "baseline_fedavg_aggregation_ms": {
+        "mean": 40.474,
+        "std": 5.444
+      },
+      "total_security_latency_ms": {
+        "mean": 179.956,
+        "std": 20.933
+      },
+      "security_overhead_over_baseline_ms": 139.482,
+      "communication": {
+        "upload_bytes_per_client": 26370308,
+        "upload_mb_per_client": 25.15,
+        "total_upload_mb": 75.45,
+        "total_download_mb": 75.44,
+        "total_round_comm_mb": 150.88
+      },
+      "storage": {
+        "retained_ciphertexts_mb": 75.44
+      }
+    },
+    "5": {
+      "client_count_K": 5,
+      "client_encryption_ms": {
+        "mean": 52.8,
+        "std": 1.823
+      },
+      "cert_signing_ms": {
+        "mean": 0.0512,
+        "std": 0.0115
+      },
+      "cert_verification_total_ms": {
+        "mean": 0.1448,
+        "std": 0.016,
+        "per_client_ms": 0.029
+      },
+      "server_aggregation_ms": {
+        "mean": 170.726,
+        "std": 11.259
+      },
+      "baseline_fedavg_aggregation_ms": {
+        "mean": 59.231,
+        "std": 7.304
+      },
+      "total_security_latency_ms": {
+        "mean": 223.722,
+        "std": 12.034
+      },
+      "security_overhead_over_baseline_ms": 164.491,
+      "communication": {
+        "upload_bytes_per_client": 26370356,
+        "upload_mb_per_client": 25.15,
+        "total_upload_mb": 125.74,
+        "total_download_mb": 125.73,
+        "total_round_comm_mb": 251.47
+      },
+      "storage": {
+        "retained_ciphertexts_mb": 125.74
+      }
+    },
+    "10": {
+      "client_count_K": 10,
+      "client_encryption_ms": {
+        "mean": 49.703,
+        "std": 1.273
+      },
+      "cert_signing_ms": {
+        "mean": 0.0551,
+        "std": 0.0129
+      },
+      "cert_verification_total_ms": {
+        "mean": 0.1778,
+        "std": 0.0184,
+        "per_client_ms": 0.0178
+      },
+      "server_aggregation_ms": {
+        "mean": 325.127,
+        "std": 31.421
+      },
+      "baseline_fedavg_aggregation_ms": {
+        "mean": 105.351,
+        "std": 7.676
+      },
+      "total_security_latency_ms": {
+        "mean": 375.062,
+        "std": 31.76
+      },
+      "security_overhead_over_baseline_ms": 269.712,
+      "communication": {
+        "upload_bytes_per_client": 26370476,
+        "upload_mb_per_client": 25.15,
+        "total_upload_mb": 251.49,
+        "total_download_mb": 251.46,
+        "total_round_comm_mb": 502.95
+      },
+      "storage": {
+        "retained_ciphertexts_mb": 251.48
+      }
+    },
+    "20": {
+      "client_count_K": 20,
+      "client_encryption_ms": {
+        "mean": 49.116,
+        "std": 0.908
+      },
+      "cert_signing_ms": {
+        "mean": 0.0544,
+        "std": 0.0127
+      },
+      "cert_verification_total_ms": {
+        "mean": 0.3555,
+        "std": 0.0734,
+        "per_client_ms": 0.0178
+      },
+      "server_aggregation_ms": {
+        "mean": 703.266,
+        "std": 51.823
+      },
+      "baseline_fedavg_aggregation_ms": {
+        "mean": 224.529,
+        "std": 12.796
+      },
+      "total_security_latency_ms": {
+        "mean": 752.792,
+        "std": 51.518
+      },
+      "security_overhead_over_baseline_ms": 528.263,
+      "communication": {
+        "upload_bytes_per_client": 26370736,
+        "upload_mb_per_client": 25.15,
+        "total_upload_mb": 502.98,
+        "total_download_mb": 502.93,
+        "total_round_comm_mb": 1005.91
+      },
+      "storage": {
+        "retained_ciphertexts_mb": 502.96
+      }
+    }
+  }
+}
