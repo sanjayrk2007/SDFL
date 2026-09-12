@@ -1,0 +1,352 @@
+{
+  "experiment": "E9_SDFL_Security_Attack_Evaluation",
+  "timestamp": "2026-09-05T04:52:07Z",
+  "total_conditions_tested": 14,
+  "seeds_used": [
+    42,
+    101,
+    2024,
+    777,
+    9999
+  ],
+  "attempts_per_condition": 1000,
+  "total_attempts_executed": 14000,
+  "total_runtime_seconds": 0.5584530830383301,
+  "summary": {
+    "condition_1_legitimate_acceptance_rate": 1.0,
+    "attack_conditions_max_success_rate": 0.0,
+    "attack_conditions_overall_defense_rate": 1.0
+  },
+  "conditions": {
+    "1": {
+      "condition_id": 1,
+      "name": "timely valid update",
+      "attempts": 1000,
+      "accepted": 1000,
+      "rejected": 0,
+      "success_rate": 1.0,
+      "failure_rate": 0.0,
+      "attack_success_rate": 0.0,
+      "legitimate_acceptance_rate": 1.0,
+      "rejection_reason_distribution": {
+        "accepted": 1000
+      },
+      "seeds": [
+        42,
+        101,
+        2024,
+        777,
+        9999
+      ],
+      "total_time_seconds": 0.04637503623962402,
+      "avg_time_per_attempt_ms": 0.04637503623962402
+    },
+    "2": {
+      "condition_id": 2,
+      "name": "expired update",
+      "attempts": 1000,
+      "accepted": 0,
+      "rejected": 1000,
+      "success_rate": 0.0,
+      "failure_rate": 1.0,
+      "attack_success_rate": 0.0,
+      "legitimate_acceptance_rate": 0.0,
+      "rejection_reason_distribution": {
+        "expired": 1000
+      },
+      "seeds": [
+        42,
+        101,
+        2024,
+        777,
+        9999
+      ],
+      "total_time_seconds": 0.03354382514953613,
+      "avg_time_per_attempt_ms": 0.03354382514953613
+    },
+    "3": {
+      "condition_id": 3,
+      "name": "replayed update",
+      "attempts": 1000,
+      "accepted": 0,
+      "rejected": 1000,
+      "success_rate": 0.0,
+      "failure_rate": 1.0,
+      "attack_success_rate": 0.0,
+      "legitimate_acceptance_rate": 0.0,
+      "rejection_reason_distribution": {
+        "replay_detected": 1000
+      },
+      "seeds": [
+        42,
+        101,
+        2024,
+        777,
+        9999
+      ],
+      "total_time_seconds": 0.03549790382385254,
+      "avg_time_per_attempt_ms": 0.03549790382385254
+    },
+    "4": {
+      "condition_id": 4,
+      "name": "tampered certificate",
+      "attempts": 1000,
+      "accepted": 0,
+      "rejected": 1000,
+      "success_rate": 0.0,
+      "failure_rate": 1.0,
+      "attack_success_rate": 0.0,
+      "legitimate_acceptance_rate": 0.0,
+      "rejection_reason_distribution": {
+        "invalid_signature": 1000
+      },
+      "seeds": [
+        42,
+        101,
+        2024,
+        777,
+        9999
+      ],
+      "total_time_seconds": 0.03760814666748047,
+      "avg_time_per_attempt_ms": 0.03760814666748047
+    },
+    "5": {
+      "condition_id": 5,
+      "name": "wrong key",
+      "attempts": 1000,
+      "accepted": 0,
+      "rejected": 1000,
+      "success_rate": 0.0,
+      "failure_rate": 1.0,
+      "attack_success_rate": 0.0,
+      "legitimate_acceptance_rate": 0.0,
+      "rejection_reason_distribution": {
+        "decryption_failed_invalid_tag": 1000
+      },
+      "seeds": [
+        42,
+        101,
+        2024,
+        777,
+        9999
+      ],
+      "total_time_seconds": 0.053056955337524414,
+      "avg_time_per_attempt_ms": 0.053056955337524414
+    },
+    "6": {
+      "condition_id": 6,
+      "name": "wrong key_context_id",
+      "attempts": 1000,
+      "accepted": 0,
+      "rejected": 1000,
+      "success_rate": 0.0,
+      "failure_rate": 1.0,
+      "attack_success_rate": 0.0,
+      "legitimate_acceptance_rate": 0.0,
+      "rejection_reason_distribution": {
+        "mismatch": 1000
+      },
+      "seeds": [
+        42,
+        101,
+        2024,
+        777,
+        9999
+      ],
+      "total_time_seconds": 0.04204273223876953,
+      "avg_time_per_attempt_ms": 0.04204273223876953
+    },
+    "7": {
+      "condition_id": 7,
+      "name": "wrong round_id",
+      "attempts": 1000,
+      "accepted": 0,
+      "rejected": 1000,
+      "success_rate": 0.0,
+      "failure_rate": 1.0,
+      "attack_success_rate": 0.0,
+      "legitimate_acceptance_rate": 0.0,
+      "rejection_reason_distribution": {
+        "invalid_signature": 500,
+        "decryption_failed_invalid_tag": 500
+      },
+      "seeds": [
+        42,
+        101,
+        2024,
+        777,
+        9999
+      ],
+      "total_time_seconds": 0.04208803176879883,
+      "avg_time_per_attempt_ms": 0.04208803176879883
+    },
+    "8": {
+      "condition_id": 8,
+      "name": "wrong model hash",
+      "attempts": 1000,
+      "accepted": 0,
+      "rejected": 1000,
+      "success_rate": 0.0,
+      "failure_rate": 1.0,
+      "attack_success_rate": 0.0,
+      "legitimate_acceptance_rate": 0.0,
+      "rejection_reason_distribution": {
+        "invalid_signature": 500,
+        "model_hash_mismatch": 500
+      },
+      "seeds": [
+        42,
+        101,
+        2024,
+        777,
+        9999
+      ],
+      "total_time_seconds": 0.03884005546569824,
+      "avg_time_per_attempt_ms": 0.03884005546569824
+    },
+    "9": {
+      "condition_id": 9,
+      "name": "cross-round substitution",
+      "attempts": 1000,
+      "accepted": 0,
+      "rejected": 1000,
+      "success_rate": 0.0,
+      "failure_rate": 1.0,
+      "attack_success_rate": 0.0,
+      "legitimate_acceptance_rate": 0.0,
+      "rejection_reason_distribution": {
+        "mismatch": 1000
+      },
+      "seeds": [
+        42,
+        101,
+        2024,
+        777,
+        9999
+      ],
+      "total_time_seconds": 0.03617286682128906,
+      "avg_time_per_attempt_ms": 0.03617286682128906
+    },
+    "10": {
+      "condition_id": 10,
+      "name": "post-destruction decryption",
+      "attempts": 1000,
+      "accepted": 0,
+      "rejected": 1000,
+      "success_rate": 0.0,
+      "failure_rate": 1.0,
+      "attack_success_rate": 0.0,
+      "legitimate_acceptance_rate": 0.0,
+      "rejection_reason_distribution": {
+        "decryption_failed_invalid_tag": 1000
+      },
+      "seeds": [
+        42,
+        101,
+        2024,
+        777,
+        9999
+      ],
+      "total_time_seconds": 0.03886818885803223,
+      "avg_time_per_attempt_ms": 0.03886818885803223
+    },
+    "11": {
+      "condition_id": 11,
+      "name": "duplicate update ID",
+      "attempts": 1000,
+      "accepted": 0,
+      "rejected": 1000,
+      "success_rate": 0.0,
+      "failure_rate": 1.0,
+      "attack_success_rate": 0.0,
+      "legitimate_acceptance_rate": 0.0,
+      "rejection_reason_distribution": {
+        "replay_detected": 1000
+      },
+      "seeds": [
+        42,
+        101,
+        2024,
+        777,
+        9999
+      ],
+      "total_time_seconds": 0.035552024841308594,
+      "avg_time_per_attempt_ms": 0.035552024841308594
+    },
+    "12": {
+      "condition_id": 12,
+      "name": "modified ciphertext",
+      "attempts": 1000,
+      "accepted": 0,
+      "rejected": 1000,
+      "success_rate": 0.0,
+      "failure_rate": 1.0,
+      "attack_success_rate": 0.0,
+      "legitimate_acceptance_rate": 0.0,
+      "rejection_reason_distribution": {
+        "update_hash_mismatch": 335,
+        "invalid_signature": 335,
+        "decryption_failed_invalid_tag": 330
+      },
+      "seeds": [
+        42,
+        101,
+        2024,
+        777,
+        9999
+      ],
+      "total_time_seconds": 0.03986501693725586,
+      "avg_time_per_attempt_ms": 0.03986501693725586
+    },
+    "13": {
+      "condition_id": 13,
+      "name": "modified nonce",
+      "attempts": 1000,
+      "accepted": 0,
+      "rejected": 1000,
+      "success_rate": 0.0,
+      "failure_rate": 1.0,
+      "attack_success_rate": 0.0,
+      "legitimate_acceptance_rate": 0.0,
+      "rejection_reason_distribution": {
+        "update_hash_mismatch": 335,
+        "invalid_signature": 335,
+        "decryption_failed_invalid_tag": 330
+      },
+      "seeds": [
+        42,
+        101,
+        2024,
+        777,
+        9999
+      ],
+      "total_time_seconds": 0.039781808853149414,
+      "avg_time_per_attempt_ms": 0.039781808853149414
+    },
+    "14": {
+      "condition_id": 14,
+      "name": "modified AAD",
+      "attempts": 1000,
+      "accepted": 0,
+      "rejected": 1000,
+      "success_rate": 0.0,
+      "failure_rate": 1.0,
+      "attack_success_rate": 0.0,
+      "legitimate_acceptance_rate": 0.0,
+      "rejection_reason_distribution": {
+        "invalid_signature": 335,
+        "wrong_client_id": 335,
+        "decryption_failed_invalid_tag": 330
+      },
+      "seeds": [
+        42,
+        101,
+        2024,
+        777,
+        9999
+      ],
+      "total_time_seconds": 0.03897595405578613,
+      "avg_time_per_attempt_ms": 0.03897595405578613
+    }
+  }
+}
