@@ -1,0 +1,11 @@
+{"event": "e13_started", "models": ["FedAvg (E2)", "FedProx (E3 Best Non-Private)", "Full SDFL (E8/E11)"], "seeds": [42, 43, 44], "timestamp": "2026-09-12T09:34:21.235709+00:00"}
+{"dice": 0.7717830239428768, "event": "seed_evaluated", "iou": 0.6849139570149634, "model": "FedAvg (E2)", "seed": 42, "timestamp": "2026-09-12T09:34:56.977209+00:00"}
+{"dice": 0.7717830239428768, "event": "seed_evaluated", "iou": 0.6849139570149634, "model": "FedAvg (E2)", "seed": 43, "timestamp": "2026-09-12T09:35:32.629398+00:00"}
+{"dice": 0.7717830239428768, "event": "seed_evaluated", "iou": 0.6849139570149634, "model": "FedAvg (E2)", "seed": 44, "timestamp": "2026-09-12T09:36:09.125426+00:00"}
+{"dice": 0.49240839199291797, "event": "seed_evaluated", "iou": 0.3630835729545335, "model": "FedProx (E3 Best Non-Private)", "seed": 42, "timestamp": "2026-09-12T09:36:46.770431+00:00"}
+{"dice": 0.49240839199291797, "event": "seed_evaluated", "iou": 0.3630835729545335, "model": "FedProx (E3 Best Non-Private)", "seed": 43, "timestamp": "2026-09-12T09:37:23.300313+00:00"}
+{"dice": 0.49240839199291797, "event": "seed_evaluated", "iou": 0.3630835729545335, "model": "FedProx (E3 Best Non-Private)", "seed": 44, "timestamp": "2026-09-12T09:37:59.749906+00:00"}
+{"dice": 0.43695232305928167, "event": "seed_evaluated", "iou": 0.31216735030798975, "model": "Full SDFL (E8/E11)", "seed": 42, "timestamp": "2026-09-12T09:38:37.463120+00:00"}
+{"dice": 0.43695232305928167, "event": "seed_evaluated", "iou": 0.31216735030798975, "model": "Full SDFL (E8/E11)", "seed": 43, "timestamp": "2026-09-12T09:39:14.400039+00:00"}
+{"dice": 0.43695232305928167, "event": "seed_evaluated", "iou": 0.31216735030798975, "model": "Full SDFL (E8/E11)", "seed": 44, "timestamp": "2026-09-12T09:39:52.017671+00:00"}
+{"event": "e13_completed", "output_json": "D:\\resesrch22\\Research11\\results\\e13_multiseed_results.json", "timestamp": "2026-09-12T09:39:52.157640+00:00"}
