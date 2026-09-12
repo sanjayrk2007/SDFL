@@ -1,0 +1,171 @@
+{
+  "experiment": "E12 synthetic leave-one-client-out generalization",
+  "completed_at": "2026-09-09T02:23:14.530641+00:00",
+  "config": {
+    "rounds": 1,
+    "local_epochs": 1,
+    "batch_size": 8,
+    "lr": 0.0001,
+    "seed": 42
+  },
+  "device": "cpu",
+  "protocol": {
+    "pretrained_checkpoint_used": false,
+    "all_held_out_assignments_excluded": true,
+    "synthetic_clients": true
+  },
+  "folds": [
+    {
+      "fold": "A",
+      "train_clients": [
+        0,
+        1
+      ],
+      "held_out_client": 2,
+      "held_out_bias": "large+medium",
+      "train_samples": [
+        226,
+        224
+      ],
+      "held_out_test_samples": 33,
+      "removed_overlapping_train_records": [
+        38,
+        39
+      ],
+      "removed_overlapping_seen_test_records": [
+        8,
+        6
+      ],
+      "initialization": "seeded_random_no_checkpoint",
+      "initial_parameter_sum": 2939.058349609375,
+      "training_seconds": 371.04641770001035,
+      "seen_client_test": {
+        "dice": 0.1805522395004901,
+        "iou": 0.1186760179109373,
+        "precision": 0.6791171935731665,
+        "recall": 0.1382205015246692,
+        "hd95": 127.52514055519227
+      },
+      "held_out_client_test": {
+        "dice": 0.1758568622728716,
+        "iou": 0.11424746501540409,
+        "precision": 0.8194519258913142,
+        "recall": 0.12299372139155525,
+        "hd95": 119.26018085989388
+      },
+      "seen_minus_held_out": {
+        "dice": 0.004695377227618508,
+        "iou": 0.004428552895533219,
+        "precision": -0.14033473231814775,
+        "recall": 0.015226780133113946,
+        "hd95": 8.264959695298387
+      }
+    },
+    {
+      "fold": "B",
+      "train_clients": [
+        0,
+        2
+      ],
+      "held_out_client": 1,
+      "held_out_bias": "medium",
+      "train_samples": [
+        229,
+        223
+      ],
+      "held_out_test_samples": 37,
+      "removed_overlapping_train_records": [
+        35,
+        39
+      ],
+      "removed_overlapping_seen_test_records": [
+        6,
+        6
+      ],
+      "initialization": "seeded_random_no_checkpoint",
+      "initial_parameter_sum": 2997.826416015625,
+      "training_seconds": 364.32504009990953,
+      "seen_client_test": {
+        "dice": 0.16811970574760923,
+        "iou": 0.11005309230643127,
+        "precision": 0.6577852861356306,
+        "recall": 0.12681937021237435,
+        "hd95": 92.98172494719104
+      },
+      "held_out_client_test": {
+        "dice": 0.15790995198271088,
+        "iou": 0.09884832812176911,
+        "precision": 0.8507154471683457,
+        "recall": 0.10530098188540185,
+        "hd95": 126.41483102046277
+      },
+      "seen_minus_held_out": {
+        "dice": 0.010209753764898355,
+        "iou": 0.011204764184662167,
+        "precision": -0.1929301610327151,
+        "recall": 0.021518388326972504,
+        "hd95": -33.43310607327173
+      }
+    },
+    {
+      "fold": "C",
+      "train_clients": [
+        1,
+        2
+      ],
+      "held_out_client": 0,
+      "held_out_bias": "small",
+      "train_samples": [
+        228,
+        224
+      ],
+      "held_out_test_samples": 37,
+      "removed_overlapping_train_records": [
+        35,
+        38
+      ],
+      "removed_overlapping_seen_test_records": [
+        6,
+        8
+      ],
+      "initialization": "seeded_random_no_checkpoint",
+      "initial_parameter_sum": 2858.585205078125,
+      "training_seconds": 379.59433510003146,
+      "seen_client_test": {
+        "dice": 0.5784010513118523,
+        "iou": 0.4310709570657201,
+        "precision": 0.5157684919762971,
+        "recall": 0.7808327358729044,
+        "hd95": 69.47344604576666
+      },
+      "held_out_client_test": {
+        "dice": 0.3233544890503307,
+        "iou": 0.22294477347237832,
+        "precision": 0.25572651966289667,
+        "recall": 0.7568935409281126,
+        "hd95": 95.41245936698184
+      },
+      "seen_minus_held_out": {
+        "dice": 0.25504656226152156,
+        "iou": 0.20812618359334176,
+        "precision": 0.2600419723134005,
+        "recall": 0.023939194944791797,
+        "hd95": -25.93901332121517
+      }
+    }
+  ],
+  "held_out_macro_mean": {
+    "dice": 0.21904043443530438,
+    "iou": 0.14534685553651716,
+    "precision": 0.6419646309075188,
+    "recall": 0.3283960814016899,
+    "hd95": 113.69582374911283
+  },
+  "held_out_worst_client": {
+    "dice": 0.15790995198271088,
+    "iou": 0.09884832812176911,
+    "precision": 0.25572651966289667,
+    "recall": 0.10530098188540185,
+    "hd95": 126.41483102046277
+  }
+}
