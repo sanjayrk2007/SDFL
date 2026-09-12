@@ -1,0 +1,81 @@
+{
+  "experiment": "E15 Fault and Late-Client Robustness Suite",
+  "timestamp_start": "2026-09-12T09:42:52.124970+00:00",
+  "completed_at": "2026-09-12T09:42:56.981210+00:00",
+  "total_scenarios_tested": 10,
+  "all_scenarios_passed": true,
+  "scenarios": [
+    {
+      "scenario_id": "SC-01",
+      "name": "Normal On-Time Submissions",
+      "description": "3 clients submit valid updates within window Tr",
+      "expected_accepted": 3,
+      "actual_accepted": 3,
+      "passed": true
+    },
+    {
+      "scenario_id": "SC-02",
+      "name": "Late Client Rejection",
+      "description": "Client submits update after round expiry timestamp Tr",
+      "expected_status": "expired",
+      "actual_status": "expired",
+      "passed": true
+    },
+    {
+      "scenario_id": "SC-03",
+      "name": "Replay / Duplicate Protection",
+      "description": "Replay of consumed UID_r within or across rounds",
+      "expected_status": "replay_detected",
+      "actual_status": "replay_detected",
+      "passed": true
+    },
+    {
+      "scenario_id": "SC-04",
+      "name": "Forged Signature Rejection",
+      "description": "Attacker generates fake certificate signature",
+      "expected_status": "invalid_signature",
+      "actual_status": "invalid_signature",
+      "passed": true
+    },
+    {
+      "scenario_id": "SC-05",
+      "name": "Key Context Mismatch Rejection",
+      "description": "Submission from stale or different round key context",
+      "expected_status": "mismatch",
+      "actual_status": "mismatch",
+      "passed": true
+    },
+    {
+      "scenario_id": "SC-06",
+      "name": "Tampered AAD Authentication Failure",
+      "description": "Ciphertext encrypted under mismatched AAD binding fails AES-GCM decryption tag",
+      "passed": true
+    },
+    {
+      "scenario_id": "SC-07",
+      "name": "Partial Client Dropout Graceful Aggregation",
+      "description": "1 client crashes/drops; remaining 2 clients successfully aggregate",
+      "expected_accepted": 2,
+      "actual_accepted": 2,
+      "passed": true
+    },
+    {
+      "scenario_id": "SC-08",
+      "name": "Total Dropout Round Handling",
+      "description": "Zero client updates received; round terminates cleanly without corrupting global model",
+      "passed": true
+    },
+    {
+      "scenario_id": "SC-09",
+      "name": "Post-Round Decryption Key Destruction",
+      "description": "Round key zeroed in memory; retrospective recovery impossible",
+      "passed": true
+    },
+    {
+      "scenario_id": "SC-10",
+      "name": "Subsequent Round Recovery",
+      "description": "System issues fresh certificate and key context; normal federated learning resumes seamlessly",
+      "passed": true
+    }
+  ]
+}
