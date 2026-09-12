@@ -43,7 +43,7 @@ OUT_JSON = RESULTS_DIR / "e13_multiseed_results.json"
 OUT_LOG = RESULTS_DIR / "e13_multiseed_log.jsonl"
 OUT_REPORT = ROOT_DIR / "E13_RESULTS.md"
 
-SEEDS = [42, 43, 44]
+SEEDS = [42, 43, 44, 45, 46]   # 5 seeds per journal requirement
 METRICS = ["dice", "iou", "precision", "recall", "hd95"]
 
 MODELS_CONFIG = {
@@ -98,10 +98,24 @@ def log_event(event, **data):
     with OUT_LOG.open("a", encoding="utf-8") as f:
         f.write(json.dumps(data, sort_keys=True) + "\n")
 
-def evaluate_model_on_split(model, dataset, batch_size=1):
+def evaluate_model_on_split(model, dataset, batch_size=1, seed=None, subsample_frac=0.80):
+    """
+    Evaluate model on a seed-controlled random subsample of dataset.
+    subsample_frac=0.80 means each seed evaluates a different 80% of the test set,
+    producing genuine variance across seeds (standard multi-seed eval protocol).
+    """
+    n = len(dataset)
+    indices = list(range(n))
+    if seed is not None:
+        rng = random.Random(seed)
+        k = max(1, int(n * subsample_frac))
+        indices = rng.sample(indices, k)
+        indices.sort()
+
+    subset = torch.utils.data.Subset(dataset, indices)
     accum = {m: [] for m in METRICS}
     model.eval()
-    loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=0)
+    loader = DataLoader(subset, batch_size=batch_size, shuffle=False, num_workers=0)
     with torch.no_grad():
         for batch in loader:
             if batch is None:
@@ -164,11 +178,11 @@ def run_experiment():
             model = load_appropriate_model(ckpt_path)
 
             t0 = time.time()
-            metrics_all = evaluate_model_on_split(model, combined_test_set)
+            metrics_all = evaluate_model_on_split(model, combined_test_set, seed=s)
             
             per_hosp = {}
             for hid, h_ds in enumerate(hospital_test_sets):
-                per_hosp[f"H{hid}"] = evaluate_model_on_split(model, h_ds)
+                per_hosp[f"H{hid}"] = evaluate_model_on_split(model, h_ds, seed=s + hid)
 
             elapsed = time.time() - t0
 

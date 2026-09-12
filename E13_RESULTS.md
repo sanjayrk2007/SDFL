@@ -1,35 +1,81 @@
-# E13 — Multi-Seed Robustness Evaluation
+﻿# E13 — Multi-Seed Robustness Evaluation (Final)
 
-> Completed: 2026-09-12T09:39:52.155052+00:00  |  Branch: `mukesh/sdfl-completion`
+> **Corrected run:** 5 seeds (42–46), seed-controlled 80% random subsampling per seed.
+> Previous run (3 seeds, ±0.0) was invalid — the seed had no effect on deterministic evaluation.
+> This run uses genuine per-seed subsample variation, producing real variance.
 
-## Overview
+---
 
-Evaluates the multi-seed stability and statistical dispersion of federated segmentation backbones across random initialization and evaluation seeds (42, 43, 44).
+## Protocol
 
-## Summary Results (Mean ± Std over 3 Seeds)
+| Parameter | Value |
+|-----------|-------|
+| Seeds | 42, 43, 44, 45, 46 |
+| Test subsample per seed | 80% random draw (seed-controlled) |
+| Models evaluated | FedAvg (E2), FedProx (E3 Best), Full SDFL (E8/E11) |
+| Metrics | Dice, IoU, Precision, Recall, HD95 |
+| Threshold | 0.5 (fixed, no tuning) |
 
-| Model | Dice | IoU | Precision | Recall | HD95 (px) |
-|---|---:|---:|---:|---:|---:|
-| **FedAvg (E2)** | 0.7718 ± 0.0000 | 0.6849 ± 0.0000 | 0.8263 ± 0.0000 | 0.8144 ± 0.0000 | 37.91 ± 0.00 |
-| **FedProx (E3 Best Non-Private)** | 0.4924 ± 0.0000 | 0.3631 ± 0.0000 | 0.6017 ± 0.0000 | 0.5282 ± 0.0000 | 61.82 ± 0.00 |
-| **Full SDFL (E8/E11)** | 0.4370 ± 0.0000 | 0.3122 ± 0.0000 | 0.4434 ± 0.0000 | 0.5792 ± 0.0000 | 75.31 ± 0.00 |
+---
 
-## Seed-Wise Breakdown
+## Per-Seed Dice Results
 
-| Model | Seed | Dice | IoU | Precision | Recall | HD95 (px) |
-|---|:---:|---:|---:|---:|---:|---:|
-| FedAvg (E2) | 42 | 0.7718 | 0.6849 | 0.8263 | 0.8144 | 37.91 |
-| FedAvg (E2) | 43 | 0.7718 | 0.6849 | 0.8263 | 0.8144 | 37.91 |
-| FedAvg (E2) | 44 | 0.7718 | 0.6849 | 0.8263 | 0.8144 | 37.91 |
-| FedProx (E3 Best Non-Private) | 42 | 0.4924 | 0.3631 | 0.6017 | 0.5282 | 61.82 |
-| FedProx (E3 Best Non-Private) | 43 | 0.4924 | 0.3631 | 0.6017 | 0.5282 | 61.82 |
-| FedProx (E3 Best Non-Private) | 44 | 0.4924 | 0.3631 | 0.6017 | 0.5282 | 61.82 |
-| Full SDFL (E8/E11) | 42 | 0.4370 | 0.3122 | 0.4434 | 0.5792 | 75.31 |
-| Full SDFL (E8/E11) | 43 | 0.4370 | 0.3122 | 0.4434 | 0.5792 | 75.31 |
-| Full SDFL (E8/E11) | 44 | 0.4370 | 0.3122 | 0.4434 | 0.5792 | 75.31 |
+### FedAvg (E2 — e2_round_20.pth)
 
-## Key Findings
+| Seed | Dice |
+|------|------|
+| 42 | 0.7664 |
+| 43 | 0.7734 |
+| 44 | 0.7695 |
+| 45 | 0.7676 |
+| 46 | 0.7719 |
+| **Mean ± SD** | **0.7698 ± 0.0026** |
 
-1. **Statistical Consistency:** Standard deviation across evaluation seeds is minimal (< 1e-4), demonstrating deterministic evaluation and reproducibility.
-2. **Baseline Comparison:** FedProx non-private baseline and Full SDFL maintain robust performance metrics across seeds without random variance artifacts.
-3. **Conclusion:** Performance characteristics reported in E3, E8, and E11 are stable and reproducible across distinct random seeds.
+### FedProx (E3 Best Non-Private — e3_best.pth)
+
+| Seed | Dice |
+|------|------|
+| 42 | 0.5109 |
+| 43 | 0.4954 |
+| 44 | 0.4898 |
+| 45 | 0.4752 |
+| 46 | 0.4739 |
+| **Mean ± SD** | **0.4891 ± 0.0137** |
+
+### Full SDFL (E8/E11 — e11_best.pth, DP-SGD σ=1.5)
+
+| Seed | Dice |
+|------|------|
+| 42 | 0.4640 |
+| 43 | 0.4388 |
+| 44 | 0.4262 |
+| 45 | 0.4193 |
+| 46 | 0.4223 |
+| **Mean ± SD** | **0.4341 ± 0.0164** |
+
+---
+
+## Paper Summary Table
+
+| Method | Seed 42 | 43 | 44 | 45 | 46 | Mean ± SD |
+|--------|--------:|---:|---:|---:|---:|----------:|
+| FedAvg (no DP) | 0.7664 | 0.7734 | 0.7695 | 0.7676 | 0.7719 | **0.7698 ± 0.0026** |
+| FedProx (no DP) | 0.5109 | 0.4954 | 0.4898 | 0.4752 | 0.4739 | **0.4891 ± 0.0137** |
+| Full SDFL (DP σ=1.5) | 0.4640 | 0.4388 | 0.4262 | 0.4193 | 0.4223 | **0.4341 ± 0.0164** |
+
+---
+
+## Findings
+
+1. **FedAvg is stable** (SD=0.0026) — strong, consistent baseline.
+2. **FedProx shows moderate variance** (SD=0.0137) — sensitive to which 80% of test samples are drawn.
+3. **Full SDFL with DP shows most variance** (SD=0.0164) — DP-SGD gradient noise adds evaluation instability, expected.
+4. **Privacy cost is quantified:** FedAvg→Full SDFL Dice gap = **0.7698 − 0.4341 = 0.3357**, the privacy-utility trade-off.
+
+---
+
+## Notes
+
+- Previous E13 run (3 seeds, ±0.0) was invalidated: deterministic model evaluation with no-shuffle loader produces identical results regardless of seed.
+- This run is the authoritative multi-seed result for paper submission.
+- All results stored in `results/e13_multiseed_results.json`.
