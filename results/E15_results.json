@@ -1,0 +1,122 @@
+{
+    "experiment_name": "E15",
+    "timestamp": 1788595053.4198039,
+    "git_commit_hash": "e5fe450f1a351badc790233f5f058364dbbbf4e0",
+    "branch": "hospital-demo-fixes-threshold-fix",
+    "seed": 42,
+    "configuration": {
+        "exp_name": "E15",
+        "seed": 42,
+        "num_rounds": 5,
+        "local_epochs": 1,
+        "num_clients": 3,
+        "hospital_split": "hospital_splits.json",
+        "dp_params": {
+            "mu": 0.001,
+            "C": 2.0,
+            "sigma": 1.5
+        },
+        "temporal_window": 10.0,
+        "checkpoint_path": "checkpoints",
+        "output_path": "results",
+        "dry_run": false,
+        "smoke_test": false
+    },
+    "hardware_info": {
+        "system": "Darwin",
+        "release": "22.4.0",
+        "machine": "arm64",
+        "python_version": "3.11.11",
+        "pytorch_version": "2.11.0",
+        "cuda_available": false
+    },
+    "runtime": 0.08062505722045898,
+    "status": "completed",
+    "errors": [],
+    "results": [
+        {
+            "fault": "baseline_valid",
+            "server_crashed": false,
+            "is_valid": true,
+            "reason": "accepted",
+            "expected_valid": true
+        },
+        {
+            "fault": "client_dropout",
+            "server_crashed": false,
+            "is_valid": false,
+            "reason": "dropped_out",
+            "expected_valid": false
+        },
+        {
+            "fault": "delayed_client",
+            "server_crashed": false,
+            "is_valid": false,
+            "reason": "expired",
+            "expected_valid": false
+        },
+        {
+            "fault": "expired_update",
+            "server_crashed": false,
+            "is_valid": false,
+            "reason": "expired",
+            "expected_valid": false
+        },
+        {
+            "fault": "duplicate_replay",
+            "server_crashed": false,
+            "is_valid": true,
+            "reason": "accepted_but_overwritten",
+            "expected_valid": false
+        },
+        {
+            "fault": "modified_ciphertext",
+            "server_crashed": false,
+            "is_valid": false,
+            "reason": "decryption_failed",
+            "expected_valid": false
+        },
+        {
+            "fault": "modified_certificate",
+            "server_crashed": false,
+            "is_valid": false,
+            "reason": "invalid_signature",
+            "expected_valid": false
+        },
+        {
+            "fault": "wrong_key_context",
+            "server_crashed": false,
+            "is_valid": false,
+            "reason": "mismatch",
+            "expected_valid": false
+        },
+        {
+            "fault": "cross_round_substitution",
+            "server_crashed": false,
+            "is_valid": false,
+            "reason": "invalid_signature",
+            "expected_valid": false
+        },
+        {
+            "fault": "reordered_update",
+            "server_crashed": false,
+            "is_valid": true,
+            "reason": "accepted",
+            "expected_valid": true
+        },
+        {
+            "fault": "truncated_ciphertext",
+            "server_crashed": false,
+            "is_valid": false,
+            "reason": "decryption_failed",
+            "expected_valid": true
+        },
+        {
+            "fault": "invalid_signature",
+            "server_crashed": false,
+            "is_valid": false,
+            "reason": "validation_error: a bytes-like object is required, not 'str'",
+            "expected_valid": false
+        }
+    ]
+}

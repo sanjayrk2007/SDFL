@@ -1,0 +1,13 @@
+fault,server_crashed,is_valid,reason,expected_valid
+baseline_valid,False,True,accepted,True
+client_dropout,False,False,dropped_out,False
+delayed_client,False,False,expired,False
+expired_update,False,False,expired,False
+duplicate_replay,False,True,accepted_but_overwritten,False
+modified_ciphertext,False,False,decryption_failed,False
+modified_certificate,False,False,invalid_signature,False
+wrong_key_context,False,False,mismatch,False
+cross_round_substitution,False,False,invalid_signature,False
+reordered_update,False,True,accepted,True
+truncated_ciphertext,False,False,decryption_failed,True
+invalid_signature,False,False,"validation_error: a bytes-like object is required, not 'str'",False
