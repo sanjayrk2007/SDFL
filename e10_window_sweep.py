@@ -20,7 +20,7 @@ from crypto import (
     write_audit_log,
     server_aggregate
 )
-from e7_temporal import TemporalCheckpointingSecAgg
+from e7_temporal import TemporalCheckpointingSecAgg, SECRET_KEY
 
 class DummyFitRes:
     def __init__(self, metrics, num_examples=100):
@@ -81,7 +81,7 @@ def run_e10_temporal_window_sweep(window_durations=[30, 60, 120, 300, 600, 1200]
     if os.path.exists(sweep_log_path):
         os.remove(sweep_log_path)
 
-    secret_key = b"sdfl_coordinator_signing_secret_key_32bytes"
+    secret_key = SECRET_KEY  # imported from e7_temporal (env-var backed; see get_coordinator_secret_key)
     start_time = time.time()
     sweep_results = {}
 
@@ -130,7 +130,7 @@ def run_e10_temporal_window_sweep(window_durations=[30, 60, 120, 300, 600, 1200]
                 uid = str(uuid.uuid4())
                 aad_bytes = compute_aad_bytes(cert, sig, uid)
                 weights = generate_mock_weights(seed=client_seed)
-                ct = client_encrypt(weights, round_key, aad=aad_bytes)
+                ct = client_encrypt(weights, round_key, associated_data=aad_bytes)
 
                 fit_res_metrics = {
                     "nonce_hex": ct["nonce"].hex(),

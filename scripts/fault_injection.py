@@ -161,7 +161,7 @@ class FaultInjectionExperiment(ExperimentRunner):
                             mod_ct_bytes[0] ^= 0xFF
                             ct_dict["ciphertext"] = bytes(mod_ct_bytes)
                             
-                        crypto.decrypt_update(ct_dict, key)
+                        crypto.decrypt_update(ct_dict, key, associated_data=None)
                     except Exception as e:
                         reason = "decryption_failed"
                         is_valid = False

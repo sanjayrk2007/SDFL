@@ -184,7 +184,7 @@ def test_2_legitimate_update_decrypts_successfully():
         "associated_data": reconstructed_aad,
     }
 
-    decrypted_weights = decrypt_update(ct_dict, round_key)
+    decrypted_weights = decrypt_update(ct_dict, round_key, associated_data=None)
     assert len(decrypted_weights) == len(weights), "Item 2 FAILED: Layer count mismatch"
     for dw, ow in zip(decrypted_weights, weights):
         assert np.array_equal(dw, ow), "Item 2 FAILED: Decrypted numerical weights do not match original"
@@ -285,7 +285,7 @@ def test_4_modified_ciphertext_rejected():
         "associated_data": pkg_mod_ct["canonical_aad"]
     }
     try:
-        decrypt_update(ct_dict, round_key)
+        decrypt_update(ct_dict, round_key, associated_data=None)
         assert False, "Item 4 FAILED: Modified ciphertext decrypted successfully!"
     except InvalidTag:
         pass  # Expected
@@ -307,7 +307,7 @@ def test_5_wrong_key_rejected():
     pkg = _build_test_update(round_id, 0, m_hash, key_ctx, correct_key, weights)
 
     try:
-        decrypt_update(pkg["ct"], wrong_key)
+        decrypt_update(pkg["ct"], wrong_key, associated_data=None)
         assert False, "Item 5 FAILED: Decryption succeeded with wrong key!"
     except InvalidTag:
         pass  # Expected
@@ -436,7 +436,7 @@ def test_8_key_destruction_prevents_subsequent_decryption():
 
     # 3. Verify attempting decryption with the zeroed/destroyed key raises InvalidTag
     try:
-        decrypt_update(pkg["ct"], saved_key_ref)
+        decrypt_update(pkg["ct"], saved_key_ref, associated_data=None)
         assert False, "Item 8 FAILED: Post-destruction decryption succeeded!"
     except InvalidTag:
         pass  # Expected

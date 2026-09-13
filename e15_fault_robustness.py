@@ -202,7 +202,7 @@ def create_client_update(client_id, template_weights, round_key, cert, sig, uid=
         aad_bytes = json.dumps(aad_data, sort_keys=True).encode()
 
     weights = [arr + np.random.normal(0, 1e-4, arr.shape).astype(arr.dtype) for arr in template_weights]
-    ct = client_encrypt(weights, round_key, aad=aad_bytes)
+    ct = client_encrypt(weights, round_key, associated_data=aad_bytes)
 
     return {
         "client_id": client_id,

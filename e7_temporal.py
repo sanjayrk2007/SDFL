@@ -31,7 +31,34 @@ from e2_server import hospital_loaders, DEVICE, ResUNetPlusPlus
 from e4_dpsgd import fix_model_for_opacus, get_parameters, set_parameters, weighted_average
 from e6_server import SanitizedSecAggDPSGDHospitalClient
 
-SECRET_KEY = b"sdfl_coordinator_signing_secret_key_32bytes"
+def get_coordinator_secret_key():
+    """
+    Returns the HMAC key used to sign/verify round certificates.
+
+    SECURITY: this key must never be a literal committed to source control —
+    anyone with read access to the repository could otherwise forge validly
+    signed certificates for any round (see SDFL_Preflight_Audit.md, Section 3).
+    The key is read from the SDFL_HMAC_SECRET_KEY environment variable
+    (utf-8 encoded). A hardcoded fallback is retained ONLY so that existing
+    unit tests / CPU smoke tests (`run_e7_tests`, `run_crypto_tests`, the
+    `scripts/security_attacks.py --attempts_per_seed 5` smoke run, etc.) keep
+    working out of the box; it must not be relied on for any real deployment,
+    committed result, or paper claim.
+    """
+    env_key = os.environ.get("SDFL_HMAC_SECRET_KEY")
+    if env_key:
+        return env_key.encode("utf-8")
+    print(
+        "[SECURITY WARNING] SDFL_HMAC_SECRET_KEY is not set — falling back to "
+        "the insecure, publicly-committed development key. Set "
+        "SDFL_HMAC_SECRET_KEY before running anything whose certificates/"
+        "results are meant to be trusted (see SDFL_Preflight_Audit.md, Section 3).",
+        file=sys.stderr,
+    )
+    return b"sdfl_coordinator_signing_secret_key_32bytes"
+
+
+SECRET_KEY = get_coordinator_secret_key()
 
 def compute_model_hash(state_dict):
     """
@@ -720,7 +747,7 @@ def run_e7_tests():
     bad_aad = compute_aad(round_id, client_id, "wrong_model_hash", key_context_id)
     ct_bad_aad = {"nonce": ct["nonce"], "ciphertext": ct["ciphertext"], "associated_data": bad_aad}
     try:
-        decrypt_update(ct_bad_aad, key)
+        decrypt_update(ct_bad_aad, key, associated_data=None)
         assert False, "Test M failed: Decryption should fail on AAD mismatch"
     except InvalidTag:
         print("Test L & M passed: AAD mismatch raised InvalidTag during decryption.")
@@ -743,7 +770,7 @@ def run_e7_tests():
     key_copy = bytearray(key)
     destroy_round_key(key_copy)
     try:
-        decrypt_update(ct, key_copy)
+        decrypt_update(ct, key_copy, associated_data=None)
         assert False, "Test 4 failed: Decryption succeeded with destroyed key!"
     except InvalidTag:
         print("Test 4 passed: Decryption with destroyed key raised InvalidTag.")

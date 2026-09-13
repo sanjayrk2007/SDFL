@@ -27,7 +27,7 @@ from crypto import (
     destroy_round_key,
     write_audit_log
 )
-from e7_temporal import TemporalCheckpointingSecAgg
+from e7_temporal import TemporalCheckpointingSecAgg, SECRET_KEY, compute_aad
 
 class DummyClientProxy:
     def __init__(self, cid):
@@ -48,12 +48,23 @@ def generate_mock_client_weights(seed=None):
     return [conv_weight, conv_bias]
 
 def compute_aad_bytes(cert, signature, uid):
-    aad_data = {
-        "cert": cert,
-        "signature": signature,
-        "UID_r": uid
-    }
-    return json.dumps(aad_data, sort_keys=True).encode("utf-8")
+    """
+    Delegates to the canonical, production e7_temporal.compute_aad() instead
+    of a bespoke {cert, signature, UID_r} scheme, so this attack harness's
+    "breaches" count is measured against the real AAD/certificate binding
+    that e8_server.py's aggregate_fit path actually uses (see
+    SDFL_Preflight_Audit.md, Section 3/5). `signature` and `uid` are kept as
+    parameters for call-site compatibility but are intentionally NOT part of
+    the AAD, matching the production field set (round_id, client_id,
+    model_hash, key_context_id).
+    """
+    client_id = cert["participants"][0]
+    return compute_aad(
+        round_id=cert["round_id"],
+        client_id=client_id,
+        model_hash=cert["model_hash"],
+        key_context_id=cert["key_context_id"],
+    )
 
 def clopper_pearson_zero_success(n, confidence=0.95):
     """Exact Clopper-Pearson upper bound for k=0 successes in n trials."""
@@ -80,7 +91,7 @@ def run_e9_retrospective_breach_attack(trials_per_condition=1000):
     if os.path.exists(attack_log_path):
         os.remove(attack_log_path)
 
-    secret_key = b"sdfl_coordinator_signing_secret_key_32bytes"
+    secret_key = SECRET_KEY  # imported from e7_temporal (env-var backed; see get_coordinator_secret_key)
     start_time = time.time()
 
     attack_results = {
@@ -138,7 +149,7 @@ def run_e9_retrospective_breach_attack(trials_per_condition=1000):
         # 2. Key generation and client encryption
         round_key = generate_round_key()
         weights = generate_mock_client_weights(seed=trial)
-        ct = client_encrypt(weights, round_key, aad=aad_bytes)
+        ct = client_encrypt(weights, round_key, associated_data=aad_bytes)
 
         # 3. Post-round key destruction
         destroy_round_key(round_key)
@@ -146,7 +157,7 @@ def run_e9_retrospective_breach_attack(trials_per_condition=1000):
 
         # 4. Attacker attempts decryption with zeroed key
         try:
-            recovered = decrypt_update(ct, zeroed_key, aad=aad_bytes)
+            recovered = decrypt_update(ct, zeroed_key, associated_data=aad_bytes)
             a1_success += 1
             reason = "recovered_plaintext"
         except InvalidTag:
@@ -199,14 +210,14 @@ def run_e9_retrospective_breach_attack(trials_per_condition=1000):
 
         round_key = generate_round_key()
         weights = generate_mock_client_weights(seed=trial + 1000)
-        ct = client_encrypt(weights, round_key, aad=aad_bytes)
+        ct = client_encrypt(weights, round_key, associated_data=aad_bytes)
         destroy_round_key(round_key)
 
         # Attacker guesses a random 256-bit key
         guessed_key = generate_round_key()
 
         try:
-            recovered = decrypt_update(ct, guessed_key, aad=aad_bytes)
+            recovered = decrypt_update(ct, guessed_key, associated_data=aad_bytes)
             a2_success += 1
             reason = "recovered_plaintext"
         except InvalidTag:
@@ -259,7 +270,7 @@ def run_e9_retrospective_breach_attack(trials_per_condition=1000):
 
         round_key = generate_round_key()
         weights = generate_mock_client_weights(seed=trial + 2000)
-        ct = client_encrypt(weights, round_key, aad=aad_bytes)
+        ct = client_encrypt(weights, round_key, associated_data=aad_bytes)
         destroy_round_key(round_key)
 
         # Attacker tests substitution using a foreign round key
@@ -277,14 +288,14 @@ def run_e9_retrospective_breach_attack(trials_per_condition=1000):
 
         sub_success = False
         try:
-            _ = decrypt_update(ct, other_round_key, aad=aad_bytes)
+            _ = decrypt_update(ct, other_round_key, associated_data=aad_bytes)
             sub_success = True
         except InvalidTag:
             pass
 
         if not sub_success:
             try:
-                _ = decrypt_update(ct, other_round_key, aad=other_aad_bytes)
+                _ = decrypt_update(ct, other_round_key, associated_data=other_aad_bytes)
                 sub_success = True
             except InvalidTag:
                 pass
@@ -340,7 +351,7 @@ def run_e9_retrospective_breach_attack(trials_per_condition=1000):
 
         round_key = generate_round_key()
         weights = generate_mock_client_weights(seed=trial + 3000)
-        ct = client_encrypt(weights, round_key, aad=aad_bytes)
+        ct = client_encrypt(weights, round_key, associated_data=aad_bytes)
         destroy_round_key(round_key)
 
         # Attacker tampers with certificate to forge active status
@@ -372,7 +383,7 @@ def run_e9_retrospective_breach_attack(trials_per_condition=1000):
         decryption_success = False
         fake_key = generate_round_key()
         try:
-            _ = decrypt_update(ct, fake_key, aad=tampered_aad_bytes)
+            _ = decrypt_update(ct, fake_key, associated_data=tampered_aad_bytes)
             decryption_success = True
         except InvalidTag:
             pass
@@ -428,7 +439,7 @@ def run_e9_retrospective_breach_attack(trials_per_condition=1000):
 
         round_key = generate_round_key()
         true_weights = generate_mock_client_weights(seed=trial + 4000)
-        ct = client_encrypt(true_weights, round_key, aad=aad_bytes)
+        ct = client_encrypt(true_weights, round_key, associated_data=aad_bytes)
         destroy_round_key(round_key)
 
         # Attacker attempts to forge/reconstruct an authenticated plaintext candidate
@@ -452,7 +463,7 @@ def run_e9_retrospective_breach_attack(trials_per_condition=1000):
         candidate_key = generate_round_key()
         authenticated_recovery = False
         try:
-            decrypted = decrypt_update(ct, candidate_key, aad=aad_bytes)
+            decrypted = decrypt_update(ct, candidate_key, associated_data=aad_bytes)
             authenticated_recovery = True
         except InvalidTag:
             authenticated_recovery = False

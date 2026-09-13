@@ -152,7 +152,7 @@ class ScalabilityExperiment(ExperimentRunner):
         start = time.perf_counter()
         decrypted_weights = []
         for i, ct in enumerate(ciphertexts):
-            dec = crypto.decrypt_update(ct, strategy.round_keys[key_context_id])
+            dec = crypto.decrypt_update(ct, strategy.round_keys[key_context_id], associated_data=None)
             decrypted_weights.append(dec)
         dec_time = time.perf_counter() - start
         

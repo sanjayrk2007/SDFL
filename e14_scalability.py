@@ -147,7 +147,7 @@ def run_scalability_benchmark():
                 client_weights = [arr + np.random.normal(0, 1e-4, arr.shape).astype(arr.dtype) for arr in template_weights]
 
                 t_enc_0 = time.perf_counter()
-                ct = client_encrypt(client_weights, round_key, aad=aad_bytes)
+                ct = client_encrypt(client_weights, round_key, associated_data=aad_bytes)
                 t_enc = (time.perf_counter() - t_enc_0) * 1000.0
                 client_enc_times.append(t_enc)
 

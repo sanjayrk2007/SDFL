@@ -1,13 +1,22 @@
-torch
-torchvision
-flwr[simulation]
-opacus
-cryptography
-opencv-python
-Pillow
-albumentations
+# NOTE: the original environment that produced the committed checkpoints/
+# results/*.json was not recoverable (no lockfile / pip freeze was ever
+# committed), so these are best-effort pins to a known mutually-compatible
+# set (torch/torchvision/opacus's GradSampleModule wrapping is version-
+# sensitive) rather than a guaranteed match to whatever produced the
+# existing numbers. Regenerate this file with `pip freeze` from the actual
+# training environment if that environment can still be found, and treat
+# E1-E15 as needing a rerun-and-diff against existing results either way.
+# See SDFL_Preflight_Audit.md, Section 3 (LOW finding) / Section 16 (P1-3).
+torch==2.3.1
+torchvision==0.18.1
+flwr[simulation]==1.8.0
+opacus==1.4.0
+cryptography==42.0.5
+opencv-python==4.9.0.80
+Pillow==10.3.0
+albumentations==1.4.4
 numpy<2.0
-scikit-learn
-medpy
-tqdm
-matplotlib
+scikit-learn==1.4.2
+medpy==0.4.0
+tqdm==4.66.4
+matplotlib==3.8.4

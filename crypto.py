@@ -211,12 +211,19 @@ def encrypt_update(weights, round_key, associated_data=None):
         res["associated_data"] = associated_data
     return res
 
-def decrypt_update(encrypted_data, round_key, associated_data=None):
+def decrypt_update(encrypted_data, round_key, associated_data):
+    """
+    SECURITY: `associated_data` is a required argument (no default) on purpose.
+    Earlier revisions defaulted it to None and, when omitted, silently pulled
+    the AAD to check from encrypted_data["associated_data"] itself — i.e. from
+    the same untrusted payload being decrypted, the classic "AAD
+    self-authenticates itself" anti-pattern (see SDFL_Preflight_Audit.md,
+    Section 3). Callers must now explicitly compute/pass the canonical AAD
+    (e.g. via e7_temporal.compute_aad(...)), or explicitly pass None if a
+    call site genuinely uses no AAD.
+    """
     aesgcm = AESGCM(bytes(round_key))
-    aad = associated_data
-    if aad is None and isinstance(encrypted_data, dict):
-        aad = encrypted_data.get("associated_data", encrypted_data.get("aad", None))
-    aad = _format_aad(aad)
+    aad = _format_aad(associated_data)
 
     payload = aesgcm.decrypt(
         encrypted_data["nonce"],
@@ -414,14 +421,14 @@ def run_crypto_tests():
     # G. Encrypt/decrypt success
     key = generate_round_key()
     ct = encrypt_update(w_det, key)
-    dec = decrypt_update(ct, key)
+    dec = decrypt_update(ct, key, associated_data=None)
     assert np.array_equal(dec[0], w_det[0]), "Test G failed"
     print("Test G passed: Encrypt/decrypt success")
 
     # H. Wrong-key rejection
     wrong_key = generate_round_key()
     try:
-        decrypt_update(ct, wrong_key)
+        decrypt_update(ct, wrong_key, associated_data=None)
         assert False, "Test H failed: Decryption should fail with wrong key"
     except InvalidTag:
         print("Test H passed: Wrong-key rejection (InvalidTag)")
@@ -432,7 +439,7 @@ def run_crypto_tests():
     ct_bytes[0] ^= 0xFF
     mod_ct["ciphertext"] = bytes(ct_bytes)
     try:
-        decrypt_update(mod_ct, key)
+        decrypt_update(mod_ct, key, associated_data=None)
         assert False, "Test I failed: Decryption should fail with modified ciphertext"
     except InvalidTag:
         print("Test I passed: Modified ciphertext rejection (InvalidTag)")
@@ -443,7 +450,7 @@ def run_crypto_tests():
     n_bytes[0] ^= 0xFF
     mod_nonce["nonce"] = bytes(n_bytes)
     try:
-        decrypt_update(mod_nonce, key)
+        decrypt_update(mod_nonce, key, associated_data=None)
         assert False, "Test J failed: Decryption should fail with modified nonce"
     except InvalidTag:
         print("Test J passed: Modified nonce rejection (InvalidTag)")

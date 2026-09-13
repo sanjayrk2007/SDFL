@@ -12,7 +12,7 @@
 |--------|-------|-------|--------|---------|--------|-------------|
 | E1 | Dataset preparation & splits | Sameer | `scripts/dataset.py` | `hospital_splits.json` | DONE | 3 hospitals, Kvasir-SEG (612 train) |
 | E2 | FedAvg baseline | Sameer | `e2_server.py` | `results/e2_metrics.json` | DONE | Dice 0.4145 (in-dist), 0.4869 (OOD) |
-| E3 | FedProx μ sweep | Mukesh | `e3_fedprox_sweep.py` | `results/e3_results.json` | DONE | Best μ=0.0, Dice ~0.7718 |
+| E3 | FedProx μ sweep | Mukesh | `e3_fedprox.py` | `results/e3_results.json` | DONE — **result file not present in repo; regenerate from `e3_fedprox.py` and reconcile against README.md/FINAL_RESULTS.md's conflicting E3 numbers (see SDFL_Preflight_Audit.md, Section 9)** | Best μ=0.0, Dice ~0.7718 |
 | E5 | DP-SGD integration | Mukesh | `e4_dpsgd.py` | `results/e4_dpsgd_results.json` | DONE | ε=2.772, δ=1e-5 at σ=1.5 |
 | E7 | Temporal security protocol | Sanjay | `e7_temporal.py` | `results/e8_metrics.json` | DONE | 0% post-expiry decrypt success |
 | E8 | Full SDFL server eval | Shared | `e8_server.py` | `results/e8_metrics.json` | DONE | Combined DP+temporal+crypto |

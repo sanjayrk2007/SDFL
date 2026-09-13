@@ -28,7 +28,7 @@ from crypto import (
 from model import ResUNetPlusPlus
 from e2_server import DEVICE
 from e4_dpsgd import fix_model_for_opacus, get_parameters, set_parameters, weighted_average
-from e7_temporal import TemporalHospitalClient, TemporalCheckpointingSecAgg, compute_model_hash, compute_aad
+from e7_temporal import TemporalHospitalClient, TemporalCheckpointingSecAgg, compute_model_hash, compute_aad, SECRET_KEY
 from dataset import get_dataloaders, KvasirSegDataset
 
 # =========================================================================
@@ -563,7 +563,7 @@ def measure_privacy_metrics(model, test_loader, round_key):
     
     success = False
     try:
-        _ = decrypt_update(ct, round_key)
+        _ = decrypt_update(ct, round_key, associated_data=None)
         success = True
     except InvalidTag:
         success = False
@@ -626,7 +626,7 @@ def run_e8_simulation(num_rounds=20):
     C = 2.0
     sigma = 1.5
     window_seconds = 300
-    secret_key = b"sdfl_coordinator_signing_secret_key_32bytes"
+    secret_key = SECRET_KEY  # imported from e7_temporal (env-var backed; see get_coordinator_secret_key)
     
     strategy = FullSDFLStrategy(
         mu=mu,

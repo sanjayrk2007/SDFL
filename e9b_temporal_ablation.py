@@ -26,7 +26,7 @@ from crypto import (
     destroy_round_key,
     write_audit_log
 )
-from e7_temporal import TemporalCheckpointingSecAgg
+from e7_temporal import TemporalCheckpointingSecAgg, SECRET_KEY, compute_aad
 
 class DummyFitRes:
     def __init__(self, metrics, num_examples=100):
@@ -40,12 +40,23 @@ def generate_mock_weights(seed=42):
     return [w1, b1]
 
 def compute_aad_bytes(cert, signature, uid):
-    aad_data = {
-        "cert": cert,
-        "signature": signature,
-        "UID_r": uid
-    }
-    return json.dumps(aad_data, sort_keys=True).encode("utf-8")
+    """
+    Delegates to the canonical, production e7_temporal.compute_aad() instead
+    of a bespoke {cert, signature, UID_r} scheme, so this attack harness's
+    "breaches" count is measured against the real AAD/certificate binding
+    that e8_server.py's aggregate_fit path actually uses (see
+    SDFL_Preflight_Audit.md, Section 3/5). `signature` and `uid` are kept as
+    parameters for call-site compatibility but are intentionally NOT part of
+    the AAD, matching the production field set (round_id, client_id,
+    model_hash, key_context_id).
+    """
+    client_id = cert["participants"][0]
+    return compute_aad(
+        round_id=cert["round_id"],
+        client_id=client_id,
+        model_hash=cert["model_hash"],
+        key_context_id=cert["key_context_id"],
+    )
 
 def run_e9b_temporal_security_ablation(num_trials=100):
     print("=" * 85)
@@ -61,7 +72,7 @@ def run_e9b_temporal_security_ablation(num_trials=100):
     if os.path.exists(ablation_log_path):
         os.remove(ablation_log_path)
 
-    secret_key = b"sdfl_coordinator_signing_secret_key_32bytes"
+    secret_key = SECRET_KEY  # imported from e7_temporal (env-var backed; see get_coordinator_secret_key)
 
     # Pre-calculated segmentation benchmark metrics from E1-E8 experimental campaign:
     # Row A: Baseline FedAvg (E2)
@@ -201,7 +212,7 @@ def run_e9b_temporal_security_ablation(num_trials=100):
                 peak_storage = comm_bytes
                 ct = {"raw": payload}
             else:
-                ct = client_encrypt(client_weights, active_key, aad=aad_bytes)
+                ct = client_encrypt(client_weights, active_key, associated_data=aad_bytes)
                 enc_time_ms = (time.perf_counter() - t_enc_start) * 1000.0
                 comm_bytes = len(ct["ciphertext"]) + len(ct["nonce"]) + (len(aad_bytes) if aad_bytes else 0)
                 peak_storage = comm_bytes + len(active_key)
@@ -215,7 +226,7 @@ def run_e9b_temporal_security_ablation(num_trials=100):
             if row_cfg["encryption"] == "none":
                 deser = deserialize_weights(ct["raw"])
             else:
-                deser = decrypt_update(ct, active_key, aad=aad_bytes)
+                deser = decrypt_update(ct, active_key, associated_data=aad_bytes)
             agg_time_ms = (time.perf_counter() - t_agg_start) * 1000.0
             agg_times.append(agg_time_ms)
 
@@ -273,7 +284,7 @@ def run_e9b_temporal_security_ablation(num_trials=100):
             elif row_cfg["id"] in ["Row_E", "Row_F"]:
                 # Ephemeral key isolation: foreign key raises InvalidTag
                 try:
-                    decrypt_update(ct, foreign_key, aad=aad_bytes)
+                    decrypt_update(ct, foreign_key, associated_data=aad_bytes)
                 except InvalidTag:
                     wrong_context_rejects += 1
 
@@ -283,7 +294,7 @@ def run_e9b_temporal_security_ablation(num_trials=100):
                 # Full SDFL: destroy_round_key called post-round
                 destroy_round_key(active_key)
                 try:
-                    _ = decrypt_update(ct, active_key, aad=aad_bytes)
+                    _ = decrypt_update(ct, active_key, associated_data=aad_bytes)
                     post_expiry_breaches += 1
                 except InvalidTag:
                     # Successful defense: post-expiry recovery prevented!
@@ -296,7 +307,7 @@ def run_e9b_temporal_security_ablation(num_trials=100):
                 # Attacker acquires ciphertext post-expiry and uses retained key from key store
                 retained_k = key_store[round_id]
                 try:
-                    _ = decrypt_update(ct, retained_k, aad=aad_bytes)
+                    _ = decrypt_update(ct, retained_k, associated_data=aad_bytes)
                     post_expiry_breaches += 1
                 except InvalidTag:
                     pass
