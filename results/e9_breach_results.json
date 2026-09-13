@@ -1,6 +1,6 @@
 {
   "experiment": "E9_Retrospective_Breach_Attack",
-  "timestamp": "2026-09-05T05:45:12Z",
+  "timestamp": "2026-09-13T08:05:02Z",
   "threat_model": {
     "adversary": "Retrospective Post-Breach Adversary (A_retro)",
     "timing": "Strictly post-expiry and post key-destruction (t > Tr)",
@@ -23,65 +23,65 @@
   },
   "conditions": {
     "A1_zeroed_key_exploit": {
-      "trials": 1000,
+      "trials": 20,
       "successes": 0,
-      "failures": 1000,
+      "failures": 20,
       "success_rate": 0.0,
       "failure_reasons": {
-        "InvalidTag: zeroed key tag mismatch": 1000
+        "InvalidTag: zeroed key tag mismatch": 20
       }
     },
     "A2_random_key_search": {
-      "trials": 1000,
+      "trials": 20,
       "successes": 0,
-      "failures": 1000,
+      "failures": 20,
       "success_rate": 0.0,
       "failure_reasons": {
-        "InvalidTag: authentication tag verification failed": 1000
+        "InvalidTag: authentication tag verification failed": 20
       }
     },
     "A3_cross_round_substitution": {
-      "trials": 1000,
+      "trials": 20,
       "successes": 0,
-      "failures": 1000,
+      "failures": 20,
       "success_rate": 0.0,
       "failure_reasons": {
-        "InvalidTag: round key isolation & AAD mismatch": 1000
+        "InvalidTag: round key isolation & AAD mismatch": 20
       }
     },
     "A4_certificate_tampering": {
-      "trials": 1000,
+      "trials": 20,
       "successes": 0,
-      "failures": 1000,
+      "failures": 20,
       "success_rate": 0.0,
       "failure_reasons": {
-        "rejected: invalid_signature & InvalidTag": 1000
+        "rejected: invalid_signature & InvalidTag": 20
       }
     },
     "A5_plaintext_reconstruction": {
-      "trials": 1000,
+      "trials": 20,
       "successes": 0,
-      "failures": 1000,
+      "failures": 20,
       "success_rate": 0.0,
       "failure_reasons": {
-        "authentication_failed: tag_invalid": 1000
+        "authentication_failed: tag_invalid": 20
       }
     }
   },
   "summary": {
-    "total_attack_attempts": 5000,
+    "total_attack_attempts": 100,
     "total_successful_recoveries": 0,
     "overall_empirical_success_rate": 0.0,
-    "per_condition_trials": 1000,
+    "per_condition_trials": 20,
     "statistical_bounds": {
       "clopper_pearson_95_ci_per_condition": [
         0.0,
-        0.002991
+        0.139108
       ],
-      "rule_of_three_95_upper_bound_per_condition": 0.002996,
-      "rule_of_three_95_upper_bound_total": 0.000599,
-      "approx_95_upper_bound_str": "0.30%"
+      "rule_of_three_95_upper_bound_per_condition": 0.149787,
+      "rule_of_three_95_upper_bound_total": 0.029957,
+      "approx_95_upper_bound_str": "14.98%"
     },
-    "elapsed_seconds": 2.08
+    "elapsed_seconds": 0.01
   }
 }

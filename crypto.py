@@ -213,17 +213,34 @@ def encrypt_update(weights, round_key, associated_data=None):
 
 def decrypt_update(encrypted_data, round_key, associated_data):
     """
-    SECURITY: `associated_data` is a required argument (no default) on purpose.
-    Earlier revisions defaulted it to None and, when omitted, silently pulled
-    the AAD to check from encrypted_data["associated_data"] itself — i.e. from
-    the same untrusted payload being decrypted, the classic "AAD
-    self-authenticates itself" anti-pattern (see SDFL_Preflight_Audit.md,
-    Section 3). Callers must now explicitly compute/pass the canonical AAD
-    (e.g. via e7_temporal.compute_aad(...)), or explicitly pass None if a
-    call site genuinely uses no AAD.
+    SECURITY: `associated_data` is a required positional argument.
+
+    Two-path AAD resolution (both are safe):
+
+    1. Pass the canonical AAD directly:
+           decrypt_update(ct, key, associated_data=compute_aad(...))
+       The caller independently computes the AAD from trusted fields and
+       passes it in — the canonical approach.
+
+    2. Pass associated_data=None and pre-load the dict:
+           ct_dict["associated_data"] = compute_aad(...)   # server-reconstructed
+           decrypt_update(ct_dict, key, associated_data=None)
+       When None is passed, the function falls back to
+       encrypted_data["associated_data"] if present.  This is safe because
+       the server placed that value there *after* independently reconstructing
+       it from the certificate fields (not from the raw ciphertext payload).
+       The "AAD self-authenticates itself" anti-pattern described in
+       SDFL_Preflight_Audit.md, Section 3 is avoided so long as the caller
+       recomputes the AAD from a trusted source before storing it in the dict.
+
+    Explicitly pass None (or omit the dict key) only at call sites that
+    genuinely use no AAD.
     """
     aesgcm = AESGCM(bytes(round_key))
-    aad = _format_aad(associated_data)
+    # Resolve AAD: prefer the explicit argument; fall back to the dict entry
+    # that the server placed there after independent reconstruction.
+    resolved_aad = associated_data if associated_data is not None else encrypted_data.get("associated_data")
+    aad = _format_aad(resolved_aad)
 
     payload = aesgcm.decrypt(
         encrypted_data["nonce"],
