@@ -116,7 +116,12 @@ def create_baseline_update(
 
     signature = sign_certificate(cert, secret_key)
 
+    hospital_id = 0
+    if client_id.startswith("client") and client_id[6:].isdigit():
+        hospital_id = int(client_id[6:])
+
     metrics = {
+        "hospital_id": hospital_id,
         "nonce_hex": ct["nonce"].hex(),
         "ciphertext_hex": ct["ciphertext"].hex(),
         "certificate": json.dumps(cert),

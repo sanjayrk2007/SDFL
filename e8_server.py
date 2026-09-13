@@ -23,32 +23,20 @@ from crypto import (
     sign_certificate,
     verify_certificate,
     write_audit_log,
+    server_aggregate,
 )
 from model import ResUNetPlusPlus
 from e2_server import DEVICE
 from e4_dpsgd import fix_model_for_opacus, get_parameters, set_parameters, weighted_average
-from e7_temporal import TemporalHospitalClient, TemporalCheckpointingSecAgg, compute_model_hash
+from e7_temporal import TemporalHospitalClient, TemporalCheckpointingSecAgg, compute_model_hash, compute_aad
 from dataset import get_dataloaders, KvasirSegDataset
 
 # =========================================================================
-# PART 1 — WEIGHTED AVERAGING FIX IN crypto.py (MONKEY-PATCH)
+# PART 1 — WEIGHTED AVERAGING FIX IN crypto.py
 # =========================================================================
 
 def _weighted_server_aggregate(list_of_ciphertexts, round_key, num_examples_list):
-    import numpy as np
-    from crypto import decrypt_update
-    decrypted_updates = [decrypt_update(ct, round_key) for ct in list_of_ciphertexts]
-    total = sum(num_examples_list)
-    if total == 0:
-        total = 1
-    aggregated = []
-    for layer_idx in range(len(decrypted_updates[0])):
-        weighted_sum = sum(
-            (n / total) * update[layer_idx]
-            for n, update in zip(num_examples_list, decrypted_updates)
-        )
-        aggregated.append(weighted_sum)
-    return aggregated
+    return server_aggregate(list_of_ciphertexts, round_key, num_examples_list=num_examples_list)
 
 # =========================================================================
 # PART 2 — MC DROPOUT UNCERTAINTY HEAD
@@ -143,16 +131,27 @@ class FullSDFLStrategy(TemporalCheckpointingSecAgg):
         try:
             # 1. Accept updates only if they satisfy validator rules
             for client_proxy, fit_res in results:
-                is_valid, reason = self.validate_update(fit_res, current_time)
+                is_valid, reason = self.validate_update(fit_res, client_proxy=client_proxy, current_time=current_time)
                 if not is_valid:
-                    print(f"Aggregator rejected update from client {client_proxy.cid}: {reason}")
+                    print(f"Aggregator rejected update from client {client_proxy.cid if hasattr(client_proxy, 'cid') else 'unknown'}: {reason}")
                     continue
                     
                 nonce = bytes.fromhex(fit_res.metrics["nonce_hex"])
                 ciphertext = bytes.fromhex(fit_res.metrics["ciphertext_hex"])
+                cert = json.loads(fit_res.metrics["certificate"])
+
+                # Reconstruct canonical AAD
+                aad = compute_aad(
+                    cert["round_id"],
+                    cert["client_id"],
+                    cert["model_hash"],
+                    cert["key_context_id"]
+                )
+
                 list_of_ciphertexts.append({
                     "nonce": nonce,
-                    "ciphertext": ciphertext
+                    "ciphertext": ciphertext,
+                    "associated_data": aad
                 })
                 
                 num_examples = fit_res.metrics.get("num_examples", fit_res.num_examples)
@@ -191,7 +190,7 @@ class FullSDFLStrategy(TemporalCheckpointingSecAgg):
             if list_of_ciphertexts and round_key is not None:
                 try:
                     # Use weighted average aggregation
-                    aggregated_weights = _weighted_server_aggregate(list_of_ciphertexts, round_key, num_examples_list)
+                    aggregated_weights = server_aggregate(list_of_ciphertexts, round_key, num_examples_list=num_examples_list)
                 except Exception as e:
                     print(f"Decryption / Aggregation failed: {e}")
 
@@ -223,6 +222,7 @@ class FullSDFLStrategy(TemporalCheckpointingSecAgg):
                 self.round_keys.pop(self.current_key_context_id, None)
                 
             self.cached_ciphertexts.pop(server_round, None)
+            self.seen_updates.pop(server_round, None)
             list_of_ciphertexts.clear()
             
             write_audit_log(self.AUDIT_LOG_PATH, {
@@ -500,7 +500,7 @@ def run_uncertainty_evaluation(model, test_loader, threshold=0.05):
 # =========================================================================
 
 def measure_system_metrics(strategy, num_rounds=3):
-    from crypto import generate_round_key, client_encrypt, destroy_round_key
+    from crypto import generate_round_key, client_encrypt, destroy_round_key, server_aggregate
     
     # Benchmarking on actual model parameters
     model = ResUNetPlusPlus()
@@ -517,10 +517,11 @@ def measure_system_metrics(strategy, num_rounds=3):
         clients_cts = []
         client_enc_times = []
         # 3 clients
-        for _ in range(3):
+        for i in range(3):
             weights_copy = [w.copy() for w in weights]
+            aad = compute_aad(r + 1, f"client{i}", "bench_model_hash", f"bench_ctx_{r}")
             t0 = time.time()
-            ct = client_encrypt(weights_copy, round_key)
+            ct = client_encrypt(weights_copy, round_key, associated_data=aad)
             t1 = time.time()
             client_enc_times.append(t1 - t0)
             clients_cts.append(ct)
@@ -532,7 +533,7 @@ def measure_system_metrics(strategy, num_rounds=3):
         # Aggregate
         num_examples_list = [100, 120, 80]
         t0 = time.time()
-        _ = _weighted_server_aggregate(clients_cts, round_key, num_examples_list)
+        _ = server_aggregate(clients_cts, round_key, num_examples_list=num_examples_list)
         t1 = time.time()
         aggregation_times.append(t1 - t0)
         
