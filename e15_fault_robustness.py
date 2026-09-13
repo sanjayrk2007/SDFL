@@ -49,7 +49,7 @@ from crypto import (
 )
 from e2_server import DEVICE, ResUNetPlusPlus, get_parameters, set_parameters
 from e4_dpsgd import fix_model_for_opacus
-from e7_temporal import compute_model_hash, SECRET_KEY
+from e7_temporal import compute_model_hash, SECRET_KEY, compute_aad
 
 RESULTS_DIR = ROOT_DIR / "results"
 RESULTS_DIR.mkdir(exist_ok=True)
@@ -144,12 +144,16 @@ class MockSDFLAggregator:
             cert_str = sub["certificate"]
             sig = sub["signature"]
             uid = sub["UID_r"]
-            aad_data = {
-                "cert": json.loads(cert_str),
-                "signature": sig,
-                "UID_r": uid
-            }
-            aad_bytes = json.dumps(aad_data, sort_keys=True).encode()
+            # Canonical AAD (bound to this client's own identity), not the
+            # bespoke {cert, signature, UID_r} scheme -- see
+            # SDFL_Preflight_Audit.md, Section 3/5.
+            cert_obj = json.loads(cert_str)
+            aad_bytes = compute_aad(
+                round_id=cert_obj["round_id"],
+                client_id=sub.get("client_id"),
+                model_hash=cert_obj["model_hash"],
+                key_context_id=cert_obj["key_context_id"],
+            )
             aad_list.append(aad_bytes)
             self.consumed_uids.add(uid)
 
@@ -165,7 +169,7 @@ class MockSDFLAggregator:
                     valid_ciphertexts,
                     round_key,
                     num_examples_list=num_examples_list,
-                    aad_list=aad_list
+                    associated_data_list=aad_list
                 )
                 decryption_success = True
             except Exception as e:
@@ -194,12 +198,15 @@ def create_client_update(client_id, template_weights, round_key, cert, sig, uid=
     if custom_aad is not None:
         aad_bytes = custom_aad
     else:
-        aad_data = {
-            "cert": cert,
-            "signature": sig,
-            "UID_r": uid
-        }
-        aad_bytes = json.dumps(aad_data, sort_keys=True).encode()
+        # Canonical AAD (bound to this client's own identity), matching
+        # aggregate_submissions()'s server-side re-derivation -- see
+        # SDFL_Preflight_Audit.md, Section 3/5.
+        aad_bytes = compute_aad(
+            round_id=cert["round_id"],
+            client_id=client_id,
+            model_hash=cert["model_hash"],
+            key_context_id=cert["key_context_id"],
+        )
 
     weights = [arr + np.random.normal(0, 1e-4, arr.shape).astype(arr.dtype) for arr in template_weights]
     ct = client_encrypt(weights, round_key, associated_data=aad_bytes)

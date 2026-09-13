@@ -49,7 +49,7 @@ from crypto import (
 )
 from e2_server import DEVICE, ResUNetPlusPlus, get_parameters
 from e4_dpsgd import fix_model_for_opacus
-from e7_temporal import compute_model_hash, SECRET_KEY
+from e7_temporal import compute_model_hash, SECRET_KEY, compute_aad
 
 RESULTS_DIR = ROOT_DIR / "results"
 RESULTS_DIR.mkdir(exist_ok=True)
@@ -136,12 +136,15 @@ def run_scalability_benchmark():
             for i in range(k):
                 # Generate unique transaction UID for replay protection
                 uid = str(uuid.uuid4())
-                aad_data = {
-                    "cert": cert,
-                    "signature": sig,
-                    "UID_r": uid
-                }
-                aad_bytes = json.dumps(aad_data, sort_keys=True).encode()
+                # Canonical AAD (bound to this client's own identity), not the
+                # bespoke {cert, signature, UID_r} scheme -- see
+                # SDFL_Preflight_Audit.md, Section 3/5.
+                aad_bytes = compute_aad(
+                    round_id=cert["round_id"],
+                    client_id=participants[i],
+                    model_hash=cert["model_hash"],
+                    key_context_id=cert["key_context_id"],
+                )
                 
                 # Synthetic client update (small perturbation to simulate training)
                 client_weights = [arr + np.random.normal(0, 1e-4, arr.shape).astype(arr.dtype) for arr in template_weights]
@@ -175,7 +178,7 @@ def run_scalability_benchmark():
                 list_of_ciphertexts=client_ciphertexts,
                 round_key=round_key,
                 num_examples_list=client_sample_counts,
-                aad_list=aad_list
+                associated_data_list=aad_list
             )
             agg_time = (time.perf_counter() - t_agg_0) * 1000.0
 

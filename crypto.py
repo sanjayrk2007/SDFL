@@ -311,17 +311,41 @@ def write_audit_log(
 def client_encrypt(update_weights, round_key, associated_data=None):
     return encrypt_update(update_weights, round_key, associated_data=associated_data)
 
-def server_aggregate(list_of_ciphertexts, round_key, num_examples_list=None, associated_data=None):
+def server_aggregate(list_of_ciphertexts, round_key, num_examples_list=None, associated_data=None, associated_data_list=None):
     """
     Aggregates encrypted client model updates.
 
     If num_examples_list is provided (a list of integers representing sample counts),
     performs a weighted average. If None, falls back to unweighted average.
+
+    associated_data_list, when provided, supplies one AAD per ciphertext (the
+    common case: each client's update is bound to its own round_id/client_id/
+    model_hash/key_context_id via e7_temporal.compute_aad, so a single shared
+    AAD can't be correct for a batch of more than one client). When omitted,
+    the single `associated_data` value is used for every ciphertext in the
+    batch, preserving the old single-AAD-or-None behavior for callers with
+    exactly one shared AAD (or none).
+
+    SECURITY: this function must never fall back to trusting an
+    "associated_data" key embedded inside `list_of_ciphertexts` itself — that
+    is the untrusted payload being decrypted, and doing so lets an attacker
+    supply whichever AAD makes their forged/replayed ciphertext verify (see
+    SDFL_Preflight_Audit.md, Section 3). The caller is always responsible for
+    computing the expected AAD server-side and passing it in explicitly.
     """
-    decrypted_updates = [
-        decrypt_update(ct, round_key, associated_data=ct.get("associated_data", associated_data))
-        for ct in list_of_ciphertexts
-    ]
+    if associated_data_list is not None:
+        assert len(associated_data_list) == len(list_of_ciphertexts), (
+            "associated_data_list must have exactly one entry per ciphertext"
+        )
+        decrypted_updates = [
+            decrypt_update(ct, round_key, associated_data=aad)
+            for ct, aad in zip(list_of_ciphertexts, associated_data_list)
+        ]
+    else:
+        decrypted_updates = [
+            decrypt_update(ct, round_key, associated_data=associated_data)
+            for ct in list_of_ciphertexts
+        ]
 
     if isinstance(decrypted_updates[0], torch.Tensor):
         if num_examples_list is not None:

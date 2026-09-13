@@ -1,0 +1,224 @@
+diff --git a/crypto.py b/crypto.py
+index 4eb2e1c..1068217 100644
+--- a/crypto.py
++++ b/crypto.py
+@@ -294,17 +294,41 @@ def write_audit_log(
+ def client_encrypt(update_weights, round_key, associated_data=None):
+     return encrypt_update(update_weights, round_key, associated_data=associated_data)
+ 
+-def server_aggregate(list_of_ciphertexts, round_key, num_examples_list=None, associated_data=None):
++def server_aggregate(list_of_ciphertexts, round_key, num_examples_list=None, associated_data=None, associated_data_list=None):
+     """
+     Aggregates encrypted client model updates.
+ 
+     If num_examples_list is provided (a list of integers representing sample counts),
+     performs a weighted average. If None, falls back to unweighted average.
++
++    associated_data_list, when provided, supplies one AAD per ciphertext (the
++    common case: each client's update is bound to its own round_id/client_id/
++    model_hash/key_context_id via e7_temporal.compute_aad, so a single shared
++    AAD can't be correct for a batch of more than one client). When omitted,
++    the single `associated_data` value is used for every ciphertext in the
++    batch, preserving the old single-AAD-or-None behavior for callers with
++    exactly one shared AAD (or none).
++
++    SECURITY: this function must never fall back to trusting an
++    "associated_data" key embedded inside `list_of_ciphertexts` itself — that
++    is the untrusted payload being decrypted, and doing so lets an attacker
++    supply whichever AAD makes their forged/replayed ciphertext verify (see
++    SDFL_Preflight_Audit.md, Section 3). The caller is always responsible for
++    computing the expected AAD server-side and passing it in explicitly.
+     """
+-    decrypted_updates = [
+-        decrypt_update(ct, round_key, associated_data=ct.get("associated_data", associated_data))
+-        for ct in list_of_ciphertexts
+-    ]
++    if associated_data_list is not None:
++        assert len(associated_data_list) == len(list_of_ciphertexts), (
++            "associated_data_list must have exactly one entry per ciphertext"
++        )
++        decrypted_updates = [
++            decrypt_update(ct, round_key, associated_data=aad)
++            for ct, aad in zip(list_of_ciphertexts, associated_data_list)
++        ]
++    else:
++        decrypted_updates = [
++            decrypt_update(ct, round_key, associated_data=associated_data)
++            for ct in list_of_ciphertexts
++        ]
+ 
+     if isinstance(decrypted_updates[0], torch.Tensor):
+         if num_examples_list is not None:
+diff --git a/e10_window_sweep.py b/e10_window_sweep.py
+index b348baf..86c0ac8 100644
+--- a/e10_window_sweep.py
++++ b/e10_window_sweep.py
+@@ -20,7 +20,7 @@ from crypto import (
+     write_audit_log,
+     server_aggregate
+ )
+-from e7_temporal import TemporalCheckpointingSecAgg, SECRET_KEY
++from e7_temporal import TemporalCheckpointingSecAgg, SECRET_KEY, compute_aad
+ 
+ class DummyFitRes:
+     def __init__(self, metrics, num_examples=100):
+@@ -34,13 +34,23 @@ def generate_mock_weights(seed=None):
+     b1 = np.random.randn(16).astype(np.float32) * 0.01
+     return [w1, b1]
+ 
+-def compute_aad_bytes(cert, signature, uid):
+-    aad_data = {
+-        "cert": cert,
+-        "signature": signature,
+-        "UID_r": uid
+-    }
+-    return json.dumps(aad_data, sort_keys=True).encode("utf-8")
++def compute_aad_bytes(cert, signature, uid, client_idx=0):
++    """
++    Delegates to the canonical, production e7_temporal.compute_aad() instead
++    of a bespoke {cert, signature, UID_r} scheme (see
++    SDFL_Preflight_Audit.md, Section 3/5). `signature` and `uid` are kept as
++    parameters for call-site compatibility but are intentionally NOT part of
++    the AAD, matching the production field set. `client_idx` selects which
++    of cert["participants"] this AAD is bound to -- each client in a round
++    must get its OWN AAD, not all clients sharing participants[0].
++    """
++    client_id = cert["participants"][client_idx]
++    return compute_aad(
++        round_id=cert["round_id"],
++        client_id=client_id,
++        model_hash=cert["model_hash"],
++        key_context_id=cert["key_context_id"],
++    )
+ 
+ def sample_client_latency(client_id, seed=None):
+     """
+@@ -128,7 +138,7 @@ def run_e10_temporal_window_sweep(window_durations=[30, 60, 120, 300, 600, 1200]
+ 
+                 # Client encryption
+                 uid = str(uuid.uuid4())
+-                aad_bytes = compute_aad_bytes(cert, sig, uid)
++                aad_bytes = compute_aad_bytes(cert, sig, uid, client_idx=cid)
+                 weights = generate_mock_weights(seed=client_seed)
+                 ct = client_encrypt(weights, round_key, associated_data=aad_bytes)
+ 
+@@ -170,7 +180,7 @@ def run_e10_temporal_window_sweep(window_durations=[30, 60, 120, 300, 600, 1200]
+                 list_of_cts = [{"nonce": ct["nonce"], "ciphertext": ct["ciphertext"]} for _, _, ct, _ in round_accepted_updates]
+                 aad_list = [aad for _, _, _, aad in round_accepted_updates]
+                 num_ex_list = [100] * len(list_of_cts)
+-                _ = server_aggregate(list_of_cts, round_key, num_examples_list=num_ex_list, aad_list=aad_list)
++                _ = server_aggregate(list_of_cts, round_key, num_examples_list=num_ex_list, associated_data_list=aad_list)
+             else:
+                 round_latencies.append(float(window_sec))
+                 if round_accepted_updates:
+diff --git a/e14_scalability.py b/e14_scalability.py
+index 9f38a63..fb5e342 100644
+--- a/e14_scalability.py
++++ b/e14_scalability.py
+@@ -49,7 +49,7 @@ from crypto import (
+ )
+ from e2_server import DEVICE, ResUNetPlusPlus, get_parameters
+ from e4_dpsgd import fix_model_for_opacus
+-from e7_temporal import compute_model_hash, SECRET_KEY
++from e7_temporal import compute_model_hash, SECRET_KEY, compute_aad
+ 
+ RESULTS_DIR = ROOT_DIR / "results"
+ RESULTS_DIR.mkdir(exist_ok=True)
+@@ -136,12 +136,15 @@ def run_scalability_benchmark():
+             for i in range(k):
+                 # Generate unique transaction UID for replay protection
+                 uid = str(uuid.uuid4())
+-                aad_data = {
+-                    "cert": cert,
+-                    "signature": sig,
+-                    "UID_r": uid
+-                }
+-                aad_bytes = json.dumps(aad_data, sort_keys=True).encode()
++                # Canonical AAD (bound to this client's own identity), not the
++                # bespoke {cert, signature, UID_r} scheme -- see
++                # SDFL_Preflight_Audit.md, Section 3/5.
++                aad_bytes = compute_aad(
++                    round_id=cert["round_id"],
++                    client_id=participants[i],
++                    model_hash=cert["model_hash"],
++                    key_context_id=cert["key_context_id"],
++                )
+                 
+                 # Synthetic client update (small perturbation to simulate training)
+                 client_weights = [arr + np.random.normal(0, 1e-4, arr.shape).astype(arr.dtype) for arr in template_weights]
+@@ -175,7 +178,7 @@ def run_scalability_benchmark():
+                 list_of_ciphertexts=client_ciphertexts,
+                 round_key=round_key,
+                 num_examples_list=client_sample_counts,
+-                aad_list=aad_list
++                associated_data_list=aad_list
+             )
+             agg_time = (time.perf_counter() - t_agg_0) * 1000.0
+ 
+diff --git a/e15_fault_robustness.py b/e15_fault_robustness.py
+index 3b051c9..13f5fc4 100644
+--- a/e15_fault_robustness.py
++++ b/e15_fault_robustness.py
+@@ -49,7 +49,7 @@ from crypto import (
+ )
+ from e2_server import DEVICE, ResUNetPlusPlus, get_parameters, set_parameters
+ from e4_dpsgd import fix_model_for_opacus
+-from e7_temporal import compute_model_hash, SECRET_KEY
++from e7_temporal import compute_model_hash, SECRET_KEY, compute_aad
+ 
+ RESULTS_DIR = ROOT_DIR / "results"
+ RESULTS_DIR.mkdir(exist_ok=True)
+@@ -144,12 +144,16 @@ class MockSDFLAggregator:
+             cert_str = sub["certificate"]
+             sig = sub["signature"]
+             uid = sub["UID_r"]
+-            aad_data = {
+-                "cert": json.loads(cert_str),
+-                "signature": sig,
+-                "UID_r": uid
+-            }
+-            aad_bytes = json.dumps(aad_data, sort_keys=True).encode()
++            # Canonical AAD (bound to this client's own identity), not the
++            # bespoke {cert, signature, UID_r} scheme -- see
++            # SDFL_Preflight_Audit.md, Section 3/5.
++            cert_obj = json.loads(cert_str)
++            aad_bytes = compute_aad(
++                round_id=cert_obj["round_id"],
++                client_id=sub.get("client_id"),
++                model_hash=cert_obj["model_hash"],
++                key_context_id=cert_obj["key_context_id"],
++            )
+             aad_list.append(aad_bytes)
+             self.consumed_uids.add(uid)
+ 
+@@ -165,7 +169,7 @@ class MockSDFLAggregator:
+                     valid_ciphertexts,
+                     round_key,
+                     num_examples_list=num_examples_list,
+-                    aad_list=aad_list
++                    associated_data_list=aad_list
+                 )
+                 decryption_success = True
+             except Exception as e:
+@@ -194,12 +198,15 @@ def create_client_update(client_id, template_weights, round_key, cert, sig, uid=
+     if custom_aad is not None:
+         aad_bytes = custom_aad
+     else:
+-        aad_data = {
+-            "cert": cert,
+-            "signature": sig,
+-            "UID_r": uid
+-        }
+-        aad_bytes = json.dumps(aad_data, sort_keys=True).encode()
++        # Canonical AAD (bound to this client's own identity), matching
++        # aggregate_submissions()'s server-side re-derivation -- see
++        # SDFL_Preflight_Audit.md, Section 3/5.
++        aad_bytes = compute_aad(
++            round_id=cert["round_id"],
++            client_id=client_id,
++            model_hash=cert["model_hash"],
++            key_context_id=cert["key_context_id"],
++        )
+ 
+     weights = [arr + np.random.normal(0, 1e-4, arr.shape).astype(arr.dtype) for arr in template_weights]
+     ct = client_encrypt(weights, round_key, associated_data=aad_bytes)
