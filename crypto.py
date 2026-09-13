@@ -301,7 +301,10 @@ def server_aggregate(list_of_ciphertexts, round_key, num_examples_list=None, ass
     If num_examples_list is provided (a list of integers representing sample counts),
     performs a weighted average. If None, falls back to unweighted average.
     """
-    decrypted_updates = [decrypt_update(ct, round_key, associated_data=associated_data) for ct in list_of_ciphertexts]
+    decrypted_updates = [
+        decrypt_update(ct, round_key, associated_data=ct.get("associated_data", associated_data))
+        for ct in list_of_ciphertexts
+    ]
 
     if isinstance(decrypted_updates[0], torch.Tensor):
         if num_examples_list is not None:
