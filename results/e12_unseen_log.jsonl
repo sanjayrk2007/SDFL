@@ -1,0 +1,6 @@
+{"event": "round_complete", "fold": "A", "round": 1, "timestamp": "2026-09-09T02:10:24.280023+00:00"}
+{"event": "fold_complete", "fold": "A", "held_out_client": 2, "held_out_dice": 0.1758568622728716, "timestamp": "2026-09-09T02:10:50.320135+00:00"}
+{"event": "round_complete", "fold": "B", "round": 1, "timestamp": "2026-09-09T02:16:27.062961+00:00"}
+{"event": "fold_complete", "fold": "B", "held_out_client": 1, "held_out_dice": 0.15790995198271088, "timestamp": "2026-09-09T02:16:54.793318+00:00"}
+{"event": "round_complete", "fold": "C", "round": 1, "timestamp": "2026-09-09T02:22:47.220118+00:00"}
+{"event": "fold_complete", "fold": "C", "held_out_client": 0, "held_out_dice": 0.3233544890503307, "timestamp": "2026-09-09T02:23:14.516660+00:00"}
