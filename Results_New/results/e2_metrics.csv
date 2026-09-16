@@ -1,2 +1,2 @@
 experiment,method,dice,iou,precision,recall,best_val_dice,epsilon,notes
-E2,"FedAvg (3 clients, 20 rounds)",0.7712,0.6818,0.7791,0.8493,0.8571,,best round 19
+E2,"FedAvg (3 clients, 20 rounds)",0.7791,0.6905,0.8181,0.8208,0.86,,best round 16
