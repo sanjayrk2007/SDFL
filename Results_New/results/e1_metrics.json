@@ -1,0 +1,11 @@
+{
+  "experiment": "E1",
+  "method": "Centralized baseline",
+  "dice": 0.8182,
+  "iou": 0.7402,
+  "precision": 0.8532,
+  "recall": 0.8492,
+  "best_val_dice": 0.8599,
+  "epsilon": "",
+  "notes": "50 epochs, single model"
+}

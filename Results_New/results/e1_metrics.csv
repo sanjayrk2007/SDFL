@@ -1,0 +1,2 @@
+experiment,method,dice,iou,precision,recall,best_val_dice,epsilon,notes
+E1,Centralized baseline,0.8182,0.7402,0.8532,0.8492,0.8599,,"50 epochs, single model"
