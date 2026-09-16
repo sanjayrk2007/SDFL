@@ -19,21 +19,6 @@
 
 **Status:** Complete. Reproduced on `integration/sdfl-final-validation`.
 
-### Experiment E2 - Federated Learning (FedAvg)
-
-**Framework:** Flower (flwr) + Ray simulation backend
-**Clients:** 3 (one per non-IID hospital split)
-**Rounds:** 20
-**Local epochs per round:** 3
-
-**Best round:** 19
-**Test Set Results (best round checkpoint):**
-- Dice: 0.7712
-- IoU: 0.6818
-- Precision: 0.7791
-- Recall: 0.8493
-
-**Status:** Complete. Reproduced on `integration/sdfl-final-validation`. Checkpoint: checkpoints/e2_best.pth
 
 ### Experiment E2 - Federated Learning (FedAvg)
 
