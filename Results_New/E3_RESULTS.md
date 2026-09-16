@@ -13,12 +13,12 @@
 
 | mu | best round | val_dice | val_iou |
 |:---:|:---:|:---:|:---:|
-| 0.0 | 1 | 0.5542 | 0.4265 |
-| 0.001 | 1 | 0.5782 | 0.4533 |
-| 0.01 | 1 | 0.4958 | 0.3658 |
-| 0.1 | 1 | 0.5077 | 0.3711 |
+| 0.0 | 16 | 0.8430 | 0.7543 |
+| 0.001 | 18 | 0.8469 | 0.7657 |
+| 0.01 | 20 | 0.8569 | 0.7767 |
+| 0.1 | 18 | 0.8212 | 0.7295 |
 
-**Best configuration:** mu = 0.001, val_dice = 0.5782
+**Best configuration:** mu = 0.01, val_dice = 0.8569
 
 **Status:** Complete. Reproduced on `integration/sdfl-final-validation` at the script's documented 20-round default.
 **Note:** This supersedes the previously conflicting E3 numbers in README.md (0.5782 @ 1 round) and FINAL_RESULTS.md (0.4924, round count unstated).
