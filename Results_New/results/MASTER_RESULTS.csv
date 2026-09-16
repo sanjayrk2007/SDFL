@@ -1,0 +1,6 @@
+experiment,method,dice,iou,precision,recall,best_val_dice,epsilon,notes
+E1,Centralized baseline,0.8182,0.7402,0.8532,0.8492,0.8599,,"50 epochs, single model"
+E2,"FedAvg (3 clients, 20 rounds)",0.7791,0.6905,0.8181,0.8208,0.86,,best round 16
+E3,"FedProx (mu=0.01, 20 rounds)",,,,,0.8569,,best round 20; val_iou 0.7767
+E4,"DP-SGD (C=2.0, sigma=1.0)",0.2947,0.1916,,,0.2947,2.141,delta=1e-5
+E5,SecAgg (AES-GCM) on E4 best config,0.2576,0.1656,,,0.2576,0.9793,1 round

@@ -1,0 +1,57 @@
+[
+  {
+    "experiment": "E1",
+    "method": "Centralized baseline",
+    "dice": 0.8182,
+    "iou": 0.7402,
+    "precision": 0.8532,
+    "recall": 0.8492,
+    "best_val_dice": 0.8599,
+    "epsilon": "",
+    "notes": "50 epochs, single model"
+  },
+  {
+    "experiment": "E2",
+    "method": "FedAvg (3 clients, 20 rounds)",
+    "dice": 0.7791,
+    "iou": 0.6905,
+    "precision": 0.8181,
+    "recall": 0.8208,
+    "best_val_dice": 0.86,
+    "epsilon": "",
+    "notes": "best round 16"
+  },
+  {
+    "experiment": "E3",
+    "method": "FedProx (mu=0.01, 20 rounds)",
+    "dice": "",
+    "iou": "",
+    "precision": "",
+    "recall": "",
+    "best_val_dice": 0.8569,
+    "epsilon": "",
+    "notes": "best round 20; val_iou 0.7767"
+  },
+  {
+    "experiment": "E4",
+    "method": "DP-SGD (C=2.0, sigma=1.0)",
+    "dice": 0.2947,
+    "iou": 0.1916,
+    "precision": "",
+    "recall": "",
+    "best_val_dice": 0.2947,
+    "epsilon": 2.141,
+    "notes": "delta=1e-5"
+  },
+  {
+    "experiment": "E5",
+    "method": "SecAgg (AES-GCM) on E4 best config",
+    "dice": 0.2576,
+    "iou": 0.1656,
+    "precision": "",
+    "recall": "",
+    "best_val_dice": 0.2576,
+    "epsilon": 0.9793,
+    "notes": "1 round"
+  }
+]
