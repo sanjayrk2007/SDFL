@@ -1,0 +1,11 @@
+{
+  "experiment": "E3",
+  "method": "FedProx (mu=0.01, 20 rounds)",
+  "dice": 0.4926,
+  "iou": 0.3614,
+  "precision": 0.5808,
+  "recall": 0.5538,
+  "best_val_dice": 0.8569,
+  "epsilon": "",
+  "notes": "best round 20; val_iou 0.7767"
+}

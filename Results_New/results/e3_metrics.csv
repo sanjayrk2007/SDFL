@@ -1,0 +1,2 @@
+experiment,method,dice,iou,precision,recall,best_val_dice,epsilon,notes
+E3,"FedProx (mu=0.01, 20 rounds)",0.4926,0.3614,0.5808,0.5538,0.8569,,best round 20; val_iou 0.7767
