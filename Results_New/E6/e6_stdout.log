@@ -1,0 +1,1238 @@
+Starting E6 Federated Learning simulation...
+[92mINFO [0m:      Starting Flower simulation, config: num_rounds=20, no round_timeout
+09/17/2026 09:46:09:INFO:Starting Flower simulation, config: num_rounds=20, no round_timeout
+2026-09-17 09:46:13,465	INFO worker.py:1771 -- Started a local Ray instance.
+[92mINFO [0m:      Flower VCE: Ray initialized with resources: {'node:172.19.2.2': 1.0, 'node:__internal_head__': 1.0, 'CPU': 4.0, 'memory': 18269599335.0, 'object_store_memory': 9134799667.0, 'accelerator_type:T4': 1.0, 'GPU': 2.0}
+09/17/2026 09:46:19:INFO:Flower VCE: Ray initialized with resources: {'node:172.19.2.2': 1.0, 'node:__internal_head__': 1.0, 'CPU': 4.0, 'memory': 18269599335.0, 'object_store_memory': 9134799667.0, 'accelerator_type:T4': 1.0, 'GPU': 2.0}
+[92mINFO [0m:      Optimize your simulation with Flower VCE: https://flower.ai/docs/framework/how-to-run-simulations.html
+09/17/2026 09:46:19:INFO:Optimize your simulation with Flower VCE: https://flower.ai/docs/framework/how-to-run-simulations.html
+[92mINFO [0m:      Flower VCE: Resources for each Virtual Client: {'num_cpus': 1, 'num_gpus': 0.33}
+09/17/2026 09:46:19:INFO:Flower VCE: Resources for each Virtual Client: {'num_cpus': 1, 'num_gpus': 0.33}
+[92mINFO [0m:      Flower VCE: Creating VirtualClientEngineActorPool with 4 actors
+09/17/2026 09:46:19:INFO:Flower VCE: Creating VirtualClientEngineActorPool with 4 actors
+[92mINFO [0m:      [INIT]
+09/17/2026 09:46:19:INFO:[INIT]
+[92mINFO [0m:      Using initial global parameters provided by strategy
+09/17/2026 09:46:19:INFO:Using initial global parameters provided by strategy
+[92mINFO [0m:      Evaluating initial global parameters
+09/17/2026 09:46:19:INFO:Evaluating initial global parameters
+[92mINFO [0m:      
+09/17/2026 09:46:19:INFO:
+[92mINFO [0m:      [ROUND 1]
+09/17/2026 09:46:19:INFO:[ROUND 1]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09/17/2026 09:46:19:INFO:configure_fit: strategy sampled 3 clients (out of 3)
+[36m(ClientAppActor pid=654)[0m /usr/local/lib/python3.12/dist-packages/opacus/privacy_engine.py:142: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
+[36m(ClientAppActor pid=654)[0m   warnings.warn(
+[36m(ClientAppActor pid=653)[0m /usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py:1830: FutureWarning: Using a non-full backward hook when the forward contains multiple autograd Nodes is deprecated and will be removed in future versions. This hook will be missing some grad_input. Please use register_full_backward_hook to get the documented behavior.
+[36m(ClientAppActor pid=653)[0m   self._maybe_warn_non_full_backward_hook(args, result, grad_fn)
+[36m(ClientAppActor pid=654)[0m /usr/local/lib/python3.12/dist-packages/opacus/accountants/analysis/prv/prvs.py:50: RuntimeWarning: invalid value encountered in log
+[36m(ClientAppActor pid=654)[0m   z = np.log((np.exp(t) + q - 1) / q)
+[36m(ClientAppActor pid=652)[0m /usr/local/lib/python3.12/dist-packages/opacus/privacy_engine.py:142: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.[32m [repeated 2x across cluster] (Ray deduplicates logs by default. Set RAY_DEDUP_LOGS=0 to disable log deduplication, or see https://docs.ray.io/en/master/ray-observability/user-guides/configure-logging.html#log-deduplication for more options.)[0m
+[36m(ClientAppActor pid=652)[0m   warnings.warn([32m [repeated 2x across cluster][0m
+[36m(ClientAppActor pid=652)[0m /usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py:1830: FutureWarning: Using a non-full backward hook when the forward contains multiple autograd Nodes is deprecated and will be removed in future versions. This hook will be missing some grad_input. Please use register_full_backward_hook to get the documented behavior.[32m [repeated 2x across cluster][0m
+[36m(ClientAppActor pid=652)[0m   self._maybe_warn_non_full_backward_hook(args, result, grad_fn)[32m [repeated 2x across cluster][0m
+[36m(ClientAppActor pid=652)[0m /usr/local/lib/python3.12/dist-packages/opacus/accountants/analysis/prv/prvs.py:50: RuntimeWarning: invalid value encountered in log
+[36m(ClientAppActor pid=652)[0m   z = np.log((np.exp(t) + q - 1) / q)
+[36m(ClientAppActor pid=653)[0m /usr/local/lib/python3.12/dist-packages/opacus/accountants/analysis/prv/prvs.py:50: RuntimeWarning: invalid value encountered in log
+[36m(ClientAppActor pid=653)[0m   z = np.log((np.exp(t) + q - 1) / q)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09/17/2026 09:49:39:INFO:aggregate_fit: received 3 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 3 clients (out of 3)
+09/17/2026 09:49:39:INFO:configure_evaluate: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_evaluate: received 3 results and 0 failures
+09/17/2026 09:49:42:INFO:aggregate_evaluate: received 3 results and 0 failures
+[93mWARNING [0m:   No evaluate_metrics_aggregation_fn provided
+09/17/2026 09:49:42:WARNING:No evaluate_metrics_aggregation_fn provided
+Round  1/20 | val_loss 0.5130 | val_dice 0.4013 | val_iou 0.2871
+[92mINFO [0m:      
+09/17/2026 09:49:42:INFO:
+[92mINFO [0m:      [ROUND 2]
+09/17/2026 09:49:42:INFO:[ROUND 2]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09/17/2026 09:49:42:INFO:configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09/17/2026 09:52:44:INFO:aggregate_fit: received 3 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 3 clients (out of 3)
+09/17/2026 09:52:45:INFO:configure_evaluate: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_evaluate: received 3 results and 0 failures
+09/17/2026 09:52:48:INFO:aggregate_evaluate: received 3 results and 0 failures
+Round  2/20 | val_loss 0.5064 | val_dice 0.4203 | val_iou 0.3027
+[92mINFO [0m:      
+09/17/2026 09:52:48:INFO:
+[92mINFO [0m:      [ROUND 3]
+09/17/2026 09:52:48:INFO:[ROUND 3]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09/17/2026 09:52:48:INFO:configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09/17/2026 09:55:49:INFO:aggregate_fit: received 3 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 3 clients (out of 3)
+09/17/2026 09:55:49:INFO:configure_evaluate: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_evaluate: received 3 results and 0 failures
+09/17/2026 09:55:52:INFO:aggregate_evaluate: received 3 results and 0 failures
+Round  3/20 | val_loss 0.5019 | val_dice 0.4321 | val_iou 0.3125
+[92mINFO [0m:      
+09/17/2026 09:55:52:INFO:
+[92mINFO [0m:      [ROUND 4]
+09/17/2026 09:55:52:INFO:[ROUND 4]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09/17/2026 09:55:52:INFO:configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09/17/2026 09:59:06:INFO:aggregate_fit: received 3 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 3 clients (out of 3)
+09/17/2026 09:59:06:INFO:configure_evaluate: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_evaluate: received 3 results and 0 failures
+09/17/2026 09:59:09:INFO:aggregate_evaluate: received 3 results and 0 failures
+Round  4/20 | val_loss 0.4958 | val_dice 0.4508 | val_iou 0.3278
+[92mINFO [0m:      
+09/17/2026 09:59:09:INFO:
+[92mINFO [0m:      [ROUND 5]
+09/17/2026 09:59:09:INFO:[ROUND 5]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09/17/2026 09:59:09:INFO:configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09/17/2026 10:02:14:INFO:aggregate_fit: received 3 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 3 clients (out of 3)
+09/17/2026 10:02:14:INFO:configure_evaluate: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_evaluate: received 3 results and 0 failures
+09/17/2026 10:02:17:INFO:aggregate_evaluate: received 3 results and 0 failures
+Round  5/20 | val_loss 0.4896 | val_dice 0.4540 | val_iou 0.3314
+[92mINFO [0m:      
+09/17/2026 10:02:17:INFO:
+[92mINFO [0m:      [ROUND 6]
+09/17/2026 10:02:17:INFO:[ROUND 6]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09/17/2026 10:02:17:INFO:configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09/17/2026 10:05:20:INFO:aggregate_fit: received 3 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 3 clients (out of 3)
+09/17/2026 10:05:21:INFO:configure_evaluate: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_evaluate: received 3 results and 0 failures
+09/17/2026 10:05:23:INFO:aggregate_evaluate: received 3 results and 0 failures
+Round  6/20 | val_loss 0.4838 | val_dice 0.4668 | val_iou 0.3431
+[92mINFO [0m:      
+09/17/2026 10:05:23:INFO:
+[92mINFO [0m:      [ROUND 7]
+09/17/2026 10:05:23:INFO:[ROUND 7]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09/17/2026 10:05:23:INFO:configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09/17/2026 10:08:30:INFO:aggregate_fit: received 3 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 3 clients (out of 3)
+09/17/2026 10:08:31:INFO:configure_evaluate: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_evaluate: received 3 results and 0 failures
+09/17/2026 10:08:34:INFO:aggregate_evaluate: received 3 results and 0 failures
+Round  7/20 | val_loss 0.4784 | val_dice 0.4765 | val_iou 0.3516
+[92mINFO [0m:      
+09/17/2026 10:08:34:INFO:
+[92mINFO [0m:      [ROUND 8]
+09/17/2026 10:08:34:INFO:[ROUND 8]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09/17/2026 10:08:34:INFO:configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09/17/2026 10:11:43:INFO:aggregate_fit: received 3 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 3 clients (out of 3)
+09/17/2026 10:11:44:INFO:configure_evaluate: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_evaluate: received 3 results and 0 failures
+09/17/2026 10:11:46:INFO:aggregate_evaluate: received 3 results and 0 failures
+Round  8/20 | val_loss 0.4741 | val_dice 0.4820 | val_iou 0.3568
+[92mINFO [0m:      
+09/17/2026 10:11:46:INFO:
+[92mINFO [0m:      [ROUND 9]
+09/17/2026 10:11:46:INFO:[ROUND 9]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09/17/2026 10:11:46:INFO:configure_fit: strategy sampled 3 clients (out of 3)
+[91mERROR [0m:     Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 73, in _submit_job
+    out_mssg, updated_context = self.actor_pool.get_client_result(
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 399, in get_client_result
+    return self._fetch_future_result(cid)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 280, in _fetch_future_result
+    res_cid, out_mssg, updated_context = ray.get(
+                                         ^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/auto_init_hook.py", line 21, in auto_init_wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/client_mode_hook.py", line 103, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/worker.py", line 2639, in get
+    values, debugger_breakpoint = worker.get_objects(object_refs, timeout=timeout)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/worker.py", line 864, in get_objects
+    raise value.as_instanceof_cause()
+ray.exceptions.RayTaskError(ClientAppException): [36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 98, in __call__
+    return self._call(message, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 81, in ffn
+    out_message = handle_legacy_message_from_msgtype(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/message_handler/message_handler.py", line 130, in handle_legacy_message_from_msgtype
+    fit_res = maybe_call_fit(
+              ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client.py", line 234, in maybe_call_fit
+    return client.fit(fit_ins)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/numpy_client.py", line 238, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e6_server.py", line 178, in fit
+    self.optimizer.step()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 513, in step
+    if self.pre_step():
+       ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 494, in pre_step
+    self.clip_and_accumulate()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 412, in clip_and_accumulate
+    grad = contract("i,i...", per_sample_clip_factor, grad_sample)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 603, in contract
+    return _core_contract(operands, contraction_list, backend=backend, out=out, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 687, in _core_contract
+    new_view = _tensordot(*tmp_operands, axes=axes, backend=backend, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/sharing.py", line 140, in cached_tensordot
+    return tensordot(x, y, axes, backend=backend)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 470, in _tensordot
+    return fn(x, y, axes=axes)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/backends/torch.py", line 56, in tensordot
+    return torch.tensordot(x, y, dims=axes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/functional.py", line 1360, in tensordot
+    return _VF.tensordot(a, b, dims_a, dims_b)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+
+The above exception was the direct cause of the following exception:
+
+[36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 64, in run
+    raise ClientAppException(str(ex)) from ex
+flwr.client.client_app.ClientAppException: 
+Exception ClientAppException occurred. Message: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+
+09/17/2026 10:13:10:ERROR:Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 73, in _submit_job
+    out_mssg, updated_context = self.actor_pool.get_client_result(
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 399, in get_client_result
+    return self._fetch_future_result(cid)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 280, in _fetch_future_result
+    res_cid, out_mssg, updated_context = ray.get(
+                                         ^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/auto_init_hook.py", line 21, in auto_init_wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/client_mode_hook.py", line 103, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/worker.py", line 2639, in get
+    values, debugger_breakpoint = worker.get_objects(object_refs, timeout=timeout)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/worker.py", line 864, in get_objects
+    raise value.as_instanceof_cause()
+ray.exceptions.RayTaskError(ClientAppException): [36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 98, in __call__
+    return self._call(message, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 81, in ffn
+    out_message = handle_legacy_message_from_msgtype(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/message_handler/message_handler.py", line 130, in handle_legacy_message_from_msgtype
+    fit_res = maybe_call_fit(
+              ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client.py", line 234, in maybe_call_fit
+    return client.fit(fit_ins)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/numpy_client.py", line 238, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e6_server.py", line 178, in fit
+    self.optimizer.step()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 513, in step
+    if self.pre_step():
+       ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 494, in pre_step
+    self.clip_and_accumulate()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 412, in clip_and_accumulate
+    grad = contract("i,i...", per_sample_clip_factor, grad_sample)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 603, in contract
+    return _core_contract(operands, contraction_list, backend=backend, out=out, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 687, in _core_contract
+    new_view = _tensordot(*tmp_operands, axes=axes, backend=backend, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/sharing.py", line 140, in cached_tensordot
+    return tensordot(x, y, axes, backend=backend)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 470, in _tensordot
+    return fn(x, y, axes=axes)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/backends/torch.py", line 56, in tensordot
+    return torch.tensordot(x, y, dims=axes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/functional.py", line 1360, in tensordot
+    return _VF.tensordot(a, b, dims_a, dims_b)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+
+The above exception was the direct cause of the following exception:
+
+[36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 64, in run
+    raise ClientAppException(str(ex)) from ex
+flwr.client.client_app.ClientAppException: 
+Exception ClientAppException occurred. Message: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+
+[91mERROR [0m:     [36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 98, in __call__
+    return self._call(message, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 81, in ffn
+    out_message = handle_legacy_message_from_msgtype(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/message_handler/message_handler.py", line 130, in handle_legacy_message_from_msgtype
+    fit_res = maybe_call_fit(
+              ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client.py", line 234, in maybe_call_fit
+    return client.fit(fit_ins)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/numpy_client.py", line 238, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e6_server.py", line 178, in fit
+    self.optimizer.step()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 513, in step
+    if self.pre_step():
+       ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 494, in pre_step
+    self.clip_and_accumulate()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 412, in clip_and_accumulate
+    grad = contract("i,i...", per_sample_clip_factor, grad_sample)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 603, in contract
+    return _core_contract(operands, contraction_list, backend=backend, out=out, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 687, in _core_contract
+    new_view = _tensordot(*tmp_operands, axes=axes, backend=backend, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/sharing.py", line 140, in cached_tensordot
+    return tensordot(x, y, axes, backend=backend)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 470, in _tensordot
+    return fn(x, y, axes=axes)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/backends/torch.py", line 56, in tensordot
+    return torch.tensordot(x, y, dims=axes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/functional.py", line 1360, in tensordot
+    return _VF.tensordot(a, b, dims_a, dims_b)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+
+The above exception was the direct cause of the following exception:
+
+[36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 64, in run
+    raise ClientAppException(str(ex)) from ex
+flwr.client.client_app.ClientAppException: 
+Exception ClientAppException occurred. Message: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+09/17/2026 10:13:10:ERROR:[36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 98, in __call__
+    return self._call(message, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 81, in ffn
+    out_message = handle_legacy_message_from_msgtype(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/message_handler/message_handler.py", line 130, in handle_legacy_message_from_msgtype
+    fit_res = maybe_call_fit(
+              ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client.py", line 234, in maybe_call_fit
+    return client.fit(fit_ins)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/numpy_client.py", line 238, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e6_server.py", line 178, in fit
+    self.optimizer.step()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 513, in step
+    if self.pre_step():
+       ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 494, in pre_step
+    self.clip_and_accumulate()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 412, in clip_and_accumulate
+    grad = contract("i,i...", per_sample_clip_factor, grad_sample)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 603, in contract
+    return _core_contract(operands, contraction_list, backend=backend, out=out, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 687, in _core_contract
+    new_view = _tensordot(*tmp_operands, axes=axes, backend=backend, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/sharing.py", line 140, in cached_tensordot
+    return tensordot(x, y, axes, backend=backend)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 470, in _tensordot
+    return fn(x, y, axes=axes)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/backends/torch.py", line 56, in tensordot
+    return torch.tensordot(x, y, dims=axes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/functional.py", line 1360, in tensordot
+    return _VF.tensordot(a, b, dims_a, dims_b)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+
+The above exception was the direct cause of the following exception:
+
+[36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 64, in run
+    raise ClientAppException(str(ex)) from ex
+flwr.client.client_app.ClientAppException: 
+Exception ClientAppException occurred. Message: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+[92mINFO [0m:      aggregate_fit: received 2 results and 1 failures
+09/17/2026 10:14:37:INFO:aggregate_fit: received 2 results and 1 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 3 clients (out of 3)
+09/17/2026 10:14:37:INFO:configure_evaluate: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_evaluate: received 3 results and 0 failures
+09/17/2026 10:14:40:INFO:aggregate_evaluate: received 3 results and 0 failures
+Round  9/20 | val_loss 0.4690 | val_dice 0.4864 | val_iou 0.3608
+[92mINFO [0m:      
+09/17/2026 10:14:40:INFO:
+[92mINFO [0m:      [ROUND 10]
+09/17/2026 10:14:40:INFO:[ROUND 10]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09/17/2026 10:14:40:INFO:configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09/17/2026 10:17:53:INFO:aggregate_fit: received 3 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 3 clients (out of 3)
+09/17/2026 10:17:53:INFO:configure_evaluate: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_evaluate: received 3 results and 0 failures
+09/17/2026 10:17:56:INFO:aggregate_evaluate: received 3 results and 0 failures
+Round 10/20 | val_loss 0.4640 | val_dice 0.4977 | val_iou 0.3710
+[92mINFO [0m:      
+09/17/2026 10:17:56:INFO:
+[92mINFO [0m:      [ROUND 11]
+09/17/2026 10:17:56:INFO:[ROUND 11]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09/17/2026 10:17:56:INFO:configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09/17/2026 10:21:02:INFO:aggregate_fit: received 3 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 3 clients (out of 3)
+09/17/2026 10:21:03:INFO:configure_evaluate: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_evaluate: received 3 results and 0 failures
+09/17/2026 10:21:06:INFO:aggregate_evaluate: received 3 results and 0 failures
+Round 11/20 | val_loss 0.4606 | val_dice 0.5049 | val_iou 0.3771
+[92mINFO [0m:      
+09/17/2026 10:21:06:INFO:
+[92mINFO [0m:      [ROUND 12]
+09/17/2026 10:21:06:INFO:[ROUND 12]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09/17/2026 10:21:06:INFO:configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09/17/2026 10:24:10:INFO:aggregate_fit: received 3 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 3 clients (out of 3)
+09/17/2026 10:24:10:INFO:configure_evaluate: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_evaluate: received 3 results and 0 failures
+09/17/2026 10:24:13:INFO:aggregate_evaluate: received 3 results and 0 failures
+Round 12/20 | val_loss 0.4579 | val_dice 0.5073 | val_iou 0.3792
+[92mINFO [0m:      
+09/17/2026 10:24:13:INFO:
+[92mINFO [0m:      [ROUND 13]
+09/17/2026 10:24:13:INFO:[ROUND 13]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09/17/2026 10:24:13:INFO:configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09/17/2026 10:27:11:INFO:aggregate_fit: received 3 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 3 clients (out of 3)
+09/17/2026 10:27:11:INFO:configure_evaluate: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_evaluate: received 3 results and 0 failures
+09/17/2026 10:27:14:INFO:aggregate_evaluate: received 3 results and 0 failures
+Round 13/20 | val_loss 0.4542 | val_dice 0.5076 | val_iou 0.3797
+[92mINFO [0m:      
+09/17/2026 10:27:14:INFO:
+[92mINFO [0m:      [ROUND 14]
+09/17/2026 10:27:14:INFO:[ROUND 14]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09/17/2026 10:27:14:INFO:configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09/17/2026 10:30:21:INFO:aggregate_fit: received 3 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 3 clients (out of 3)
+09/17/2026 10:30:22:INFO:configure_evaluate: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_evaluate: received 3 results and 0 failures
+09/17/2026 10:30:24:INFO:aggregate_evaluate: received 3 results and 0 failures
+Round 14/20 | val_loss 0.4521 | val_dice 0.5116 | val_iou 0.3828
+[92mINFO [0m:      
+09/17/2026 10:30:24:INFO:
+[92mINFO [0m:      [ROUND 15]
+09/17/2026 10:30:24:INFO:[ROUND 15]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09/17/2026 10:30:24:INFO:configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09/17/2026 10:33:20:INFO:aggregate_fit: received 3 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 3 clients (out of 3)
+09/17/2026 10:33:20:INFO:configure_evaluate: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_evaluate: received 3 results and 0 failures
+09/17/2026 10:33:23:INFO:aggregate_evaluate: received 3 results and 0 failures
+Round 15/20 | val_loss 0.4500 | val_dice 0.5170 | val_iou 0.3876
+[92mINFO [0m:      
+09/17/2026 10:33:23:INFO:
+[92mINFO [0m:      [ROUND 16]
+09/17/2026 10:33:23:INFO:[ROUND 16]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09/17/2026 10:33:23:INFO:configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09/17/2026 10:36:34:INFO:aggregate_fit: received 3 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 3 clients (out of 3)
+09/17/2026 10:36:34:INFO:configure_evaluate: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_evaluate: received 3 results and 0 failures
+09/17/2026 10:36:37:INFO:aggregate_evaluate: received 3 results and 0 failures
+Round 16/20 | val_loss 0.4476 | val_dice 0.5222 | val_iou 0.3919
+[92mINFO [0m:      
+09/17/2026 10:36:37:INFO:
+[92mINFO [0m:      [ROUND 17]
+09/17/2026 10:36:37:INFO:[ROUND 17]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09/17/2026 10:36:37:INFO:configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09/17/2026 10:39:39:INFO:aggregate_fit: received 3 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 3 clients (out of 3)
+09/17/2026 10:39:40:INFO:configure_evaluate: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_evaluate: received 3 results and 0 failures
+09/17/2026 10:39:43:INFO:aggregate_evaluate: received 3 results and 0 failures
+Round 17/20 | val_loss 0.4432 | val_dice 0.5228 | val_iou 0.3925
+[92mINFO [0m:      
+09/17/2026 10:39:43:INFO:
+[92mINFO [0m:      [ROUND 18]
+09/17/2026 10:39:43:INFO:[ROUND 18]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09/17/2026 10:39:43:INFO:configure_fit: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_fit: received 3 results and 0 failures
+09/17/2026 10:42:41:INFO:aggregate_fit: received 3 results and 0 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 3 clients (out of 3)
+09/17/2026 10:42:41:INFO:configure_evaluate: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_evaluate: received 3 results and 0 failures
+09/17/2026 10:42:44:INFO:aggregate_evaluate: received 3 results and 0 failures
+Round 18/20 | val_loss 0.4418 | val_dice 0.5235 | val_iou 0.3935
+[92mINFO [0m:      
+09/17/2026 10:42:44:INFO:
+[92mINFO [0m:      [ROUND 19]
+09/17/2026 10:42:44:INFO:[ROUND 19]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09/17/2026 10:42:44:INFO:configure_fit: strategy sampled 3 clients (out of 3)
+[91mERROR [0m:     Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 73, in _submit_job
+    out_mssg, updated_context = self.actor_pool.get_client_result(
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 399, in get_client_result
+    return self._fetch_future_result(cid)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 280, in _fetch_future_result
+    res_cid, out_mssg, updated_context = ray.get(
+                                         ^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/auto_init_hook.py", line 21, in auto_init_wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/client_mode_hook.py", line 103, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/worker.py", line 2639, in get
+    values, debugger_breakpoint = worker.get_objects(object_refs, timeout=timeout)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/worker.py", line 864, in get_objects
+    raise value.as_instanceof_cause()
+ray.exceptions.RayTaskError(ClientAppException): [36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 98, in __call__
+    return self._call(message, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 81, in ffn
+    out_message = handle_legacy_message_from_msgtype(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/message_handler/message_handler.py", line 130, in handle_legacy_message_from_msgtype
+    fit_res = maybe_call_fit(
+              ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client.py", line 234, in maybe_call_fit
+    return client.fit(fit_ins)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/numpy_client.py", line 238, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e6_server.py", line 178, in fit
+    self.optimizer.step()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 513, in step
+    if self.pre_step():
+       ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 494, in pre_step
+    self.clip_and_accumulate()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 412, in clip_and_accumulate
+    grad = contract("i,i...", per_sample_clip_factor, grad_sample)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 603, in contract
+    return _core_contract(operands, contraction_list, backend=backend, out=out, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 687, in _core_contract
+    new_view = _tensordot(*tmp_operands, axes=axes, backend=backend, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/sharing.py", line 140, in cached_tensordot
+    return tensordot(x, y, axes, backend=backend)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 470, in _tensordot
+    return fn(x, y, axes=axes)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/backends/torch.py", line 56, in tensordot
+    return torch.tensordot(x, y, dims=axes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/functional.py", line 1360, in tensordot
+    return _VF.tensordot(a, b, dims_a, dims_b)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+
+The above exception was the direct cause of the following exception:
+
+[36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 64, in run
+    raise ClientAppException(str(ex)) from ex
+flwr.client.client_app.ClientAppException: 
+Exception ClientAppException occurred. Message: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+
+09/17/2026 10:43:39:ERROR:Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 73, in _submit_job
+    out_mssg, updated_context = self.actor_pool.get_client_result(
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 399, in get_client_result
+    return self._fetch_future_result(cid)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 280, in _fetch_future_result
+    res_cid, out_mssg, updated_context = ray.get(
+                                         ^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/auto_init_hook.py", line 21, in auto_init_wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/client_mode_hook.py", line 103, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/worker.py", line 2639, in get
+    values, debugger_breakpoint = worker.get_objects(object_refs, timeout=timeout)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/worker.py", line 864, in get_objects
+    raise value.as_instanceof_cause()
+ray.exceptions.RayTaskError(ClientAppException): [36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 98, in __call__
+    return self._call(message, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 81, in ffn
+    out_message = handle_legacy_message_from_msgtype(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/message_handler/message_handler.py", line 130, in handle_legacy_message_from_msgtype
+    fit_res = maybe_call_fit(
+              ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client.py", line 234, in maybe_call_fit
+    return client.fit(fit_ins)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/numpy_client.py", line 238, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e6_server.py", line 178, in fit
+    self.optimizer.step()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 513, in step
+    if self.pre_step():
+       ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 494, in pre_step
+    self.clip_and_accumulate()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 412, in clip_and_accumulate
+    grad = contract("i,i...", per_sample_clip_factor, grad_sample)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 603, in contract
+    return _core_contract(operands, contraction_list, backend=backend, out=out, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 687, in _core_contract
+    new_view = _tensordot(*tmp_operands, axes=axes, backend=backend, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/sharing.py", line 140, in cached_tensordot
+    return tensordot(x, y, axes, backend=backend)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 470, in _tensordot
+    return fn(x, y, axes=axes)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/backends/torch.py", line 56, in tensordot
+    return torch.tensordot(x, y, dims=axes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/functional.py", line 1360, in tensordot
+    return _VF.tensordot(a, b, dims_a, dims_b)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+
+The above exception was the direct cause of the following exception:
+
+[36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 64, in run
+    raise ClientAppException(str(ex)) from ex
+flwr.client.client_app.ClientAppException: 
+Exception ClientAppException occurred. Message: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+
+[91mERROR [0m:     [36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 98, in __call__
+    return self._call(message, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 81, in ffn
+    out_message = handle_legacy_message_from_msgtype(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/message_handler/message_handler.py", line 130, in handle_legacy_message_from_msgtype
+    fit_res = maybe_call_fit(
+              ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client.py", line 234, in maybe_call_fit
+    return client.fit(fit_ins)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/numpy_client.py", line 238, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e6_server.py", line 178, in fit
+    self.optimizer.step()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 513, in step
+    if self.pre_step():
+       ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 494, in pre_step
+    self.clip_and_accumulate()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 412, in clip_and_accumulate
+    grad = contract("i,i...", per_sample_clip_factor, grad_sample)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 603, in contract
+    return _core_contract(operands, contraction_list, backend=backend, out=out, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 687, in _core_contract
+    new_view = _tensordot(*tmp_operands, axes=axes, backend=backend, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/sharing.py", line 140, in cached_tensordot
+    return tensordot(x, y, axes, backend=backend)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 470, in _tensordot
+    return fn(x, y, axes=axes)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/backends/torch.py", line 56, in tensordot
+    return torch.tensordot(x, y, dims=axes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/functional.py", line 1360, in tensordot
+    return _VF.tensordot(a, b, dims_a, dims_b)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+
+The above exception was the direct cause of the following exception:
+
+[36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 64, in run
+    raise ClientAppException(str(ex)) from ex
+flwr.client.client_app.ClientAppException: 
+Exception ClientAppException occurred. Message: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+09/17/2026 10:43:39:ERROR:[36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 98, in __call__
+    return self._call(message, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 81, in ffn
+    out_message = handle_legacy_message_from_msgtype(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/message_handler/message_handler.py", line 130, in handle_legacy_message_from_msgtype
+    fit_res = maybe_call_fit(
+              ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client.py", line 234, in maybe_call_fit
+    return client.fit(fit_ins)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/numpy_client.py", line 238, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e6_server.py", line 178, in fit
+    self.optimizer.step()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 513, in step
+    if self.pre_step():
+       ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 494, in pre_step
+    self.clip_and_accumulate()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 412, in clip_and_accumulate
+    grad = contract("i,i...", per_sample_clip_factor, grad_sample)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 603, in contract
+    return _core_contract(operands, contraction_list, backend=backend, out=out, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 687, in _core_contract
+    new_view = _tensordot(*tmp_operands, axes=axes, backend=backend, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/sharing.py", line 140, in cached_tensordot
+    return tensordot(x, y, axes, backend=backend)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 470, in _tensordot
+    return fn(x, y, axes=axes)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/backends/torch.py", line 56, in tensordot
+    return torch.tensordot(x, y, dims=axes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/functional.py", line 1360, in tensordot
+    return _VF.tensordot(a, b, dims_a, dims_b)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+
+The above exception was the direct cause of the following exception:
+
+[36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 64, in run
+    raise ClientAppException(str(ex)) from ex
+flwr.client.client_app.ClientAppException: 
+Exception ClientAppException occurred. Message: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+[92mINFO [0m:      aggregate_fit: received 2 results and 1 failures
+09/17/2026 10:45:23:INFO:aggregate_fit: received 2 results and 1 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 3 clients (out of 3)
+09/17/2026 10:45:23:INFO:configure_evaluate: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_evaluate: received 3 results and 0 failures
+09/17/2026 10:45:26:INFO:aggregate_evaluate: received 3 results and 0 failures
+Round 19/20 | val_loss 0.4582 | val_dice 0.5265 | val_iou 0.3926
+[92mINFO [0m:      
+09/17/2026 10:45:26:INFO:
+[92mINFO [0m:      [ROUND 20]
+09/17/2026 10:45:26:INFO:[ROUND 20]
+[92mINFO [0m:      configure_fit: strategy sampled 3 clients (out of 3)
+09/17/2026 10:45:26:INFO:configure_fit: strategy sampled 3 clients (out of 3)
+[91mERROR [0m:     Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 73, in _submit_job
+    out_mssg, updated_context = self.actor_pool.get_client_result(
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 399, in get_client_result
+    return self._fetch_future_result(cid)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 280, in _fetch_future_result
+    res_cid, out_mssg, updated_context = ray.get(
+                                         ^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/auto_init_hook.py", line 21, in auto_init_wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/client_mode_hook.py", line 103, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/worker.py", line 2639, in get
+    values, debugger_breakpoint = worker.get_objects(object_refs, timeout=timeout)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/worker.py", line 864, in get_objects
+    raise value.as_instanceof_cause()
+ray.exceptions.RayTaskError(ClientAppException): [36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 98, in __call__
+    return self._call(message, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 81, in ffn
+    out_message = handle_legacy_message_from_msgtype(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/message_handler/message_handler.py", line 130, in handle_legacy_message_from_msgtype
+    fit_res = maybe_call_fit(
+              ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client.py", line 234, in maybe_call_fit
+    return client.fit(fit_ins)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/numpy_client.py", line 238, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e6_server.py", line 178, in fit
+    self.optimizer.step()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 513, in step
+    if self.pre_step():
+       ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 494, in pre_step
+    self.clip_and_accumulate()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 412, in clip_and_accumulate
+    grad = contract("i,i...", per_sample_clip_factor, grad_sample)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 603, in contract
+    return _core_contract(operands, contraction_list, backend=backend, out=out, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 687, in _core_contract
+    new_view = _tensordot(*tmp_operands, axes=axes, backend=backend, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/sharing.py", line 140, in cached_tensordot
+    return tensordot(x, y, axes, backend=backend)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 470, in _tensordot
+    return fn(x, y, axes=axes)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/backends/torch.py", line 56, in tensordot
+    return torch.tensordot(x, y, dims=axes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/functional.py", line 1360, in tensordot
+    return _VF.tensordot(a, b, dims_a, dims_b)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+
+The above exception was the direct cause of the following exception:
+
+[36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 64, in run
+    raise ClientAppException(str(ex)) from ex
+flwr.client.client_app.ClientAppException: 
+Exception ClientAppException occurred. Message: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+
+09/17/2026 10:45:53:ERROR:Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_client_proxy.py", line 73, in _submit_job
+    out_mssg, updated_context = self.actor_pool.get_client_result(
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 399, in get_client_result
+    return self._fetch_future_result(cid)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 280, in _fetch_future_result
+    res_cid, out_mssg, updated_context = ray.get(
+                                         ^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/auto_init_hook.py", line 21, in auto_init_wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/client_mode_hook.py", line 103, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/worker.py", line 2639, in get
+    values, debugger_breakpoint = worker.get_objects(object_refs, timeout=timeout)
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/ray/_private/worker.py", line 864, in get_objects
+    raise value.as_instanceof_cause()
+ray.exceptions.RayTaskError(ClientAppException): [36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 98, in __call__
+    return self._call(message, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 81, in ffn
+    out_message = handle_legacy_message_from_msgtype(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/message_handler/message_handler.py", line 130, in handle_legacy_message_from_msgtype
+    fit_res = maybe_call_fit(
+              ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client.py", line 234, in maybe_call_fit
+    return client.fit(fit_ins)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/numpy_client.py", line 238, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e6_server.py", line 178, in fit
+    self.optimizer.step()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 513, in step
+    if self.pre_step():
+       ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 494, in pre_step
+    self.clip_and_accumulate()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 412, in clip_and_accumulate
+    grad = contract("i,i...", per_sample_clip_factor, grad_sample)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 603, in contract
+    return _core_contract(operands, contraction_list, backend=backend, out=out, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 687, in _core_contract
+    new_view = _tensordot(*tmp_operands, axes=axes, backend=backend, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/sharing.py", line 140, in cached_tensordot
+    return tensordot(x, y, axes, backend=backend)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 470, in _tensordot
+    return fn(x, y, axes=axes)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/backends/torch.py", line 56, in tensordot
+    return torch.tensordot(x, y, dims=axes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/functional.py", line 1360, in tensordot
+    return _VF.tensordot(a, b, dims_a, dims_b)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+
+The above exception was the direct cause of the following exception:
+
+[36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 64, in run
+    raise ClientAppException(str(ex)) from ex
+flwr.client.client_app.ClientAppException: 
+Exception ClientAppException occurred. Message: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+
+[91mERROR [0m:     [36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 98, in __call__
+    return self._call(message, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 81, in ffn
+    out_message = handle_legacy_message_from_msgtype(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/message_handler/message_handler.py", line 130, in handle_legacy_message_from_msgtype
+    fit_res = maybe_call_fit(
+              ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client.py", line 234, in maybe_call_fit
+    return client.fit(fit_ins)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/numpy_client.py", line 238, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e6_server.py", line 178, in fit
+    self.optimizer.step()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 513, in step
+    if self.pre_step():
+       ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 494, in pre_step
+    self.clip_and_accumulate()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 412, in clip_and_accumulate
+    grad = contract("i,i...", per_sample_clip_factor, grad_sample)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 603, in contract
+    return _core_contract(operands, contraction_list, backend=backend, out=out, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 687, in _core_contract
+    new_view = _tensordot(*tmp_operands, axes=axes, backend=backend, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/sharing.py", line 140, in cached_tensordot
+    return tensordot(x, y, axes, backend=backend)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 470, in _tensordot
+    return fn(x, y, axes=axes)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/backends/torch.py", line 56, in tensordot
+    return torch.tensordot(x, y, dims=axes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/functional.py", line 1360, in tensordot
+    return _VF.tensordot(a, b, dims_a, dims_b)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+
+The above exception was the direct cause of the following exception:
+
+[36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 64, in run
+    raise ClientAppException(str(ex)) from ex
+flwr.client.client_app.ClientAppException: 
+Exception ClientAppException occurred. Message: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+09/17/2026 10:45:53:ERROR:[36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 98, in __call__
+    return self._call(message, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client_app.py", line 81, in ffn
+    out_message = handle_legacy_message_from_msgtype(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/message_handler/message_handler.py", line 130, in handle_legacy_message_from_msgtype
+    fit_res = maybe_call_fit(
+              ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/client.py", line 234, in maybe_call_fit
+    return client.fit(fit_ins)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/client/numpy_client.py", line 238, in _fit
+    results = self.numpy_client.fit(parameters, ins.config)  # type: ignore
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e6_server.py", line 178, in fit
+    self.optimizer.step()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 513, in step
+    if self.pre_step():
+       ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 494, in pre_step
+    self.clip_and_accumulate()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 412, in clip_and_accumulate
+    grad = contract("i,i...", per_sample_clip_factor, grad_sample)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 603, in contract
+    return _core_contract(operands, contraction_list, backend=backend, out=out, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 687, in _core_contract
+    new_view = _tensordot(*tmp_operands, axes=axes, backend=backend, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/sharing.py", line 140, in cached_tensordot
+    return tensordot(x, y, axes, backend=backend)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 470, in _tensordot
+    return fn(x, y, axes=axes)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/backends/torch.py", line 56, in tensordot
+    return torch.tensordot(x, y, dims=axes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/functional.py", line 1360, in tensordot
+    return _VF.tensordot(a, b, dims_a, dims_b)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+
+The above exception was the direct cause of the following exception:
+
+[36mray::ClientAppActor.run()[39m (pid=652, ip=172.19.2.2, actor_id=24e692f7c03b6e47dc67c2ea01000000, repr=<flwr.simulation.ray_transport.ray_actor.ClientAppActor object at 0x7ac1fbdf3080>)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/flwr/simulation/ray_transport/ray_actor.py", line 64, in run
+    raise ClientAppException(str(ex)) from ex
+flwr.client.client_app.ClientAppException: 
+Exception ClientAppException occurred. Message: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+[92mINFO [0m:      aggregate_fit: received 2 results and 1 failures
+09/17/2026 10:47:53:INFO:aggregate_fit: received 2 results and 1 failures
+[92mINFO [0m:      configure_evaluate: strategy sampled 3 clients (out of 3)
+09/17/2026 10:47:53:INFO:configure_evaluate: strategy sampled 3 clients (out of 3)
+[92mINFO [0m:      aggregate_evaluate: received 3 results and 0 failures
+09/17/2026 10:47:56:INFO:aggregate_evaluate: received 3 results and 0 failures
+Round 20/20 | val_loss 0.4404 | val_dice 0.4980 | val_iou 0.3713
+[92mINFO [0m:      
+09/17/2026 10:47:56:INFO:
+[92mINFO [0m:      [SUMMARY]
+09/17/2026 10:47:56:INFO:[SUMMARY]
+[92mINFO [0m:      Run finished 20 rounds in 3696.50s
+09/17/2026 10:47:56:INFO:Run finished 20 rounds in 3696.50s
+[92mINFO [0m:      History (loss, distributed):
+09/17/2026 10:47:56:INFO:History (loss, distributed):
+[92mINFO [0m:      	('\tround 1: 0.5130142932377973\n'
+09/17/2026 10:47:56:INFO:	('\tround 1: 0.5130142932377973\n'
+[92mINFO [0m:      	 '\tround 2: 0.5063563401259266\n'
+09/17/2026 10:47:56:INFO:	 '\tround 2: 0.5063563401259266\n'
+[92mINFO [0m:      	 '\tround 3: 0.5018583212083984\n'
+09/17/2026 10:47:56:INFO:	 '\tround 3: 0.5018583212083984\n'
+[92mINFO [0m:      	 '\tround 4: 0.4958044844344982\n'
+09/17/2026 10:47:56:INFO:	 '\tround 4: 0.4958044844344982\n'
+[92mINFO [0m:      	 '\tround 5: 0.48959070258927573\n'
+09/17/2026 10:47:56:INFO:	 '\tround 5: 0.48959070258927573\n'
+[92mINFO [0m:      	 '\tround 6: 0.48382652338268684\n'
+09/17/2026 10:47:56:INFO:	 '\tround 6: 0.48382652338268684\n'
+[92mINFO [0m:      	 '\tround 7: 0.47843248369624314\n'
+09/17/2026 10:47:56:INFO:	 '\tround 7: 0.47843248369624314\n'
+[92mINFO [0m:      	 '\tround 8: 0.4741252968612226\n'
+09/17/2026 10:47:56:INFO:	 '\tround 8: 0.4741252968612226\n'
+[92mINFO [0m:      	 '\tround 9: 0.4689972864771352\n'
+09/17/2026 10:47:56:INFO:	 '\tround 9: 0.4689972864771352\n'
+[92mINFO [0m:      	 '\tround 10: 0.46398254494065216\n'
+09/17/2026 10:47:56:INFO:	 '\tround 10: 0.46398254494065216\n'
+[92mINFO [0m:      	 '\tround 11: 0.4605856919751584\n'
+09/17/2026 10:47:56:INFO:	 '\tround 11: 0.4605856919751584\n'
+[92mINFO [0m:      	 '\tround 12: 0.45793072315095695\n'
+09/17/2026 10:47:56:INFO:	 '\tround 12: 0.45793072315095695\n'
+[92mINFO [0m:      	 '\tround 13: 0.4541795705128642\n'
+09/17/2026 10:47:56:INFO:	 '\tround 13: 0.4541795705128642\n'
+[92mINFO [0m:      	 '\tround 14: 0.4521183359391481\n'
+09/17/2026 10:47:56:INFO:	 '\tround 14: 0.4521183359391481\n'
+[92mINFO [0m:      	 '\tround 15: 0.4500170672402798\n'
+09/17/2026 10:47:56:INFO:	 '\tround 15: 0.4500170672402798\n'
+[92mINFO [0m:      	 '\tround 16: 0.44756577061217967\n'
+09/17/2026 10:47:56:INFO:	 '\tround 16: 0.44756577061217967\n'
+[92mINFO [0m:      	 '\tround 17: 0.4432063991004981\n'
+09/17/2026 10:47:56:INFO:	 '\tround 17: 0.4432063991004981\n'
+[92mINFO [0m:      	 '\tround 18: 0.44176081829858055\n'
+09/17/2026 10:47:56:INFO:	 '\tround 18: 0.44176081829858055\n'
+[92mINFO [0m:      	 '\tround 19: 0.4581570044304561\n'
+09/17/2026 10:47:56:INFO:	 '\tround 19: 0.4581570044304561\n'
+[92mINFO [0m:      	 '\tround 20: 0.44037039829689323\n')History (metrics, distributed, evaluate):
+09/17/2026 10:47:56:INFO:	 '\tround 20: 0.44037039829689323\n')History (metrics, distributed, evaluate):
+[92mINFO [0m:      	{'val_dice': [(1, 0.4012821057467784),
+09/17/2026 10:47:56:INFO:	{'val_dice': [(1, 0.4012821057467784),
+[92mINFO [0m:      	              (2, 0.4202848494631573),
+09/17/2026 10:47:56:INFO:	              (2, 0.4202848494631573),
+[92mINFO [0m:      	              (3, 0.43206125682997476),
+09/17/2026 10:47:56:INFO:	              (3, 0.43206125682997476),
+[92mINFO [0m:      	              (4, 0.45075637350961995),
+09/17/2026 10:47:56:INFO:	              (4, 0.45075637350961995),
+[92mINFO [0m:      	              (5, 0.45403002859319297),
+09/17/2026 10:47:56:INFO:	              (5, 0.45403002859319297),
+[92mINFO [0m:      	              (6, 0.466828792187774),
+09/17/2026 10:47:56:INFO:	              (6, 0.466828792187774),
+[92mINFO [0m:      	              (7, 0.47649225806726997),
+09/17/2026 10:47:56:INFO:	              (7, 0.47649225806726997),
+[92mINFO [0m:      	              (8, 0.4820072370825462),
+09/17/2026 10:47:56:INFO:	              (8, 0.4820072370825462),
+[92mINFO [0m:      	              (9, 0.48644344436312187),
+09/17/2026 10:47:56:INFO:	              (9, 0.48644344436312187),
+[92mINFO [0m:      	              (10, 0.4977075057122314),
+09/17/2026 10:47:56:INFO:	              (10, 0.4977075057122314),
+[92mINFO [0m:      	              (11, 0.5048751825267829),
+09/17/2026 10:47:56:INFO:	              (11, 0.5048751825267829),
+[92mINFO [0m:      	              (12, 0.5072996536504876),
+09/17/2026 10:47:56:INFO:	              (12, 0.5072996536504876),
+[92mINFO [0m:      	              (13, 0.5075658490935575),
+09/17/2026 10:47:56:INFO:	              (13, 0.5075658490935575),
+[92mINFO [0m:      	              (14, 0.5115527828341548),
+09/17/2026 10:47:56:INFO:	              (14, 0.5115527828341548),
+[92mINFO [0m:      	              (15, 0.5170176363107071),
+09/17/2026 10:47:56:INFO:	              (15, 0.5170176363107071),
+[92mINFO [0m:      	              (16, 0.5221529362271133),
+09/17/2026 10:47:56:INFO:	              (16, 0.5221529362271133),
+[92mINFO [0m:      	              (17, 0.5227672431654143),
+09/17/2026 10:47:56:INFO:	              (17, 0.5227672431654143),
+[92mINFO [0m:      	              (18, 0.5235251231100952),
+09/17/2026 10:47:56:INFO:	              (18, 0.5235251231100952),
+[92mINFO [0m:      	              (19, 0.5264693664694295),
+09/17/2026 10:47:56:INFO:	              (19, 0.5264693664694295),
+[92mINFO [0m:      	              (20, 0.49795635950218126)],
+09/17/2026 10:47:56:INFO:	              (20, 0.49795635950218126)],
+[92mINFO [0m:      	 'val_iou': [(1, 0.2871175114969605),
+09/17/2026 10:47:56:INFO:	 'val_iou': [(1, 0.2871175114969605),
+[92mINFO [0m:      	             (2, 0.30273505999046624),
+09/17/2026 10:47:56:INFO:	             (2, 0.30273505999046624),
+[92mINFO [0m:      	             (3, 0.31245346318170863),
+09/17/2026 10:47:56:INFO:	             (3, 0.31245346318170863),
+[92mINFO [0m:      	             (4, 0.327848308670868),
+09/17/2026 10:47:56:INFO:	             (4, 0.327848308670868),
+[92mINFO [0m:      	             (5, 0.3313690337162573),
+09/17/2026 10:47:56:INFO:	             (5, 0.3313690337162573),
+[92mINFO [0m:      	             (6, 0.34305399066036185),
+09/17/2026 10:47:56:INFO:	             (6, 0.34305399066036185),
+[92mINFO [0m:      	             (7, 0.35163459511636536),
+09/17/2026 10:47:56:INFO:	             (7, 0.35163459511636536),
+[92mINFO [0m:      	             (8, 0.35678673259262894),
+09/17/2026 10:47:56:INFO:	             (8, 0.35678673259262894),
+[92mINFO [0m:      	             (9, 0.36080785972400775),
+09/17/2026 10:47:56:INFO:	             (9, 0.36080785972400775),
+[92mINFO [0m:      	             (10, 0.37098148117945035),
+09/17/2026 10:47:56:INFO:	             (10, 0.37098148117945035),
+[92mINFO [0m:      	             (11, 0.37709932049501294),
+09/17/2026 10:47:56:INFO:	             (11, 0.37709932049501294),
+[92mINFO [0m:      	             (12, 0.3792034208195881),
+09/17/2026 10:47:56:INFO:	             (12, 0.3792034208195881),
+[92mINFO [0m:      	             (13, 0.37967858731167986),
+09/17/2026 10:47:56:INFO:	             (13, 0.37967858731167986),
+[92mINFO [0m:      	             (14, 0.38276098850861334),
+09/17/2026 10:47:56:INFO:	             (14, 0.38276098850861334),
+[92mINFO [0m:      	             (15, 0.3876440664518227),
+09/17/2026 10:47:56:INFO:	             (15, 0.3876440664518227),
+[92mINFO [0m:      	             (16, 0.3918807850300687),
+09/17/2026 10:47:56:INFO:	             (16, 0.3918807850300687),
+[92mINFO [0m:      	             (17, 0.39248229612424534),
+09/17/2026 10:47:56:INFO:	             (17, 0.39248229612424534),
+[92mINFO [0m:      	             (18, 0.393484609277503),
+09/17/2026 10:47:56:INFO:	             (18, 0.393484609277503),
+[92mINFO [0m:      	             (19, 0.39262976432309565),
+09/17/2026 10:47:56:INFO:	             (19, 0.39262976432309565),
+[92mINFO [0m:      	             (20, 0.37125325706398604)]}
+09/17/2026 10:47:56:INFO:	             (20, 0.37125325706398604)]}
+[92mINFO [0m:      
+09/17/2026 10:47:56:INFO:
+Saved best model to checkpoints/e6_best.pth
+
+--- Val Dice Per Round ---
+Traceback (most recent call last):
+  File "/kaggle/working/SDFL/e6_server.py", line 360, in <module>
+    run_e6_simulation()
+  File "/kaggle/working/SDFL/e6_server.py", line 332, in run_e6_simulation
+    for rnd, dice, iou in strategy.round_history:
+        ^^^^^^^^^^^^^^
+ValueError: too many values to unpack (expected 3)
