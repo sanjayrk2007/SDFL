@@ -8,6 +8,12 @@ import hashlib
 import argparse
 import numpy as np
 import torch
+import numpy as np
+
+# Compatibility for Flower 1.8.0 with NumPy 2.x
+if not hasattr(np, "float_"):
+    np.float_ = np.float64
+
 import flwr as fl
 from cryptography.exceptions import InvalidTag
 
@@ -419,9 +425,19 @@ class TemporalCheckpointingSecAgg(fl.server.strategy.FedAvg):
 
             if list_of_ciphertexts and round_key is not None:
                 try:
-                    aggregated_weights = server_aggregate(list_of_ciphertexts, round_key, num_examples_list)
+                    aggregated_weights = server_aggregate(
+    list_of_ciphertexts,
+    round_key,
+    num_examples_list,
+    associated_data_list=[
+        item["associated_data"] for item in list_of_ciphertexts
+    ],
+)
                 except Exception as e:
-                    print(f"Decryption / Aggregation failed: {e}")
+                    print(
+    f"Decryption / Aggregation failed: "
+    f"{type(e).__name__}: {e!r}"
+)
 
             if aggregated_weights is None:
                 # Log distinct event for expired/failed aggregation round
