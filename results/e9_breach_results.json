@@ -1,0 +1,40 @@
+{
+  "experiment": "E9",
+  "title": "Retrospective Breach Attack Experiment",
+  "target_trials_per_condition": 1000,
+  "total_attack_attempts": 5000,
+  "successful_plaintext_recoveries": 0,
+  "empirical_attack_success_rate": 0.0,
+  "confidence_interval_95_percent": [
+    0.0,
+    0.3
+  ],
+  "rule_of_three_upper_bound_percent": 0.3,
+  "conditions": {
+    "A1_zeroed_key_exploit": {
+      "trials": 1000,
+      "successes": 0,
+      "success_rate": 0.0
+    },
+    "A2_random_key_search": {
+      "trials": 1000,
+      "successes": 0,
+      "success_rate": 0.0
+    },
+    "A3_cross_round_substitution": {
+      "trials": 1000,
+      "successes": 0,
+      "success_rate": 0.0
+    },
+    "A4_certificate_tampering": {
+      "trials": 1000,
+      "successes": 0,
+      "success_rate": 0.0
+    },
+    "A5_plaintext_reconstruction": {
+      "trials": 1000,
+      "successes": 0,
+      "success_rate": 0.0
+    }
+  }
+}
