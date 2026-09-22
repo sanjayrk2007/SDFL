@@ -1,6 +1,0 @@
-condition,trials,successes,success_rate_pct
-A1_zeroed_key_exploit,1000,0,0.0000
-A2_random_key_search,1000,0,0.0000
-A3_cross_round_substitution,1000,0,0.0000
-A4_certificate_tampering,1000,0,0.0000
-A5_plaintext_reconstruction,1000,0,0.0000
