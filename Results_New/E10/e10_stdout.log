@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/kaggle/working/SDFL/e10_window_sweep.py", line 23, in <module>
+    from e7_temporal import TemporalCheckpointingSecAgg, SECRET_KEY, compute_aad
+  File "/kaggle/working/SDFL/e7_temporal.py", line 17, in <module>
+    import flwr as fl
+  File "/usr/local/lib/python3.12/dist-packages/flwr/__init__.py", line 20, in <module>
+    from . import client, common, server, simulation
+  File "/usr/local/lib/python3.12/dist-packages/flwr/server/__init__.py", line 20, in <module>
+    from .app import run_driver_api as run_driver_api
+  File "/usr/local/lib/python3.12/dist-packages/flwr/server/app.py", line 48, in <module>
+    from .superlink.driver.driver_grpc import run_driver_api_grpc
+  File "/usr/local/lib/python3.12/dist-packages/flwr/server/superlink/driver/driver_grpc.py", line 29, in <module>
+    from ..fleet.grpc_bidi.grpc_server import generic_create_grpc_server
+  File "/usr/local/lib/python3.12/dist-packages/flwr/server/superlink/fleet/grpc_bidi/grpc_server.py", line 32, in <module>
+    from flwr.server.superlink.fleet.grpc_bidi.flower_service_servicer import (
+  File "/usr/local/lib/python3.12/dist-packages/flwr/server/superlink/fleet/grpc_bidi/flower_service_servicer.py", line 25, in <module>
+    from iterators import TimeoutIterator
+ModuleNotFoundError: No module named 'iterators'
