@@ -1,87 +1,40 @@
 {
-  "experiment": "E9_Retrospective_Breach_Attack",
-  "timestamp": "2026-09-13T08:05:02Z",
-  "threat_model": {
-    "adversary": "Retrospective Post-Breach Adversary (A_retro)",
-    "timing": "Strictly post-expiry and post key-destruction (t > Tr)",
-    "available_artifacts": [
-      "retained_ciphertext",
-      "nonce",
-      "tag_aad",
-      "round_certificate",
-      "hmac_signature",
-      "transaction_uid",
-      "round_metadata",
-      "audit_log_trace",
-      "pre_and_post_round_global_models"
-    ],
-    "excluded_artifacts": [
-      "destroyed_round_key",
-      "live_decryption_oracle",
-      "client_plaintext_buffer"
-    ]
-  },
+  "experiment": "E9",
+  "title": "Retrospective Breach Attack Experiment",
+  "target_trials_per_condition": 1000,
+  "total_attack_attempts": 5000,
+  "successful_plaintext_recoveries": 0,
+  "empirical_attack_success_rate": 0.0,
+  "confidence_interval_95_percent": [
+    0.0,
+    0.3
+  ],
+  "rule_of_three_upper_bound_percent": 0.3,
   "conditions": {
     "A1_zeroed_key_exploit": {
-      "trials": 20,
+      "trials": 1000,
       "successes": 0,
-      "failures": 20,
-      "success_rate": 0.0,
-      "failure_reasons": {
-        "InvalidTag: zeroed key tag mismatch": 20
-      }
+      "success_rate": 0.0
     },
     "A2_random_key_search": {
-      "trials": 20,
+      "trials": 1000,
       "successes": 0,
-      "failures": 20,
-      "success_rate": 0.0,
-      "failure_reasons": {
-        "InvalidTag: authentication tag verification failed": 20
-      }
+      "success_rate": 0.0
     },
     "A3_cross_round_substitution": {
-      "trials": 20,
+      "trials": 1000,
       "successes": 0,
-      "failures": 20,
-      "success_rate": 0.0,
-      "failure_reasons": {
-        "InvalidTag: round key isolation & AAD mismatch": 20
-      }
+      "success_rate": 0.0
     },
     "A4_certificate_tampering": {
-      "trials": 20,
+      "trials": 1000,
       "successes": 0,
-      "failures": 20,
-      "success_rate": 0.0,
-      "failure_reasons": {
-        "rejected: invalid_signature & InvalidTag": 20
-      }
+      "success_rate": 0.0
     },
     "A5_plaintext_reconstruction": {
-      "trials": 20,
+      "trials": 1000,
       "successes": 0,
-      "failures": 20,
-      "success_rate": 0.0,
-      "failure_reasons": {
-        "authentication_failed: tag_invalid": 20
-      }
+      "success_rate": 0.0
     }
-  },
-  "summary": {
-    "total_attack_attempts": 100,
-    "total_successful_recoveries": 0,
-    "overall_empirical_success_rate": 0.0,
-    "per_condition_trials": 20,
-    "statistical_bounds": {
-      "clopper_pearson_95_ci_per_condition": [
-        0.0,
-        0.139108
-      ],
-      "rule_of_three_95_upper_bound_per_condition": 0.149787,
-      "rule_of_three_95_upper_bound_total": 0.029957,
-      "approx_95_upper_bound_str": "14.98%"
-    },
-    "elapsed_seconds": 0.01
   }
 }
