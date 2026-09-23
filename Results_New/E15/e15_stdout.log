@@ -1,0 +1,17 @@
+[SECURITY WARNING] SDFL_HMAC_SECRET_KEY is not set — falling back to the insecure, publicly-committed development key. Set SDFL_HMAC_SECRET_KEY before running anything whose certificates/results are meant to be trusted (see SDFL_Preflight_Audit.md, Section 3).
+
+========================================================
+E15: Running Fault & Late-Client Robustness Suite
+========================================================
+[PASS] SC-01: Normal On-Time Submissions -> Accepted: 3/3
+[PASS] SC-02: Late Client Rejection -> Status: expired
+[PASS] SC-03: Replay / Duplicate Protection -> Status: replay_detected
+[PASS] SC-04: Forged Signature Rejection -> Status: invalid_signature
+[PASS] SC-05: Key Context Mismatch Rejection -> Status: mismatch
+[PASS] SC-06: Tampered AAD Authentication Failure -> Decryption Auth Success: False
+[PASS] SC-07: Partial Client Dropout Graceful Aggregation -> Aggregated 2/2 active clients
+[PASS] SC-08: Total Dropout Round Handling -> Has Aggregated Weights: False
+[PASS] SC-09: Post-Round Decryption Key Destruction -> Key Zeroed / Destroyed: True
+[PASS] SC-10: Subsequent Round Recovery -> Recovered Full Aggregation: 3/3
+
+E15 Suite Complete. All 10 Scenarios Passed: True
