@@ -16,6 +16,6 @@ Traceback (most recent call last):
   File "/usr/local/lib/python3.12/dist-packages/flwr/common/typing.py", line 27, in <module>
     NDArrayFloat = npt.NDArray[np.float_]
                                ^^^^^^^^^
-  File "/usr/local/lib/python3.12/dist-packages/numpy/__init__.py", line 397, in __getattr__
+  File "/usr/local/lib/python3.12/dist-packages/numpy/__init__.py", line 400, in __getattr__
     raise AttributeError(
-AttributeError: `np.float_` was removed in the NumPy 2.0 release. Use `np.float64` instead.. Did you mean: 'float16'?
+AttributeError: `np.float_` was removed in the NumPy 2.0 release. Use `np.float64` instead.
