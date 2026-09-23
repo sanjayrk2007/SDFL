@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "/kaggle/working/SDFL/e12_unseen_hospital.py", line 15, in <module>
+    from e2_server import DEVICE, DiceBCELoss, ResUNetPlusPlus, get_parameters, set_parameters
+  File "/kaggle/working/SDFL/e2_server.py", line 11, in <module>
+    import flwr as fl
+  File "/usr/local/lib/python3.12/dist-packages/flwr/__init__.py", line 18, in <module>
+    from flwr.common.version import package_version as _package_version
+  File "/usr/local/lib/python3.12/dist-packages/flwr/common/__init__.py", line 20, in <module>
+    from .context import Context as Context
+  File "/usr/local/lib/python3.12/dist-packages/flwr/common/context.py", line 20, in <module>
+    from .record import RecordSet
+  File "/usr/local/lib/python3.12/dist-packages/flwr/common/record/__init__.py", line 17, in <module>
+    from .configsrecord import ConfigsRecord
+  File "/usr/local/lib/python3.12/dist-packages/flwr/common/record/configsrecord.py", line 20, in <module>
+    from flwr.common.typing import ConfigsRecordValues, ConfigsScalar
+  File "/usr/local/lib/python3.12/dist-packages/flwr/common/typing.py", line 27, in <module>
+    NDArrayFloat = npt.NDArray[np.float_]
+                               ^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/numpy/__init__.py", line 397, in __getattr__
+    raise AttributeError(
+AttributeError: `np.float_` was removed in the NumPy 2.0 release. Use `np.float64` instead.. Did you mean: 'float16'?
