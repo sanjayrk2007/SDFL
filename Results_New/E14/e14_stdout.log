@@ -1,0 +1,13 @@
+[SECURITY WARNING] SDFL_HMAC_SECRET_KEY is not set — falling back to the insecure, publicly-committed development key. Set SDFL_HMAC_SECRET_KEY before running anything whose certificates/results are meant to be trusted (see SDFL_Preflight_Audit.md, Section 3).
+
+--- Benchmarking SDFL Security Layer for K = 3 clients ---
+K=3: Total Security Latency = 231.879 ms | Aggregation = 175.718 ms | Comm = 150.89 MB
+
+--- Benchmarking SDFL Security Layer for K = 5 clients ---
+K=5: Total Security Latency = 323.607 ms | Aggregation = 272.864 ms | Comm = 251.48 MB
+
+--- Benchmarking SDFL Security Layer for K = 10 clients ---
+K=10: Total Security Latency = 452.101 ms | Aggregation = 398.87 ms | Comm = 502.95 MB
+
+--- Benchmarking SDFL Security Layer for K = 20 clients ---
+K=20: Total Security Latency = 903.638 ms | Aggregation = 855.306 ms | Comm = 1005.91 MB
