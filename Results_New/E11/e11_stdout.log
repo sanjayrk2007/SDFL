@@ -1,31 +1,36 @@
-11:21:48  INFO      ================================================================
-11:21:48  INFO      E11 -- Privacy-Utility Sweep
-11:21:48  INFO      ================================================================
-11:21:48  INFO      Config: N_train=266  batch=8  q=0.0301  local_epochs=3  rounds=20  steps/round=99  total_steps=1980  C=2.0  delta=1e-05
-11:21:48  INFO      Reference metrics loaded for sigma values: ['1.5']
-11:21:48  INFO      --------------------------------------------------
-11:21:48  INFO      Processing sigma = 0.30 ...
-/usr/local/lib/python3.12/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the smallest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+16:59:54  INFO      Loading hospital training datasets and held-out test dataset...
+16:59:54  INFO      ================================================================
+16:59:54  INFO      E11 EXPERIMENTAL CONFIGURATION & DATASET AUDIT PRE-FLIGHT
+16:59:54  INFO      ================================================================
+16:59:54  INFO        Sigmas to evaluate     : [0.3, 0.5, 0.8, 1.0, 1.5, 2.0]
+16:59:54  INFO        Federated rounds       : 20
+16:59:54  INFO        Local epochs per round : 3
+16:59:54  INFO        Participating clients  : 3
+16:59:54  INFO        Batch size             : 8
+16:59:54  INFO        Clipping norm (C)      : 2.0
+16:59:54  INFO        DP Target delta        : 1e-05
+16:59:54  INFO        Learning rate          : 0.0001
+16:59:54  INFO        Compute Device         : cuda (CUDA available: True)
+16:59:54  INFO        --- Dataset Partition & Overlap Audit ---
+16:59:54  INFO          - Hospital 0 Train Samples: 264 (33 batches/epoch, q=0.0303)
+16:59:54  INFO          - Hospital 1 Train Samples: 263 (33 batches/epoch, q=0.0304)
+16:59:54  INFO          - Hospital 2 Train Samples: 262 (33 batches/epoch, q=0.0305)
+16:59:54  INFO          - Pairwise Overlaps       : H0-H1=35, H0-H2=38, H1-H2=39
+16:59:54  INFO          - Total Unique Records    : 679
+16:59:54  INFO          - Records in 1 Client     : 571 (84.1%)
+16:59:54  INFO          - Records in 2 Clients    : 106 (15.6%)
+16:59:54  INFO          - Records in 3 Clients    : 2 (0.3%)
+16:59:54  INFO          - Test Split Overlap      : 0 (STRICTLY DISJOINT)
+16:59:54  INFO        Combined Test Samples  : 107
+16:59:54  INFO        Expected DP Steps/Client: 1980
+16:59:54  INFO        Privacy Accounting     : Dynamic Overlap-Aware RDP Composition (Worst-Case on 3-Client Records)
+16:59:54  INFO        Save Checkpoints       : False
+16:59:54  INFO      ================================================================
+16:59:54  INFO      ================================================================
+16:59:54  INFO      Starting Federated DP-SGD Training for Sigma = 0.30 (Seed: 72)
+16:59:54  INFO      ================================================================
+/usr/local/lib/python3.12/dist-packages/opacus/privacy_engine.py:142: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
   warnings.warn(
-11:21:52  INFO        sigma=0.30  eps_final=291.1461  Dice=N/A -- requires GPU training run  IoU=N/A -- requires GPU training run  (source: theoretical projection pending actual training)
-11:21:52  INFO      --------------------------------------------------
-11:21:52  INFO      Processing sigma = 0.50 ...
-11:21:54  INFO        sigma=0.50  eps_final=58.3755  Dice=N/A -- requires GPU training run  IoU=N/A -- requires GPU training run  (source: theoretical projection pending actual training)
-11:21:54  INFO      --------------------------------------------------
-11:21:54  INFO      Processing sigma = 0.80 ...
-11:21:55  INFO        sigma=0.80  eps_final=15.7950  Dice=N/A -- requires GPU training run  IoU=N/A -- requires GPU training run  (source: theoretical projection pending actual training)
-11:21:55  INFO      --------------------------------------------------
-11:21:55  INFO      Processing sigma = 1.00 ...
-11:21:56  INFO        sigma=1.00  eps_final=9.7321  Dice=N/A -- requires GPU training run  IoU=N/A -- requires GPU training run  (source: theoretical projection pending actual training)
-11:21:56  INFO      --------------------------------------------------
-11:21:56  INFO      Processing sigma = 1.50 ...
-11:21:56  INFO        sigma=1.50  eps_final=4.9118  Dice=N/A -- requires GPU training run  IoU=N/A -- requires GPU training run  (source: theoretical projection pending actual training)
-11:21:56  INFO      --------------------------------------------------
-11:21:56  INFO      Processing sigma = 2.00 ...
-11:21:57  INFO        sigma=2.00  eps_final=3.3041  Dice=N/A -- requires GPU training run  IoU=N/A -- requires GPU training run  (source: theoretical projection pending actual training)
-11:21:57  INFO      Results written to /kaggle/working/SDFL/Results_New/E11/e11_privacy_results.json
-11:21:57  INFO      Log written to /kaggle/working/SDFL/Results_New/E11/e11_privacy_log.jsonl
-11:21:57  INFO      Report written to /kaggle/working/SDFL/Results_New/E11/E11_RESULTS.md
-11:21:57  INFO      ================================================================
-11:21:57  INFO      E11 complete.  Results in Results_New/E11/e11_privacy_results.json
-11:21:57  INFO      ================================================================
+/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py:1830: FutureWarning: Using a non-full backward hook when the forward contains multiple autograd Nodes is deprecated and will be removed in future versions. This hook will be missing some grad_input. Please use register_full_backward_hook to get the documented behavior.
+  self._maybe_warn_non_full_backward_hook(args, result, grad_fn)
+17:04:25  INFO        [Round 01/20]  Sigma: 0.30  |  Avg Train Loss: 0.6126
