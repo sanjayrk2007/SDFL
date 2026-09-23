@@ -1,36 +1,262 @@
-16:59:54  INFO      Loading hospital training datasets and held-out test dataset...
-16:59:54  INFO      ================================================================
-16:59:54  INFO      E11 EXPERIMENTAL CONFIGURATION & DATASET AUDIT PRE-FLIGHT
-16:59:54  INFO      ================================================================
-16:59:54  INFO        Sigmas to evaluate     : [0.3, 0.5, 0.8, 1.0, 1.5, 2.0]
-16:59:54  INFO        Federated rounds       : 20
-16:59:54  INFO        Local epochs per round : 3
-16:59:54  INFO        Participating clients  : 3
-16:59:54  INFO        Batch size             : 8
-16:59:54  INFO        Clipping norm (C)      : 2.0
-16:59:54  INFO        DP Target delta        : 1e-05
-16:59:54  INFO        Learning rate          : 0.0001
-16:59:54  INFO        Compute Device         : cuda (CUDA available: True)
-16:59:54  INFO        --- Dataset Partition & Overlap Audit ---
-16:59:54  INFO          - Hospital 0 Train Samples: 264 (33 batches/epoch, q=0.0303)
-16:59:54  INFO          - Hospital 1 Train Samples: 263 (33 batches/epoch, q=0.0304)
-16:59:54  INFO          - Hospital 2 Train Samples: 262 (33 batches/epoch, q=0.0305)
-16:59:54  INFO          - Pairwise Overlaps       : H0-H1=35, H0-H2=38, H1-H2=39
-16:59:54  INFO          - Total Unique Records    : 679
-16:59:54  INFO          - Records in 1 Client     : 571 (84.1%)
-16:59:54  INFO          - Records in 2 Clients    : 106 (15.6%)
-16:59:54  INFO          - Records in 3 Clients    : 2 (0.3%)
-16:59:54  INFO          - Test Split Overlap      : 0 (STRICTLY DISJOINT)
-16:59:54  INFO        Combined Test Samples  : 107
-16:59:54  INFO        Expected DP Steps/Client: 1980
-16:59:54  INFO        Privacy Accounting     : Dynamic Overlap-Aware RDP Composition (Worst-Case on 3-Client Records)
-16:59:54  INFO        Save Checkpoints       : False
-16:59:54  INFO      ================================================================
-16:59:54  INFO      ================================================================
-16:59:54  INFO      Starting Federated DP-SGD Training for Sigma = 0.30 (Seed: 72)
-16:59:54  INFO      ================================================================
+17:13:54  INFO      Loading hospital training datasets and held-out test dataset...
+17:13:54  INFO      ================================================================
+17:13:54  INFO      E11 EXPERIMENTAL CONFIGURATION & DATASET AUDIT PRE-FLIGHT
+17:13:54  INFO      ================================================================
+17:13:54  INFO        Sigmas to evaluate     : [0.3, 0.5, 0.8, 1.0, 1.5, 2.0]
+17:13:54  INFO        Federated rounds       : 20
+17:13:54  INFO        Local epochs per round : 3
+17:13:54  INFO        Participating clients  : 3
+17:13:54  INFO        Batch size             : 8
+17:13:54  INFO        Clipping norm (C)      : 2.0
+17:13:54  INFO        DP Target delta        : 1e-05
+17:13:54  INFO        Learning rate          : 0.0001
+17:13:54  INFO        Compute Device         : cuda (CUDA available: True)
+17:13:54  INFO        --- Dataset Partition & Overlap Audit ---
+17:13:54  INFO          - Hospital 0 Train Samples: 264 (33 batches/epoch, q=0.0303)
+17:13:54  INFO          - Hospital 1 Train Samples: 263 (33 batches/epoch, q=0.0304)
+17:13:54  INFO          - Hospital 2 Train Samples: 262 (33 batches/epoch, q=0.0305)
+17:13:54  INFO          - Pairwise Overlaps       : H0-H1=35, H0-H2=38, H1-H2=39
+17:13:54  INFO          - Total Unique Records    : 679
+17:13:54  INFO          - Records in 1 Client     : 571 (84.1%)
+17:13:54  INFO          - Records in 2 Clients    : 106 (15.6%)
+17:13:54  INFO          - Records in 3 Clients    : 2 (0.3%)
+17:13:54  INFO          - Test Split Overlap      : 0 (STRICTLY DISJOINT)
+17:13:54  INFO        Combined Test Samples  : 107
+17:13:54  INFO        Expected DP Steps/Client: 1980
+17:13:54  INFO        Privacy Accounting     : Dynamic Overlap-Aware RDP Composition (Worst-Case on 3-Client Records)
+17:13:54  INFO        Save Checkpoints       : False
+17:13:54  INFO      ================================================================
+17:13:54  INFO      ================================================================
+17:13:54  INFO      Starting Federated DP-SGD Training for Sigma = 0.30 (Seed: 72)
+17:13:54  INFO      ================================================================
 /usr/local/lib/python3.12/dist-packages/opacus/privacy_engine.py:142: UserWarning: Secure RNG turned off. This is perfectly fine for experimentation as it allows for much faster training performance, but remember to turn it on and retrain one last time before production with ``secure_mode`` turned on.
   warnings.warn(
 /usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py:1830: FutureWarning: Using a non-full backward hook when the forward contains multiple autograd Nodes is deprecated and will be removed in future versions. This hook will be missing some grad_input. Please use register_full_backward_hook to get the documented behavior.
   self._maybe_warn_non_full_backward_hook(args, result, grad_fn)
-17:04:25  INFO        [Round 01/20]  Sigma: 0.30  |  Avg Train Loss: 0.6126
+17:17:55  INFO        [Round 01/20]  Sigma: 0.30  |  Avg Train Loss: 0.6126
+17:33:56  INFO        [Round 05/20]  Sigma: 0.30  |  Avg Train Loss: 0.5113
+17:53:42  INFO        [Round 10/20]  Sigma: 0.30  |  Avg Train Loss: 0.4836
+18:13:27  INFO        [Round 15/20]  Sigma: 0.30  |  Avg Train Loss: 0.4642
+18:33:18  INFO        [Round 20/20]  Sigma: 0.30  |  Avg Train Loss: 0.4534
+18:33:18  INFO      Training completed for Sigma = 0.30 in 4763.94s
+18:33:18  INFO      Evaluating trained model (Sigma = 0.30) on combined held-out test set...
+18:33:21  INFO        Results (Sigma=0.30): Dice=0.5129, IoU=0.3818, Precision=0.5213, Recall=0.6413
+/usr/local/lib/python3.12/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the smallest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+18:33:28  INFO        DP Accounting (delta=1e-05):
+18:33:28  INFO          - Per-Client Epsilon       : H0=292.9291, H1=293.8323, H2=294.7433
+18:33:28  INFO          - 1-Client Records (N=571) : eps = 294.7433
+18:33:28  INFO          - 2-Client Records (N=106) : eps = 476.7973
+18:33:28  INFO          - 3-Client Records (N=2)   : eps = 657.9482 (WORST-CASE)
+18:33:28  INFO          - Federation Worst-Case Epsilon : 657.9482
+18:33:28  INFO      ================================================================
+18:33:28  INFO      Starting Federated DP-SGD Training for Sigma = 0.50 (Seed: 92)
+18:33:28  INFO      ================================================================
+18:37:29  INFO        [Round 01/20]  Sigma: 0.50  |  Avg Train Loss: 0.6389
+18:53:25  INFO        [Round 05/20]  Sigma: 0.50  |  Avg Train Loss: 0.5208
+19:13:13  INFO        [Round 10/20]  Sigma: 0.50  |  Avg Train Loss: 0.4884
+19:15:23  ERROR     Error executing sigma = 0.50: zeros() received an invalid combination of arguments - got (tuple, dtype=type), but expected one of:
+ * (tuple of ints size, *, tuple of names names, torch.dtype dtype = None, torch.layout layout = None, torch.device device = None, bool pin_memory = False, bool requires_grad = False)
+ * (tuple of ints size, *, Tensor out = None, torch.dtype dtype = None, torch.layout layout = None, torch.device device = None, bool pin_memory = False, bool requires_grad = False)
+
+19:15:23  ERROR     Traceback (most recent call last):
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 810, in main
+    res = run_federated_dpsgd_sweep_single_sigma(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 307, in run_federated_dpsgd_sweep_single_sigma
+    updated_params, n_samples, steps_taken, avg_loss = train_dp_hospital_client(
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 247, in train_dp_hospital_client
+    for images, masks, _ in train_loader:
+                            ^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py", line 708, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py", line 764, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/_utils/fetch.py", line 55, in fetch
+    return self.collate_fn(data)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/data_loader.py", line 56, in collate
+    torch.zeros(shape, dtype=dtype)
+TypeError: zeros() received an invalid combination of arguments - got (tuple, dtype=type), but expected one of:
+ * (tuple of ints size, *, tuple of names names, torch.dtype dtype = None, torch.layout layout = None, torch.device device = None, bool pin_memory = False, bool requires_grad = False)
+ * (tuple of ints size, *, Tensor out = None, torch.dtype dtype = None, torch.layout layout = None, torch.device device = None, bool pin_memory = False, bool requires_grad = False)
+
+
+19:15:23  INFO      ================================================================
+19:15:23  INFO      Starting Federated DP-SGD Training for Sigma = 0.80 (Seed: 122)
+19:15:23  INFO      ================================================================
+19:15:40  ERROR     Error executing sigma = 0.80: zeros() received an invalid combination of arguments - got (tuple, dtype=type), but expected one of:
+ * (tuple of ints size, *, tuple of names names, torch.dtype dtype = None, torch.layout layout = None, torch.device device = None, bool pin_memory = False, bool requires_grad = False)
+ * (tuple of ints size, *, Tensor out = None, torch.dtype dtype = None, torch.layout layout = None, torch.device device = None, bool pin_memory = False, bool requires_grad = False)
+
+19:15:40  ERROR     Traceback (most recent call last):
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 810, in main
+    res = run_federated_dpsgd_sweep_single_sigma(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 307, in run_federated_dpsgd_sweep_single_sigma
+    updated_params, n_samples, steps_taken, avg_loss = train_dp_hospital_client(
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 247, in train_dp_hospital_client
+    for images, masks, _ in train_loader:
+                            ^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py", line 708, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py", line 764, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/_utils/fetch.py", line 55, in fetch
+    return self.collate_fn(data)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/data_loader.py", line 56, in collate
+    torch.zeros(shape, dtype=dtype)
+TypeError: zeros() received an invalid combination of arguments - got (tuple, dtype=type), but expected one of:
+ * (tuple of ints size, *, tuple of names names, torch.dtype dtype = None, torch.layout layout = None, torch.device device = None, bool pin_memory = False, bool requires_grad = False)
+ * (tuple of ints size, *, Tensor out = None, torch.dtype dtype = None, torch.layout layout = None, torch.device device = None, bool pin_memory = False, bool requires_grad = False)
+
+
+19:15:40  INFO      ================================================================
+19:15:40  INFO      Starting Federated DP-SGD Training for Sigma = 1.00 (Seed: 142)
+19:15:40  INFO      ================================================================
+19:19:30  INFO        [Round 01/20]  Sigma: 1.00  |  Avg Train Loss: 0.6675
+19:35:17  INFO        [Round 05/20]  Sigma: 1.00  |  Avg Train Loss: 0.5530
+19:36:47  ERROR     Error executing sigma = 1.00: zeros() received an invalid combination of arguments - got (tuple, dtype=type), but expected one of:
+ * (tuple of ints size, *, tuple of names names, torch.dtype dtype = None, torch.layout layout = None, torch.device device = None, bool pin_memory = False, bool requires_grad = False)
+ * (tuple of ints size, *, Tensor out = None, torch.dtype dtype = None, torch.layout layout = None, torch.device device = None, bool pin_memory = False, bool requires_grad = False)
+
+19:36:47  ERROR     Traceback (most recent call last):
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 810, in main
+    res = run_federated_dpsgd_sweep_single_sigma(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 307, in run_federated_dpsgd_sweep_single_sigma
+    updated_params, n_samples, steps_taken, avg_loss = train_dp_hospital_client(
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 247, in train_dp_hospital_client
+    for images, masks, _ in train_loader:
+                            ^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py", line 708, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py", line 764, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/_utils/fetch.py", line 55, in fetch
+    return self.collate_fn(data)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/data_loader.py", line 56, in collate
+    torch.zeros(shape, dtype=dtype)
+TypeError: zeros() received an invalid combination of arguments - got (tuple, dtype=type), but expected one of:
+ * (tuple of ints size, *, tuple of names names, torch.dtype dtype = None, torch.layout layout = None, torch.device device = None, bool pin_memory = False, bool requires_grad = False)
+ * (tuple of ints size, *, Tensor out = None, torch.dtype dtype = None, torch.layout layout = None, torch.device device = None, bool pin_memory = False, bool requires_grad = False)
+
+
+19:36:47  INFO      ================================================================
+19:36:47  INFO      Starting Federated DP-SGD Training for Sigma = 1.50 (Seed: 192)
+19:36:47  INFO      ================================================================
+19:40:48  INFO        [Round 01/20]  Sigma: 1.50  |  Avg Train Loss: 0.7569
+19:56:40  INFO        [Round 05/20]  Sigma: 1.50  |  Avg Train Loss: 0.5992
+20:10:19  ERROR     Error executing sigma = 1.50: zeros() received an invalid combination of arguments - got (tuple, dtype=type), but expected one of:
+ * (tuple of ints size, *, tuple of names names, torch.dtype dtype = None, torch.layout layout = None, torch.device device = None, bool pin_memory = False, bool requires_grad = False)
+ * (tuple of ints size, *, Tensor out = None, torch.dtype dtype = None, torch.layout layout = None, torch.device device = None, bool pin_memory = False, bool requires_grad = False)
+
+20:10:19  ERROR     Traceback (most recent call last):
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 810, in main
+    res = run_federated_dpsgd_sweep_single_sigma(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 307, in run_federated_dpsgd_sweep_single_sigma
+    updated_params, n_samples, steps_taken, avg_loss = train_dp_hospital_client(
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 247, in train_dp_hospital_client
+    for images, masks, _ in train_loader:
+                            ^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py", line 708, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py", line 764, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/_utils/fetch.py", line 55, in fetch
+    return self.collate_fn(data)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/data_loader.py", line 56, in collate
+    torch.zeros(shape, dtype=dtype)
+TypeError: zeros() received an invalid combination of arguments - got (tuple, dtype=type), but expected one of:
+ * (tuple of ints size, *, tuple of names names, torch.dtype dtype = None, torch.layout layout = None, torch.device device = None, bool pin_memory = False, bool requires_grad = False)
+ * (tuple of ints size, *, Tensor out = None, torch.dtype dtype = None, torch.layout layout = None, torch.device device = None, bool pin_memory = False, bool requires_grad = False)
+
+
+20:10:19  INFO      ================================================================
+20:10:19  INFO      Starting Federated DP-SGD Training for Sigma = 2.00 (Seed: 242)
+20:10:19  INFO      ================================================================
+20:14:14  INFO        [Round 01/20]  Sigma: 2.00  |  Avg Train Loss: 0.7285
+20:30:12  INFO        [Round 05/20]  Sigma: 2.00  |  Avg Train Loss: 0.6131
+20:48:02  ERROR     Error executing sigma = 2.00: zeros() received an invalid combination of arguments - got (tuple, dtype=type), but expected one of:
+ * (tuple of ints size, *, tuple of names names, torch.dtype dtype = None, torch.layout layout = None, torch.device device = None, bool pin_memory = False, bool requires_grad = False)
+ * (tuple of ints size, *, Tensor out = None, torch.dtype dtype = None, torch.layout layout = None, torch.device device = None, bool pin_memory = False, bool requires_grad = False)
+
+20:48:02  ERROR     Traceback (most recent call last):
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 810, in main
+    res = run_federated_dpsgd_sweep_single_sigma(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 307, in run_federated_dpsgd_sweep_single_sigma
+    updated_params, n_samples, steps_taken, avg_loss = train_dp_hospital_client(
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 247, in train_dp_hospital_client
+    for images, masks, _ in train_loader:
+                            ^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py", line 708, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py", line 764, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/_utils/fetch.py", line 55, in fetch
+    return self.collate_fn(data)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/data_loader.py", line 56, in collate
+    torch.zeros(shape, dtype=dtype)
+TypeError: zeros() received an invalid combination of arguments - got (tuple, dtype=type), but expected one of:
+ * (tuple of ints size, *, tuple of names names, torch.dtype dtype = None, torch.layout layout = None, torch.device device = None, bool pin_memory = False, bool requires_grad = False)
+ * (tuple of ints size, *, Tensor out = None, torch.dtype dtype = None, torch.layout layout = None, torch.device device = None, bool pin_memory = False, bool requires_grad = False)
+
+
+20:48:02  INFO      Results written to /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility_results.json and /kaggle/working/SDFL/Results_New/E11/e11_privacy_results.json
+20:48:02  INFO      CSV results written to /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility_results.csv
+20:48:02  INFO      Markdown report generated at /kaggle/working/SDFL/Results_New/E11/E11_RESULTS.md
+/usr/local/lib/python3.12/dist-packages/matplotlib/_fontconfig_pattern.py:88: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+  parse = parser.parseString(pattern)
+/usr/local/lib/python3.12/dist-packages/matplotlib/_fontconfig_pattern.py:92: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+  parser.resetCache()
+/usr/local/lib/python3.12/dist-packages/matplotlib/_mathtext.py:45: PyparsingDeprecationWarning: 'enablePackrat' deprecated - use 'enable_packrat'
+  ParserElement.enablePackrat()
+09/23/2026 20:48:03:WARNING:In /usr/local/lib/python3.12/dist-packages/matplotlib/mpl-data/stylelib/classic.mplstyle: 'parseString' deprecated - use 'parse_string'
+09/23/2026 20:48:03:WARNING:In /usr/local/lib/python3.12/dist-packages/matplotlib/mpl-data/stylelib/classic.mplstyle: 'resetCache' deprecated - use 'reset_cache'
+/usr/local/lib/python3.12/dist-packages/matplotlib/_fontconfig_pattern.py:88: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+  parse = parser.parseString(pattern)
+/usr/local/lib/python3.12/dist-packages/matplotlib/_fontconfig_pattern.py:92: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+  parser.resetCache()
+/usr/local/lib/python3.12/dist-packages/matplotlib/_mathtext.py:2010: PyparsingDeprecationWarning: 'oneOf' deprecated - use 'one_of'
+  p.space          = oneOf(self._space_widths)("space")
+/usr/local/lib/python3.12/dist-packages/matplotlib/_mathtext.py:2020: PyparsingDeprecationWarning: 'leaveWhitespace' deprecated - use 'leave_whitespace'
+  )("sym").leaveWhitespace()
+/usr/local/lib/python3.12/dist-packages/matplotlib/_mathtext.py:1984: PyparsingDeprecationWarning: 'setName' deprecated - use 'set_name'
+  val.setName(key)
+/usr/local/lib/python3.12/dist-packages/matplotlib/_mathtext.py:1987: PyparsingDeprecationWarning: 'setParseAction' deprecated - use 'set_parse_action'
+  val.setParseAction(getattr(self, key))
+/usr/local/lib/python3.12/dist-packages/matplotlib/_mathtext.py:2080: PyparsingDeprecationWarning: 'endQuoteChar' argument is deprecated, use 'end_quote_char'
+  p.text = cmd(r"\text", QuotedString('{', '\\', endQuoteChar="}"))
+/usr/local/lib/python3.12/dist-packages/matplotlib/_mathtext.py:2138: PyparsingDeprecationWarning: 'unquoteResults' argument is deprecated, use 'unquote_results'
+  p.math_string   = QuotedString('$', '\\', unquoteResults=False)
+/usr/local/lib/python3.12/dist-packages/matplotlib/_mathtext.py:2162: PyparsingDeprecationWarning: 'parseString' deprecated - use 'parse_string'
+  result = self._expression.parseString(s)
+/usr/local/lib/python3.12/dist-packages/pyparsing/util.py:466: PyparsingDeprecationWarning: 'parseAll' argument is deprecated, use 'parse_all'
+  return fn(self, *args, **kwargs)
+/usr/local/lib/python3.12/dist-packages/matplotlib/_mathtext.py:2170: PyparsingDeprecationWarning: 'resetCache' deprecated - use 'reset_cache'
+  ParserElement.resetCache()
+20:48:06  INFO      Figures saved to /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility.png and /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility.pdf
+20:48:06  INFO      ================================================================
+20:48:06  INFO      E11 Empirical Privacy-Utility Sweep Complete!
+20:48:06  INFO      ================================================================
