@@ -1,0 +1,31 @@
+11:21:48  INFO      ================================================================
+11:21:48  INFO      E11 -- Privacy-Utility Sweep
+11:21:48  INFO      ================================================================
+11:21:48  INFO      Config: N_train=266  batch=8  q=0.0301  local_epochs=3  rounds=20  steps/round=99  total_steps=1980  C=2.0  delta=1e-05
+11:21:48  INFO      Reference metrics loaded for sigma values: ['1.5']
+11:21:48  INFO      --------------------------------------------------
+11:21:48  INFO      Processing sigma = 0.30 ...
+/usr/local/lib/python3.12/dist-packages/opacus/accountants/analysis/rdp.py:332: UserWarning: Optimal order is the smallest alpha. Please consider expanding the range of alphas to get a tighter privacy bound.
+  warnings.warn(
+11:21:52  INFO        sigma=0.30  eps_final=291.1461  Dice=N/A -- requires GPU training run  IoU=N/A -- requires GPU training run  (source: theoretical projection pending actual training)
+11:21:52  INFO      --------------------------------------------------
+11:21:52  INFO      Processing sigma = 0.50 ...
+11:21:54  INFO        sigma=0.50  eps_final=58.3755  Dice=N/A -- requires GPU training run  IoU=N/A -- requires GPU training run  (source: theoretical projection pending actual training)
+11:21:54  INFO      --------------------------------------------------
+11:21:54  INFO      Processing sigma = 0.80 ...
+11:21:55  INFO        sigma=0.80  eps_final=15.7950  Dice=N/A -- requires GPU training run  IoU=N/A -- requires GPU training run  (source: theoretical projection pending actual training)
+11:21:55  INFO      --------------------------------------------------
+11:21:55  INFO      Processing sigma = 1.00 ...
+11:21:56  INFO        sigma=1.00  eps_final=9.7321  Dice=N/A -- requires GPU training run  IoU=N/A -- requires GPU training run  (source: theoretical projection pending actual training)
+11:21:56  INFO      --------------------------------------------------
+11:21:56  INFO      Processing sigma = 1.50 ...
+11:21:56  INFO        sigma=1.50  eps_final=4.9118  Dice=N/A -- requires GPU training run  IoU=N/A -- requires GPU training run  (source: theoretical projection pending actual training)
+11:21:56  INFO      --------------------------------------------------
+11:21:56  INFO      Processing sigma = 2.00 ...
+11:21:57  INFO        sigma=2.00  eps_final=3.3041  Dice=N/A -- requires GPU training run  IoU=N/A -- requires GPU training run  (source: theoretical projection pending actual training)
+11:21:57  INFO      Results written to /kaggle/working/SDFL/Results_New/E11/e11_privacy_results.json
+11:21:57  INFO      Log written to /kaggle/working/SDFL/Results_New/E11/e11_privacy_log.jsonl
+11:21:57  INFO      Report written to /kaggle/working/SDFL/Results_New/E11/E11_RESULTS.md
+11:21:57  INFO      ================================================================
+11:21:57  INFO      E11 complete.  Results in Results_New/E11/e11_privacy_results.json
+11:21:57  INFO      ================================================================
