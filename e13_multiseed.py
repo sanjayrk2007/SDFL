@@ -1,8 +1,13 @@
 """
-E13: Multi-Seed Robustness Evaluation
-=====================================
-Evaluates model segmentation performance across multiple random seeds (42, 43, 44)
-for FedAvg (E2), Best Non-Private Baseline FedProx (E3), and Full SDFL (E8/E11).
+E13: Evaluation-Subset Robustness Evaluation
+=============================================
+Evaluates model segmentation performance across five seed-controlled test subsets
+(seeds 42, 43, 44, 45, 46) for FedAvg (E2), Best Non-Private Baseline FedProx (E3),
+and Full SDFL (E8).
+
+NOTE: This experiment loads FIXED pretrained checkpoints and uses seeds to select
+different deterministic 80% test subsets. It is NOT independent multi-seed retraining.
+See report note below.
 
 Measures:
   - Dice
@@ -11,9 +16,9 @@ Measures:
   - Recall
   - HD95
 Generates:
-  - results/e13_multiseed_results.json
-  - results/e13_multiseed_log.jsonl
-  - E13_RESULTS.md
+  - Results_New/E13/e13_multiseed_results.json
+  - Results_New/E13/e13_multiseed_log.jsonl
+  - Results_New/E13/E13_RESULTS.md
 """
 
 import os
@@ -37,19 +42,35 @@ from e2_server import DEVICE, ResUNetPlusPlus
 from e4_dpsgd import fix_model_for_opacus
 from scripts.dataset import KvasirSegDataset
 
-RESULTS_DIR = ROOT_DIR / "results"
-RESULTS_DIR.mkdir(exist_ok=True)
+RESULTS_DIR = ROOT_DIR / "Results_New" / "E13"
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 OUT_JSON = RESULTS_DIR / "e13_multiseed_results.json"
 OUT_LOG = RESULTS_DIR / "e13_multiseed_log.jsonl"
-OUT_REPORT = ROOT_DIR / "E13_RESULTS.md"
+OUT_REPORT = RESULTS_DIR / "E13_RESULTS.md"
 
 SEEDS = [42, 43, 44, 45, 46]   # 5 seeds per journal requirement
 METRICS = ["dice", "iou", "precision", "recall", "hd95"]
 
+# Canonical checkpoint paths -- verified against actual files on disk (SHA256 confirmed).
+#
+# E2:  Results_New/checkpoints/e2_best.pth
+#        Reproduced run on integration/sdfl-final-validation (committed Sep 19).
+#        Best round = 16, val_dice = 0.8600.
+#        NOT equivalent to checkpoints/e2_round_20.pth (different training run,
+#        different weights, and round-20 is not the best round of that old run).
+#
+# E3:  Results_New/checkpoints/e3_best.pth
+#        Reproduced 20-round FedProx sweep (mu=0.01, round 20, val_dice=0.8569).
+#        The root checkpoints/e3_best.pth is a SUPERSEDED 1-round run; do NOT use.
+#
+# E8:  Results_New/E8/e8_final.pth
+#        Byte-for-byte identical to checkpoints/e8_final.pth (SHA256: 95e6fac6...).
+#        This is the only E8 checkpoint that exists; e8_best.pth does not exist.
+#        Using the Results_New/ path for consistency with the canonical structure.
 MODELS_CONFIG = {
-    "FedAvg (E2)": "checkpoints/e2_round_20.pth",
-    "FedProx (E3 Best Non-Private)": "checkpoints/e3_best.pth",
-    "Full SDFL (E8/E11)": "checkpoints/e11_best.pth"
+    "FedAvg (E2)": "Results_New/checkpoints/e2_best.pth",
+    "FedProx (E3 Best Non-Private)": "Results_New/checkpoints/e3_best.pth",
+    "Full SDFL (E8)": "Results_New/E8/e8_final.pth"
 }
 
 def set_seed(seed):
@@ -150,7 +171,11 @@ def run_experiment():
     total_samples = len(combined_test_set)
 
     results_data = {
-        "experiment": "E13 Multi-Seed Robustness Evaluation",
+        "experiment": "E13 Evaluation-Subset Robustness Evaluation",
+        "methodology_note": (
+            "This experiment evaluates fixed checkpoints on seed-controlled test subsets; "
+            "it is not independent multi-seed retraining."
+        ),
         "timestamp_start": t_start,
         "completed_at": None,
         "device": str(DEVICE),
@@ -216,15 +241,20 @@ def run_experiment():
 
 def write_markdown_report(data):
     lines = [
-        "# E13 — Multi-Seed Robustness Evaluation",
+        "# E13 — Evaluation-Subset Robustness Evaluation",
         "",
         f"> Completed: {data['completed_at']}  |  Branch: `mukesh/sdfl-completion`",
         "",
+        "> **Methodology Note:** This experiment evaluates fixed checkpoints on seed-controlled test subsets; "
+        "it is not independent multi-seed retraining.",
+        "",
         "## Overview",
         "",
-        "Evaluates the multi-seed stability and statistical dispersion of federated segmentation backbones across random initialization and evaluation seeds (42, 43, 44).",
+        "Evaluates the evaluation-subset robustness using five fixed seeds of federated segmentation backbones "
+        "across seed-controlled deterministic 80% test subsets (seeds 42, 43, 44, 45, 46). "
+        "Fixed pretrained checkpoints are loaded; seeds control test-subset selection only.",
         "",
-        "## Summary Results (Mean ± Std over 3 Seeds)",
+        "## Summary Results (Mean ± Std over 5 Seeds)",
         "",
         "| Model | Dice | IoU | Precision | Recall | HD95 (px) |",
         "|---|---:|---:|---:|---:|---:|",
@@ -261,7 +291,8 @@ def write_markdown_report(data):
         "",
         "1. **Statistical Consistency:** Standard deviation across evaluation seeds is minimal (< 1e-4), demonstrating deterministic evaluation and reproducibility.",
         "2. **Baseline Comparison:** FedProx non-private baseline and Full SDFL maintain robust performance metrics across seeds without random variance artifacts.",
-        "3. **Conclusion:** Performance characteristics reported in E3, E8, and E11 are stable and reproducible across distinct random seeds.",
+        "3. **Conclusion:** Performance characteristics reported in E3 and E8 are stable and reproducible across distinct seed-controlled test subsets.",
+        "4. **Scope Limitation:** This experiment uses seed-controlled 80% test subsets to assess evaluation-subset robustness of fixed checkpoints. It does not constitute independent multi-seed retraining.",
         ""
     ])
 

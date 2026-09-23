@@ -1,4 +1,4 @@
-﻿"""
+"""
 E11 -- Privacy-Utility Sweep
 ==============================
 Sweep the DP noise multiplier sigma in {0.3, 0.5, 0.8, 1.0, 1.5, 2.0} and measure:
@@ -35,16 +35,16 @@ log = logging.getLogger("E11")
 # Paths
 # ---------------------------------------------------------------------------
 ROOT = Path(__file__).parent
-RESULTS_DIR = ROOT / "results"
-RESULTS_DIR.mkdir(exist_ok=True)
+RESULTS_DIR = ROOT / "Results_New" / "E11"
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
 OUT_JSON  = RESULTS_DIR / "e11_privacy_results.json"
 OUT_JSONL = RESULTS_DIR / "e11_privacy_log.jsonl"
-REPORT_MD = ROOT / "E11_RESULTS.md"
+REPORT_MD = RESULTS_DIR / "E11_RESULTS.md"
 
 # Reference result files (teammates outputs -- read-only)
-E4_RESULTS = RESULTS_DIR / "e4_dp_results.json"
-E8_METRICS = RESULTS_DIR / "e8_metrics.json"
+E4_RESULTS = ROOT / "Results_New" / "results" / "e4_dp_results.json"
+E8_METRICS = ROOT / "Results_New" / "E8" / "e8_metrics.json"
 
 # ---------------------------------------------------------------------------
 # Experimental configuration
@@ -427,5 +427,5 @@ if __name__ == "__main__":
     result = run_e11()
     generate_report(result)
     log.info("=" * 64)
-    log.info("E11 complete.  Results in results/e11_privacy_results.json")
+    log.info("E11 complete.  Results in Results_New/E11/e11_privacy_results.json")
     log.info("=" * 64)

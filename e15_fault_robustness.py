@@ -17,9 +17,9 @@ Tests 10 distinct operational scenarios:
   10. Next-round recovery after failed / partial round -> FULL RECOVERY
 
 Outputs:
-  - results/e15_fault_results.json
-  - results/e15_fault_log.jsonl
-  - E15_RESULTS.md
+  - Results_New/E15/e15_fault_results.json
+  - Results_New/E15/e15_fault_log.jsonl
+  - Results_New/E15/E15_RESULTS.md
 """
 
 import os
@@ -51,11 +51,11 @@ from e2_server import DEVICE, ResUNetPlusPlus, get_parameters, set_parameters
 from e4_dpsgd import fix_model_for_opacus
 from e7_temporal import compute_model_hash, SECRET_KEY, compute_aad
 
-RESULTS_DIR = ROOT_DIR / "results"
-RESULTS_DIR.mkdir(exist_ok=True)
+RESULTS_DIR = ROOT_DIR / "Results_New" / "E15"
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 OUT_JSON = RESULTS_DIR / "e15_fault_results.json"
 OUT_LOG = RESULTS_DIR / "e15_fault_log.jsonl"
-OUT_REPORT = ROOT_DIR / "E15_RESULTS.md"
+OUT_REPORT = RESULTS_DIR / "E15_RESULTS.md"
 
 def log_event(event, **data):
     data.update(event=event, timestamp=datetime.now(timezone.utc).isoformat())
@@ -515,7 +515,7 @@ def write_markdown_report(data):
         "2. **Cryptographic Replay Protection (SC-03):** Replayed or duplicate transaction IDs ($UID_r$) are recognized and rejected with reason code `replay_detected`.",
         "3. **HMAC & AAD Authenticity (SC-04, SC-06):** Forged coordinator signatures and tampered AAD metadata fail verification and AES-GCM decryption tag validation.",
         "4. **Fault Tolerance & Degraded Quorum (SC-07, SC-08):** Unresponsive or dropped clients do not stall the server; valid updates aggregate gracefully without corrupting model state.",
-        "5. **Zero-Knowledge Key Destruction (SC-09):** Decryption keys and ciphertext buffers are zeroed out immediately following round completion.",
+        "5. **Post-Round Key Destruction (SC-09):** Decryption keys and ciphertext buffers are zeroed out immediately following round completion.",
         "6. **Multi-Round Continuity (SC-10):** Fresh cryptographic contexts allow subsequent rounds to proceed with full quorum without session lockup.",
         ""
     ])

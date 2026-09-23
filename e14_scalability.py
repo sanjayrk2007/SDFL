@@ -18,9 +18,9 @@ Metrics measured:
   - Comparison table across K = 3, 5, 10, 20
 
 Outputs:
-  - results/e14_scalability_results.json
-  - results/e14_scalability_log.jsonl
-  - E14_RESULTS.md
+  - Results_New/E14/e14_scalability_results.json
+  - Results_New/E14/e14_scalability_log.jsonl
+  - Results_New/E14/E14_RESULTS.md
 """
 
 import os
@@ -51,11 +51,11 @@ from e2_server import DEVICE, ResUNetPlusPlus, get_parameters
 from e4_dpsgd import fix_model_for_opacus
 from e7_temporal import compute_model_hash, SECRET_KEY, compute_aad
 
-RESULTS_DIR = ROOT_DIR / "results"
-RESULTS_DIR.mkdir(exist_ok=True)
+RESULTS_DIR = ROOT_DIR / "Results_New" / "E14"
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 OUT_JSON = RESULTS_DIR / "e14_scalability_results.json"
 OUT_LOG = RESULTS_DIR / "e14_scalability_log.jsonl"
-OUT_REPORT = ROOT_DIR / "E14_RESULTS.md"
+OUT_REPORT = RESULTS_DIR / "E14_RESULTS.md"
 
 CLIENT_COUNTS = [3, 5, 10, 20]
 BENCHMARK_ROUNDS = 5  # Number of timing rounds per K for high precision
@@ -132,6 +132,8 @@ def run_scalability_benchmark():
             aad_list = []
             client_enc_times = []
             client_sample_counts = [260 + (i % 10) for i in range(k)]
+            # Collect each client's weights separately to fix baseline aggregation
+            client_weights_all = []
 
             for i in range(k):
                 # Generate unique transaction UID for replay protection
@@ -148,6 +150,8 @@ def run_scalability_benchmark():
                 
                 # Synthetic client update (small perturbation to simulate training)
                 client_weights = [arr + np.random.normal(0, 1e-4, arr.shape).astype(arr.dtype) for arr in template_weights]
+                # Store this client's weights for unencrypted baseline aggregation
+                client_weights_all.append(client_weights)
 
                 t_enc_0 = time.perf_counter()
                 ct = client_encrypt(client_weights, round_key, associated_data=aad_bytes)
@@ -183,10 +187,14 @@ def run_scalability_benchmark():
             agg_time = (time.perf_counter() - t_agg_0) * 1000.0
 
             # Baseline unencrypted FedAvg aggregation for comparison
+            # Uses each client's OWN weights with sample-count weighting.
             t_base_0 = time.perf_counter()
             total_samples = sum(client_sample_counts)
             unenc_agg = [
-                sum(client_weights[l] * (client_sample_counts[0] / total_samples) for _ in range(k))
+                sum(
+                    client_weights_all[i][l] * (client_sample_counts[i] / total_samples)
+                    for i in range(k)
+                )
                 for l in range(len(template_weights))
             ]
             base_agg_time = (time.perf_counter() - t_base_0) * 1000.0
@@ -276,11 +284,17 @@ def run_scalability_benchmark():
 
 def write_markdown_report(data):
     lines = [
-        "# E14 — Security Layer Client Scalability",
+        "# E14 — Security-Layer Client Scalability Benchmark",
         "",
         f"> Completed: {data['completed_at']}  |  Branch: `mukesh/sdfl-completion`",
         "",
         "## Overview",
+        "",
+        "> **Scope Note:** This is a **security-layer scalability benchmark**, not an end-to-end FL training scalability benchmark. "
+        "It measures the overhead of: client AES-GCM encryption, coordinator certificate signing/verification, "
+        "server decryption and weighted aggregation, communication payload, and ciphertext storage — "
+        "across client cohort sizes **K ∈ {3, 5, 10, 20}**. "
+        "No actual model training is performed.",
         "",
         "Quantifies the computational latency, cryptographic verification overhead, and communication bandwidth scaling of the Self-Destructing Federated Learning (SDFL) security protocol across cohort sizes **K ∈ {3, 5, 10, 20}**.",
         "",

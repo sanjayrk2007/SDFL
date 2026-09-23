@@ -16,8 +16,8 @@ from e2_server import DEVICE, DiceBCELoss, ResUNetPlusPlus, get_parameters, set_
 from e4_dpsgd import fix_model_for_opacus
 from scripts.dataset import KvasirSegDataset
 
-ROOT = Path(__file__).resolve().parent; RESULTS = ROOT / "results"
-OUT_JSON, OUT_LOG, OUT_REPORT = RESULTS / "e12_unseen_results.json", RESULTS / "e12_unseen_log.jsonl", ROOT / "E12_RESULTS.md"
+ROOT = Path(__file__).resolve().parent; RESULTS = ROOT / "Results_New" / "E12"
+OUT_JSON, OUT_LOG, OUT_REPORT = RESULTS / "e12_unseen_results.json", RESULTS / "e12_unseen_log.jsonl", RESULTS / "E12_RESULTS.md"
 FOLDS = (("A", (0, 1), 2, "large+medium"), ("B", (0, 2), 1, "medium"), ("C", (1, 2), 0, "small"))
 METRICS = ("dice", "iou", "precision", "recall", "hd95")
 
@@ -74,7 +74,7 @@ def write_report(payload):
     lines += ["","## Held-out summary","","| Statistic | Dice | IoU | Precision | Recall | HD95 |","|---|---:|---:|---:|---:|---:|","| Macro mean | "+" | ".join(f"{macro[k]:.4f}" if k!="hd95" else f"{macro[k]:.2f}" for k in METRICS)+" |","| Worst client | "+" | ".join(f"{worst[k]:.4f}" if k!="hd95" else f"{worst[k]:.2f}" for k in METRICS)+" |","","## Limitation","","Record-level exclusion prevents held-out-client training exposure, but cannot make these simulated, overlapping assignments equivalent to independently collected hospital cohorts."]
     OUT_REPORT.write_text("\n".join(lines)+"\n",encoding="utf-8")
 def main():
-    p=argparse.ArgumentParser(); p.add_argument("--rounds",type=int,default=20); p.add_argument("--local-epochs",type=int,default=1); p.add_argument("--batch-size",type=int,default=8); p.add_argument("--lr",type=float,default=1e-4); p.add_argument("--seed",type=int,default=42); a=p.parse_args(); RESULTS.mkdir(exist_ok=True); OUT_LOG.unlink(missing_ok=True)
+    p=argparse.ArgumentParser(); p.add_argument("--rounds",type=int,default=20); p.add_argument("--local-epochs",type=int,default=1); p.add_argument("--batch-size",type=int,default=8); p.add_argument("--lr",type=float,default=1e-4); p.add_argument("--seed",type=int,default=42); a=p.parse_args(); RESULTS.mkdir(parents=True, exist_ok=True); OUT_LOG.unlink(missing_ok=True)
     h=json.loads((ROOT/"hospital_splits.json").read_text(encoding="utf-8"))["hospitals"]; sets={int(k):set(v["filenames"]) for k,v in h.items()}
     payload={"experiment":"E12 synthetic leave-one-client-out generalization","completed_at":None,"config":vars(a),"device":str(DEVICE),"protocol":{"pretrained_checkpoint_used":False,"all_held_out_assignments_excluded":True,"synthetic_clients":True},"folds":[]}
     for fold in FOLDS: payload["folds"].append(run_fold(*fold,a,sets[fold[2]]))
