@@ -1,0 +1,3 @@
+--- Evaluating FedAvg (E2) (Results_New/checkpoints/e2_best.pth) ---
+--- Evaluating FedProx (E3 Best Non-Private) (Results_New/checkpoints/e3_best.pth) ---
+--- Evaluating Full SDFL (E8) (Results_New/E8/e8_final.pth) ---
