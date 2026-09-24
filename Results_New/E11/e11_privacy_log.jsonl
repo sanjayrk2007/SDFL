@@ -4,3 +4,21 @@
 {"event": "sigma_sweep", "sigma": 1.0, "epsilon_final": 9.732069, "dice": null, "iou": null, "dice_iou_source": "theoretical projection pending actual training", "timestamp": "2026-09-05T06:15:06.073993+00:00"}
 {"event": "sigma_sweep", "sigma": 1.5, "epsilon_final": 4.911783, "dice": null, "iou": null, "dice_iou_source": "theoretical projection pending actual training", "timestamp": "2026-09-05T06:15:06.834663+00:00"}
 {"event": "sigma_sweep", "sigma": 2.0, "epsilon_final": 3.304053, "dice": null, "iou": null, "dice_iou_source": "theoretical projection pending actual training", "timestamp": "2026-09-05T06:15:07.410713+00:00"}
+{"batch_size": 8, "event": "e11_started", "local_epochs": 1, "rounds": 1, "sigmas": [1.0], "timestamp": "2026-09-24T17:02:16.295615+00:00"}
+{"avg_loss": 0.7320803175068864, "event": "round_completed", "round": 1, "sigma": 1.0, "timestamp": "2026-09-24T17:03:36.011231+00:00"}
+{"completed_sigmas": [1.0], "event": "e11_completed", "output_json": "/kaggle/working/SDFL/Results_New/E11/e11_privacy_utility_results.json", "timestamp": "2026-09-24T17:03:44.105150+00:00"}
+{"batch_size": 8, "event": "e11_started", "local_epochs": 3, "rounds": 20, "sigmas": [0.5, 1.0, 1.5, 2.0], "timestamp": "2026-09-24T17:03:50.914378+00:00"}
+{"avg_loss": 0.6388549587943336, "event": "round_completed", "round": 1, "sigma": 0.5, "timestamp": "2026-09-24T17:07:50.642580+00:00"}
+{"avg_loss": 0.5207972266657986, "event": "round_completed", "round": 5, "sigma": 0.5, "timestamp": "2026-09-24T17:23:39.109019+00:00"}
+{"avg_loss": 0.4884160171052823, "event": "round_completed", "round": 10, "sigma": 0.5, "timestamp": "2026-09-24T17:43:23.518660+00:00"}
+{"error": "name 'self' is not defined", "event": "sigma_failed", "sigma": 0.5, "timestamp": "2026-09-24T17:45:33.161544+00:00"}
+{"avg_loss": 0.6675488475195888, "event": "round_completed", "round": 1, "sigma": 1.0, "timestamp": "2026-09-24T17:49:21.639134+00:00"}
+{"avg_loss": 0.5529573584847177, "event": "round_completed", "round": 5, "sigma": 1.0, "timestamp": "2026-09-24T18:04:58.809716+00:00"}
+{"error": "name 'self' is not defined", "event": "sigma_failed", "sigma": 1.0, "timestamp": "2026-09-24T18:06:27.801904+00:00"}
+{"avg_loss": 0.7568541510337932, "event": "round_completed", "round": 1, "sigma": 1.5, "timestamp": "2026-09-24T18:10:26.781100+00:00"}
+{"avg_loss": 0.5992200388651504, "event": "round_completed", "round": 5, "sigma": 1.5, "timestamp": "2026-09-24T18:26:08.787980+00:00"}
+{"error": "name 'self' is not defined", "event": "sigma_failed", "sigma": 1.5, "timestamp": "2026-09-24T18:39:37.350869+00:00"}
+{"avg_loss": 0.7284835962334064, "event": "round_completed", "round": 1, "sigma": 2.0, "timestamp": "2026-09-24T18:43:30.960793+00:00"}
+{"avg_loss": 0.6131327680064372, "event": "round_completed", "round": 5, "sigma": 2.0, "timestamp": "2026-09-24T18:59:25.008532+00:00"}
+{"error": "name 'self' is not defined", "event": "sigma_failed", "sigma": 2.0, "timestamp": "2026-09-24T19:17:12.109899+00:00"}
+{"completed_sigmas": [], "event": "e11_completed", "output_json": "/kaggle/working/SDFL/Results_New/E11/e11_privacy_utility_results.json", "timestamp": "2026-09-24T19:17:12.379324+00:00"}

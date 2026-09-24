@@ -260,3 +260,208 @@ TypeError: zeros() received an invalid combination of arguments - got (tuple, dt
 20:48:06  INFO      ================================================================
 20:48:06  INFO      E11 Empirical Privacy-Utility Sweep Complete!
 20:48:06  INFO      ================================================================
+17:02:16  INFO      Executing Smoke Test configuration...
+17:02:16  INFO      Loading hospital training datasets and held-out test dataset...
+17:02:16  INFO      ================================================================
+17:02:16  INFO      E11 EXPERIMENTAL CONFIGURATION & DATASET AUDIT PRE-FLIGHT
+17:02:16  INFO      ================================================================
+17:02:16  INFO        Sigmas to evaluate     : [1.0]
+17:02:16  INFO        Federated rounds       : 1
+17:02:16  INFO        Local epochs per round : 1
+17:02:16  INFO        Participating clients  : 3
+17:02:16  INFO        Batch size             : 8
+17:02:16  INFO        Clipping norm (C)      : 2.0
+17:02:16  INFO        DP Target delta        : 1e-05
+17:02:16  INFO        Learning rate          : 0.0001
+17:02:16  INFO        Compute Device         : cuda (CUDA available: True)
+17:02:16  INFO        --- Dataset Partition & Overlap Audit ---
+17:02:16  INFO          - Hospital 0 Train Samples: 264 (33 batches/epoch, q=0.0303)
+17:02:16  INFO          - Hospital 1 Train Samples: 263 (33 batches/epoch, q=0.0304)
+17:02:16  INFO          - Hospital 2 Train Samples: 262 (33 batches/epoch, q=0.0305)
+17:02:16  INFO          - Pairwise Overlaps       : H0-H1=35, H0-H2=38, H1-H2=39
+17:02:16  INFO          - Total Unique Records    : 679
+17:02:16  INFO          - Records in 1 Client     : 571 (84.1%)
+17:02:16  INFO          - Records in 2 Clients    : 106 (15.6%)
+17:02:16  INFO          - Records in 3 Clients    : 2 (0.3%)
+17:02:16  INFO          - Test Split Overlap      : 0 (STRICTLY DISJOINT)
+17:02:16  INFO        Combined Test Samples  : 107
+17:02:16  INFO        Expected DP Steps/Client: 33
+17:02:16  INFO        Privacy Accounting     : Dynamic Overlap-Aware RDP Composition (Worst-Case on 3-Client Records)
+17:02:16  INFO        Save Checkpoints       : False
+17:02:16  INFO      ================================================================
+17:02:16  INFO      ================================================================
+17:02:16  INFO      Starting Federated DP-SGD Training for Sigma = 1.00 (Seed: 142)
+17:02:16  INFO      ================================================================
+17:03:36  INFO        [Round 01/01]  Sigma: 1.00  |  Avg Train Loss: 0.7321
+17:03:36  INFO      Training completed for Sigma = 1.00 in 79.37s
+17:03:36  INFO      Evaluating trained model (Sigma = 1.00) on combined held-out test set...
+17:03:39  INFO        Results (Sigma=1.00): Dice=0.2033, IoU=0.1213, Precision=0.2372, Recall=0.2405
+17:03:40  INFO        DP Accounting (delta=1e-05):
+17:03:40  INFO          - Per-Client Epsilon       : H0=1.9473, H1=1.9525, H2=1.9577
+17:03:40  INFO          - 1-Client Records (N=571) : eps = 1.9577
+17:03:40  INFO          - 2-Client Records (N=106) : eps = 2.2916
+17:03:40  INFO          - 3-Client Records (N=2)   : eps = 2.5700 (WORST-CASE)
+17:03:40  INFO          - Federation Worst-Case Epsilon : 2.5700
+17:03:40  INFO      Results written to /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility_results.json and /kaggle/working/SDFL/Results_New/E11/e11_privacy_results.json
+17:03:40  INFO      CSV results written to /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility_results.csv
+17:03:40  INFO      Markdown report generated at /kaggle/working/SDFL/Results_New/E11/E11_RESULTS.md
+17:03:44  INFO      Figures saved to /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility.png and /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility.pdf
+17:03:44  INFO      ================================================================
+17:03:44  INFO      E11 Empirical Privacy-Utility Sweep Complete!
+17:03:44  INFO      ================================================================
+17:03:50  INFO      Loading hospital training datasets and held-out test dataset...
+17:03:50  INFO      ================================================================
+17:03:50  INFO      E11 EXPERIMENTAL CONFIGURATION & DATASET AUDIT PRE-FLIGHT
+17:03:50  INFO      ================================================================
+17:03:50  INFO        Sigmas to evaluate     : [0.5, 1.0, 1.5, 2.0]
+17:03:50  INFO        Federated rounds       : 20
+17:03:50  INFO        Local epochs per round : 3
+17:03:50  INFO        Participating clients  : 3
+17:03:50  INFO        Batch size             : 8
+17:03:50  INFO        Clipping norm (C)      : 2.0
+17:03:50  INFO        DP Target delta        : 1e-05
+17:03:50  INFO        Learning rate          : 0.0001
+17:03:50  INFO        Compute Device         : cuda (CUDA available: True)
+17:03:50  INFO        --- Dataset Partition & Overlap Audit ---
+17:03:50  INFO          - Hospital 0 Train Samples: 264 (33 batches/epoch, q=0.0303)
+17:03:50  INFO          - Hospital 1 Train Samples: 263 (33 batches/epoch, q=0.0304)
+17:03:50  INFO          - Hospital 2 Train Samples: 262 (33 batches/epoch, q=0.0305)
+17:03:50  INFO          - Pairwise Overlaps       : H0-H1=35, H0-H2=38, H1-H2=39
+17:03:50  INFO          - Total Unique Records    : 679
+17:03:50  INFO          - Records in 1 Client     : 571 (84.1%)
+17:03:50  INFO          - Records in 2 Clients    : 106 (15.6%)
+17:03:50  INFO          - Records in 3 Clients    : 2 (0.3%)
+17:03:50  INFO          - Test Split Overlap      : 0 (STRICTLY DISJOINT)
+17:03:50  INFO        Combined Test Samples  : 107
+17:03:50  INFO        Expected DP Steps/Client: 1980
+17:03:50  INFO        Privacy Accounting     : Dynamic Overlap-Aware RDP Composition (Worst-Case on 3-Client Records)
+17:03:50  INFO        Save Checkpoints       : True
+17:03:50  INFO      ================================================================
+17:03:50  INFO      ================================================================
+17:03:50  INFO      Starting Federated DP-SGD Training for Sigma = 0.50 (Seed: 92)
+17:03:50  INFO      ================================================================
+17:07:50  INFO        [Round 01/20]  Sigma: 0.50  |  Avg Train Loss: 0.6389
+17:23:39  INFO        [Round 05/20]  Sigma: 0.50  |  Avg Train Loss: 0.5208
+17:43:23  INFO        [Round 10/20]  Sigma: 0.50  |  Avg Train Loss: 0.4884
+17:45:33  ERROR     Error executing sigma = 0.50: name 'self' is not defined
+17:45:33  ERROR     Traceback (most recent call last):
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 832, in main
+    res = run_federated_dpsgd_sweep_single_sigma(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 329, in run_federated_dpsgd_sweep_single_sigma
+    updated_params, n_samples, steps_taken, avg_loss = train_dp_hospital_client(
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 266, in train_dp_hospital_client
+    for images, masks in train_loader:
+                         ^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py", line 708, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py", line 764, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/_utils/fetch.py", line 55, in fetch
+    return self.collate_fn(data)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/data_loader.py", line 62, in collate
+    for p in self.dataset[0].values()
+             ^^^^
+NameError: name 'self' is not defined
+
+17:45:33  INFO      ================================================================
+17:45:33  INFO      Starting Federated DP-SGD Training for Sigma = 1.00 (Seed: 142)
+17:45:33  INFO      ================================================================
+17:49:21  INFO        [Round 01/20]  Sigma: 1.00  |  Avg Train Loss: 0.6675
+18:04:58  INFO        [Round 05/20]  Sigma: 1.00  |  Avg Train Loss: 0.5530
+18:06:27  ERROR     Error executing sigma = 1.00: name 'self' is not defined
+18:06:27  ERROR     Traceback (most recent call last):
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 832, in main
+    res = run_federated_dpsgd_sweep_single_sigma(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 329, in run_federated_dpsgd_sweep_single_sigma
+    updated_params, n_samples, steps_taken, avg_loss = train_dp_hospital_client(
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 266, in train_dp_hospital_client
+    for images, masks in train_loader:
+                         ^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py", line 708, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py", line 764, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/_utils/fetch.py", line 55, in fetch
+    return self.collate_fn(data)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/data_loader.py", line 62, in collate
+    for p in self.dataset[0].values()
+             ^^^^
+NameError: name 'self' is not defined
+
+18:06:27  INFO      ================================================================
+18:06:27  INFO      Starting Federated DP-SGD Training for Sigma = 1.50 (Seed: 192)
+18:06:27  INFO      ================================================================
+18:10:26  INFO        [Round 01/20]  Sigma: 1.50  |  Avg Train Loss: 0.7569
+18:26:08  INFO        [Round 05/20]  Sigma: 1.50  |  Avg Train Loss: 0.5992
+18:39:37  ERROR     Error executing sigma = 1.50: name 'self' is not defined
+18:39:37  ERROR     Traceback (most recent call last):
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 832, in main
+    res = run_federated_dpsgd_sweep_single_sigma(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 329, in run_federated_dpsgd_sweep_single_sigma
+    updated_params, n_samples, steps_taken, avg_loss = train_dp_hospital_client(
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 266, in train_dp_hospital_client
+    for images, masks in train_loader:
+                         ^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py", line 708, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py", line 764, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/_utils/fetch.py", line 55, in fetch
+    return self.collate_fn(data)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/data_loader.py", line 62, in collate
+    for p in self.dataset[0].values()
+             ^^^^
+NameError: name 'self' is not defined
+
+18:39:37  INFO      ================================================================
+18:39:37  INFO      Starting Federated DP-SGD Training for Sigma = 2.00 (Seed: 242)
+18:39:37  INFO      ================================================================
+18:43:30  INFO        [Round 01/20]  Sigma: 2.00  |  Avg Train Loss: 0.7285
+18:59:25  INFO        [Round 05/20]  Sigma: 2.00  |  Avg Train Loss: 0.6131
+19:17:12  ERROR     Error executing sigma = 2.00: name 'self' is not defined
+19:17:12  ERROR     Traceback (most recent call last):
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 832, in main
+    res = run_federated_dpsgd_sweep_single_sigma(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 329, in run_federated_dpsgd_sweep_single_sigma
+    updated_params, n_samples, steps_taken, avg_loss = train_dp_hospital_client(
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 266, in train_dp_hospital_client
+    for images, masks in train_loader:
+                         ^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py", line 708, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/dataloader.py", line 764, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/utils/data/_utils/fetch.py", line 55, in fetch
+    return self.collate_fn(data)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/data_loader.py", line 62, in collate
+    for p in self.dataset[0].values()
+             ^^^^
+NameError: name 'self' is not defined
+
+19:17:12  INFO      Results written to /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility_results.json and /kaggle/working/SDFL/Results_New/E11/e11_privacy_results.json
+19:17:12  INFO      CSV results written to /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility_results.csv
+19:17:12  INFO      Markdown report generated at /kaggle/working/SDFL/Results_New/E11/E11_RESULTS.md
+19:17:12  WARNING   No completed runs to plot.
+19:17:12  INFO      ================================================================
+19:17:12  INFO      E11 Empirical Privacy-Utility Sweep Complete!
+19:17:12  INFO      ================================================================
