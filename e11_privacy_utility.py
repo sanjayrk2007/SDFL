@@ -199,6 +199,25 @@ def compute_rdp_curve(sigma: float, sample_rate: float, steps_per_round_list: li
 # ---------------------------------------------------------------------------
 # DP-SGD Local Training & Federated Aggregation
 # ---------------------------------------------------------------------------
+class _ImageMaskOnly(torch.utils.data.Dataset):
+    """Drops the trailing `stem` (str) from KvasirSegDataset items.
+
+    Opacus' Poisson DPDataLoader builds an empty batch with torch.zeros(shape, dtype=type(x))
+    for every field of dataset[0]. A str field gives dtype=str -> TypeError whenever a
+    Poisson draw comes up empty (random, so some sigmas crash and others don't).
+    """
+
+    def __init__(self, base):
+        self.base = base
+
+    def __len__(self):
+        return len(self.base)
+
+    def __getitem__(self, idx):
+        image, mask, _stem = self.base[idx]
+        return image, mask
+
+
 def train_dp_hospital_client(
     global_parameters: list[np.ndarray],
     train_dataset: torch.utils.data.Dataset,
@@ -223,7 +242,7 @@ def train_dp_hospital_client(
     loss_fn = DiceBCELoss()
 
     train_loader = DataLoader(
-        train_dataset,
+        _ImageMaskOnly(train_dataset),
         batch_size=batch_size,
         shuffle=True,
         drop_last=False,
@@ -244,14 +263,17 @@ def train_dp_hospital_client(
     steps_executed = 0
 
     for _ in range(local_epochs):
-        for images, masks, _ in train_loader:
+        for images, masks in train_loader:
             images, masks = images.to(device), masks.to(device)
             optimizer.zero_grad()
             preds = model(images)
             loss = loss_fn(preds, masks)
             loss.backward()
             optimizer.step()
-            total_loss += loss.item()
+            # An empty Poisson batch (rare) still counts as a DP step, but BCELoss over
+            # zero elements is NaN, so keep it out of the logged average loss.
+            if images.shape[0] > 0:
+                total_loss += loss.item()
             steps_executed += 1
 
     avg_loss = total_loss / max(steps_executed, 1)
