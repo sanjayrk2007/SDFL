@@ -1,8 +1,8 @@
 {
   "experiment": "E11 Empirical Federated DP-SGD Privacy-Utility Sweep (Overlap-Aware)",
-  "timestamp_start": "2026-09-24T17:03:50.914359+00:00",
-  "completed_at": "2026-09-24T19:17:12.111161+00:00",
-  "device": "cuda",
+  "timestamp_start": "2026-09-25T04:33:27.545483+00:00",
+  "completed_at": "2026-09-25T07:01:45.256078+00:00",
+  "device": "cuda:0",
   "configuration": {
     "sigmas": [
       0.5,
@@ -37,22 +37,22 @@
     {
       "sigma": 0.5,
       "status": "failed",
-      "error": "name 'self' is not defined"
+      "error": "Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)"
     },
     {
       "sigma": 1.0,
       "status": "failed",
-      "error": "name 'self' is not defined"
+      "error": "Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)"
     },
     {
       "sigma": 1.5,
       "status": "failed",
-      "error": "name 'self' is not defined"
+      "error": "Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)"
     },
     {
       "sigma": 2.0,
       "status": "failed",
-      "error": "name 'self' is not defined"
+      "error": "Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)"
     }
   ]
 }

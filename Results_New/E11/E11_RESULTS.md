@@ -1,6 +1,6 @@
 # E11 — Empirical Federated DP-SGD Privacy–Utility Sweep
 
-> **Completed:** 2026-09-24T19:17:12.111161+00:00  |  **Device:** `cuda`
+> **Completed:** 2026-09-25T07:01:45.256078+00:00  |  **Device:** `cuda:0`
 
 ## Executive Summary
 
@@ -30,10 +30,10 @@ The canonical synthetic hospital partition in this repository contains overlappi
 
 | $\sigma$ | $\epsilon$ (Worst-Case Sample) | $\delta$ | Test Dice | Test IoU | Precision | Recall | Training Time (s) | Privacy Regime |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---|
-| **0.5** | *Failed* | -- | -- | -- | -- | -- | -- | Run aborted (name 'self' is not defined) |
-| **1.0** | *Failed* | -- | -- | -- | -- | -- | -- | Run aborted (name 'self' is not defined) |
-| **1.5** | *Failed* | -- | -- | -- | -- | -- | -- | Run aborted (name 'self' is not defined) |
-| **2.0** | *Failed* | -- | -- | -- | -- | -- | -- | Run aborted (name 'self' is not defined) |
+| **0.5** | *Failed* | -- | -- | -- | -- | -- | -- | Run aborted (Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)) |
+| **1.0** | *Failed* | -- | -- | -- | -- | -- | -- | Run aborted (Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)) |
+| **1.5** | *Failed* | -- | -- | -- | -- | -- | -- | Run aborted (Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)) |
+| **2.0** | *Failed* | -- | -- | -- | -- | -- | -- | Run aborted (Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)) |
 
 ---
 

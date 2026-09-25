@@ -22,3 +22,21 @@
 {"avg_loss": 0.6131327680064372, "event": "round_completed", "round": 5, "sigma": 2.0, "timestamp": "2026-09-24T18:59:25.008532+00:00"}
 {"error": "name 'self' is not defined", "event": "sigma_failed", "sigma": 2.0, "timestamp": "2026-09-24T19:17:12.109899+00:00"}
 {"completed_sigmas": [], "event": "e11_completed", "output_json": "/kaggle/working/SDFL/Results_New/E11/e11_privacy_utility_results.json", "timestamp": "2026-09-24T19:17:12.379324+00:00"}
+{"batch_size": 8, "event": "e11_started", "local_epochs": 1, "rounds": 1, "sigmas": [1.0], "timestamp": "2026-09-25T04:31:37.307623+00:00"}
+{"avg_loss": 0.7320802639229128, "event": "round_completed", "round": 1, "sigma": 1.0, "timestamp": "2026-09-25T04:33:09.563642+00:00"}
+{"completed_sigmas": [1.0], "event": "e11_completed", "output_json": "/kaggle/working/SDFL/Results_New/E11/e11_privacy_utility_results.json", "timestamp": "2026-09-25T04:33:19.110196+00:00"}
+{"batch_size": 8, "event": "e11_started", "local_epochs": 3, "rounds": 20, "sigmas": [0.5, 1.0, 1.5, 2.0], "timestamp": "2026-09-25T04:33:27.545507+00:00"}
+{"avg_loss": 0.638855041678907, "event": "round_completed", "round": 1, "sigma": 0.5, "timestamp": "2026-09-25T04:38:07.937296+00:00"}
+{"avg_loss": 0.5207975591071928, "event": "round_completed", "round": 5, "sigma": 0.5, "timestamp": "2026-09-25T04:56:09.833847+00:00"}
+{"avg_loss": 0.4884164893265927, "event": "round_completed", "round": 10, "sigma": 0.5, "timestamp": "2026-09-25T05:19:09.848338+00:00"}
+{"error": "Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)", "event": "sigma_failed", "sigma": 0.5, "timestamp": "2026-09-25T05:21:39.654785+00:00"}
+{"avg_loss": 0.667548848322345, "event": "round_completed", "round": 1, "sigma": 1.0, "timestamp": "2026-09-25T05:26:05.003814+00:00"}
+{"avg_loss": 0.5529571183602818, "event": "round_completed", "round": 5, "sigma": 1.0, "timestamp": "2026-09-25T05:43:26.921931+00:00"}
+{"error": "Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)", "event": "sigma_failed", "sigma": 1.0, "timestamp": "2026-09-25T05:45:04.383901+00:00"}
+{"avg_loss": 0.7568541359821154, "event": "round_completed", "round": 1, "sigma": 1.5, "timestamp": "2026-09-25T05:49:27.749464+00:00"}
+{"avg_loss": 0.599219985682555, "event": "round_completed", "round": 5, "sigma": 1.5, "timestamp": "2026-09-25T06:06:57.541209+00:00"}
+{"error": "Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)", "event": "sigma_failed", "sigma": 1.5, "timestamp": "2026-09-25T06:21:25.668690+00:00"}
+{"avg_loss": 0.7284836006485653, "event": "round_completed", "round": 1, "sigma": 2.0, "timestamp": "2026-09-25T06:25:37.929387+00:00"}
+{"avg_loss": 0.613132721847958, "event": "round_completed", "round": 5, "sigma": 2.0, "timestamp": "2026-09-25T06:42:49.271490+00:00"}
+{"error": "Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)", "event": "sigma_failed", "sigma": 2.0, "timestamp": "2026-09-25T07:01:45.254793+00:00"}
+{"completed_sigmas": [], "event": "e11_completed", "output_json": "/kaggle/working/SDFL/Results_New/E11/e11_privacy_utility_results.json", "timestamp": "2026-09-25T07:01:45.528322+00:00"}

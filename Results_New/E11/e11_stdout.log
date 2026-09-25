@@ -465,3 +465,268 @@ NameError: name 'self' is not defined
 19:17:12  INFO      ================================================================
 19:17:12  INFO      E11 Empirical Privacy-Utility Sweep Complete!
 19:17:12  INFO      ================================================================
+04:31:37  INFO      Executing Smoke Test configuration...
+04:31:37  INFO      Loading hospital training datasets and held-out test dataset...
+04:31:37  INFO      ================================================================
+04:31:37  INFO      E11 EXPERIMENTAL CONFIGURATION & DATASET AUDIT PRE-FLIGHT
+04:31:37  INFO      ================================================================
+04:31:37  INFO        Sigmas to evaluate     : [1.0]
+04:31:37  INFO        Federated rounds       : 1
+04:31:37  INFO        Local epochs per round : 1
+04:31:37  INFO        Participating clients  : 3
+04:31:37  INFO        Batch size             : 8
+04:31:37  INFO        Clipping norm (C)      : 2.0
+04:31:37  INFO        DP Target delta        : 1e-05
+04:31:37  INFO        Learning rate          : 0.0001
+04:31:37  INFO        Compute Device         : cuda (CUDA available: True)
+04:31:37  INFO        --- Dataset Partition & Overlap Audit ---
+04:31:37  INFO          - Hospital 0 Train Samples: 264 (33 batches/epoch, q=0.0303)
+04:31:37  INFO          - Hospital 1 Train Samples: 263 (33 batches/epoch, q=0.0304)
+04:31:37  INFO          - Hospital 2 Train Samples: 262 (33 batches/epoch, q=0.0305)
+04:31:37  INFO          - Pairwise Overlaps       : H0-H1=35, H0-H2=38, H1-H2=39
+04:31:37  INFO          - Total Unique Records    : 679
+04:31:37  INFO          - Records in 1 Client     : 571 (84.1%)
+04:31:37  INFO          - Records in 2 Clients    : 106 (15.6%)
+04:31:37  INFO          - Records in 3 Clients    : 2 (0.3%)
+04:31:37  INFO          - Test Split Overlap      : 0 (STRICTLY DISJOINT)
+04:31:37  INFO        Combined Test Samples  : 107
+04:31:37  INFO        Expected DP Steps/Client: 33
+04:31:37  INFO        Privacy Accounting     : Dynamic Overlap-Aware RDP Composition (Worst-Case on 3-Client Records)
+04:31:37  INFO        Save Checkpoints       : False
+04:31:37  INFO      ================================================================
+04:31:37  INFO      ================================================================
+04:31:37  INFO      Starting Federated DP-SGD Training for Sigma = 1.00 (Seed: 142)
+04:31:37  INFO      ================================================================
+04:33:09  INFO        [Round 01/01]  Sigma: 1.00  |  Avg Train Loss: 0.7321
+04:33:09  INFO      Training completed for Sigma = 1.00 in 91.87s
+04:33:09  INFO      Evaluating trained model (Sigma = 1.00) on combined held-out test set...
+04:33:13  INFO        Results (Sigma=1.00): Dice=0.2033, IoU=0.1213, Precision=0.2372, Recall=0.2405
+04:33:14  INFO        DP Accounting (delta=1e-05):
+04:33:14  INFO          - Per-Client Epsilon       : H0=1.9473, H1=1.9525, H2=1.9577
+04:33:14  INFO          - 1-Client Records (N=571) : eps = 1.9577
+04:33:14  INFO          - 2-Client Records (N=106) : eps = 2.2916
+04:33:14  INFO          - 3-Client Records (N=2)   : eps = 2.5700 (WORST-CASE)
+04:33:14  INFO          - Federation Worst-Case Epsilon : 2.5700
+04:33:14  INFO      Results written to /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility_results.json and /kaggle/working/SDFL/Results_New/E11/e11_privacy_results.json
+04:33:14  INFO      CSV results written to /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility_results.csv
+04:33:14  INFO      Markdown report generated at /kaggle/working/SDFL/Results_New/E11/E11_RESULTS.md
+04:33:19  INFO      Figures saved to /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility.png and /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility.pdf
+04:33:19  INFO      ================================================================
+04:33:19  INFO      E11 Empirical Privacy-Utility Sweep Complete!
+04:33:19  INFO      ================================================================
+04:33:27  INFO      Loading hospital training datasets and held-out test dataset...
+04:33:27  INFO      ================================================================
+04:33:27  INFO      E11 EXPERIMENTAL CONFIGURATION & DATASET AUDIT PRE-FLIGHT
+04:33:27  INFO      ================================================================
+04:33:27  INFO        Sigmas to evaluate     : [0.5, 1.0, 1.5, 2.0]
+04:33:27  INFO        Federated rounds       : 20
+04:33:27  INFO        Local epochs per round : 3
+04:33:27  INFO        Participating clients  : 3
+04:33:27  INFO        Batch size             : 8
+04:33:27  INFO        Clipping norm (C)      : 2.0
+04:33:27  INFO        DP Target delta        : 1e-05
+04:33:27  INFO        Learning rate          : 0.0001
+04:33:27  INFO        Compute Device         : cuda:0 (CUDA available: True)
+04:33:27  INFO        --- Dataset Partition & Overlap Audit ---
+04:33:27  INFO          - Hospital 0 Train Samples: 264 (33 batches/epoch, q=0.0303)
+04:33:27  INFO          - Hospital 1 Train Samples: 263 (33 batches/epoch, q=0.0304)
+04:33:27  INFO          - Hospital 2 Train Samples: 262 (33 batches/epoch, q=0.0305)
+04:33:27  INFO          - Pairwise Overlaps       : H0-H1=35, H0-H2=38, H1-H2=39
+04:33:27  INFO          - Total Unique Records    : 679
+04:33:27  INFO          - Records in 1 Client     : 571 (84.1%)
+04:33:27  INFO          - Records in 2 Clients    : 106 (15.6%)
+04:33:27  INFO          - Records in 3 Clients    : 2 (0.3%)
+04:33:27  INFO          - Test Split Overlap      : 0 (STRICTLY DISJOINT)
+04:33:27  INFO        Combined Test Samples  : 107
+04:33:27  INFO        Expected DP Steps/Client: 1980
+04:33:27  INFO        Privacy Accounting     : Dynamic Overlap-Aware RDP Composition (Worst-Case on 3-Client Records)
+04:33:27  INFO        Save Checkpoints       : True
+04:33:27  INFO      ================================================================
+04:33:27  INFO      ================================================================
+04:33:27  INFO      Starting Federated DP-SGD Training for Sigma = 0.50 (Seed: 92)
+04:33:27  INFO      ================================================================
+04:38:07  INFO        [Round 01/20]  Sigma: 0.50  |  Avg Train Loss: 0.6389
+04:56:09  INFO        [Round 05/20]  Sigma: 0.50  |  Avg Train Loss: 0.5208
+05:19:09  INFO        [Round 10/20]  Sigma: 0.50  |  Avg Train Loss: 0.4884
+05:21:39  ERROR     Error executing sigma = 0.50: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+05:21:39  ERROR     Traceback (most recent call last):
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 882, in main
+    res = run_federated_dpsgd_sweep_single_sigma(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 376, in run_federated_dpsgd_sweep_single_sigma
+    updated_params, n_samples, steps_taken, avg_loss = train_dp_hospital_client(
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 319, in train_dp_hospital_client
+    raise e
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 313, in train_dp_hospital_client
+    optimizer.step()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 513, in step
+    if self.pre_step():
+       ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 494, in pre_step
+    self.clip_and_accumulate()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 412, in clip_and_accumulate
+    grad = contract("i,i...", per_sample_clip_factor, grad_sample)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 603, in contract
+    return _core_contract(operands, contraction_list, backend=backend, out=out, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 687, in _core_contract
+    new_view = _tensordot(*tmp_operands, axes=axes, backend=backend, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/sharing.py", line 140, in cached_tensordot
+    return tensordot(x, y, axes, backend=backend)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 470, in _tensordot
+    return fn(x, y, axes=axes)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/backends/torch.py", line 56, in tensordot
+    return torch.tensordot(x, y, dims=axes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/functional.py", line 1360, in tensordot
+    return _VF.tensordot(a, b, dims_a, dims_b)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+
+05:21:39  INFO      ================================================================
+05:21:39  INFO      Starting Federated DP-SGD Training for Sigma = 1.00 (Seed: 142)
+05:21:39  INFO      ================================================================
+05:26:05  INFO        [Round 01/20]  Sigma: 1.00  |  Avg Train Loss: 0.6675
+05:43:26  INFO        [Round 05/20]  Sigma: 1.00  |  Avg Train Loss: 0.5530
+05:45:04  ERROR     Error executing sigma = 1.00: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+05:45:04  ERROR     Traceback (most recent call last):
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 882, in main
+    res = run_federated_dpsgd_sweep_single_sigma(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 376, in run_federated_dpsgd_sweep_single_sigma
+    updated_params, n_samples, steps_taken, avg_loss = train_dp_hospital_client(
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 319, in train_dp_hospital_client
+    raise e
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 313, in train_dp_hospital_client
+    optimizer.step()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 513, in step
+    if self.pre_step():
+       ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 494, in pre_step
+    self.clip_and_accumulate()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 412, in clip_and_accumulate
+    grad = contract("i,i...", per_sample_clip_factor, grad_sample)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 603, in contract
+    return _core_contract(operands, contraction_list, backend=backend, out=out, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 687, in _core_contract
+    new_view = _tensordot(*tmp_operands, axes=axes, backend=backend, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/sharing.py", line 140, in cached_tensordot
+    return tensordot(x, y, axes, backend=backend)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 470, in _tensordot
+    return fn(x, y, axes=axes)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/backends/torch.py", line 56, in tensordot
+    return torch.tensordot(x, y, dims=axes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/functional.py", line 1360, in tensordot
+    return _VF.tensordot(a, b, dims_a, dims_b)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+
+05:45:04  INFO      ================================================================
+05:45:04  INFO      Starting Federated DP-SGD Training for Sigma = 1.50 (Seed: 192)
+05:45:04  INFO      ================================================================
+05:49:27  INFO        [Round 01/20]  Sigma: 1.50  |  Avg Train Loss: 0.7569
+06:06:57  INFO        [Round 05/20]  Sigma: 1.50  |  Avg Train Loss: 0.5992
+06:21:25  ERROR     Error executing sigma = 1.50: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+06:21:25  ERROR     Traceback (most recent call last):
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 882, in main
+    res = run_federated_dpsgd_sweep_single_sigma(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 376, in run_federated_dpsgd_sweep_single_sigma
+    updated_params, n_samples, steps_taken, avg_loss = train_dp_hospital_client(
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 319, in train_dp_hospital_client
+    raise e
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 313, in train_dp_hospital_client
+    optimizer.step()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 513, in step
+    if self.pre_step():
+       ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 494, in pre_step
+    self.clip_and_accumulate()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 412, in clip_and_accumulate
+    grad = contract("i,i...", per_sample_clip_factor, grad_sample)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 603, in contract
+    return _core_contract(operands, contraction_list, backend=backend, out=out, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 687, in _core_contract
+    new_view = _tensordot(*tmp_operands, axes=axes, backend=backend, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/sharing.py", line 140, in cached_tensordot
+    return tensordot(x, y, axes, backend=backend)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 470, in _tensordot
+    return fn(x, y, axes=axes)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/backends/torch.py", line 56, in tensordot
+    return torch.tensordot(x, y, dims=axes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/functional.py", line 1360, in tensordot
+    return _VF.tensordot(a, b, dims_a, dims_b)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+
+06:21:25  INFO      ================================================================
+06:21:25  INFO      Starting Federated DP-SGD Training for Sigma = 2.00 (Seed: 242)
+06:21:25  INFO      ================================================================
+06:25:37  INFO        [Round 01/20]  Sigma: 2.00  |  Avg Train Loss: 0.7285
+06:42:49  INFO        [Round 05/20]  Sigma: 2.00  |  Avg Train Loss: 0.6131
+07:01:45  ERROR     Error executing sigma = 2.00: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+07:01:45  ERROR     Traceback (most recent call last):
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 882, in main
+    res = run_federated_dpsgd_sweep_single_sigma(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 376, in run_federated_dpsgd_sweep_single_sigma
+    updated_params, n_samples, steps_taken, avg_loss = train_dp_hospital_client(
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 319, in train_dp_hospital_client
+    raise e
+  File "/kaggle/working/SDFL/e11_privacy_utility.py", line 313, in train_dp_hospital_client
+    optimizer.step()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 513, in step
+    if self.pre_step():
+       ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 494, in pre_step
+    self.clip_and_accumulate()
+  File "/usr/local/lib/python3.12/dist-packages/opacus/optimizers/optimizer.py", line 412, in clip_and_accumulate
+    grad = contract("i,i...", per_sample_clip_factor, grad_sample)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 603, in contract
+    return _core_contract(operands, contraction_list, backend=backend, out=out, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 687, in _core_contract
+    new_view = _tensordot(*tmp_operands, axes=axes, backend=backend, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/sharing.py", line 140, in cached_tensordot
+    return tensordot(x, y, axes, backend=backend)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/contract.py", line 470, in _tensordot
+    return fn(x, y, axes=axes)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/opt_einsum/backends/torch.py", line 56, in tensordot
+    return torch.tensordot(x, y, dims=axes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/functional.py", line 1360, in tensordot
+    return _VF.tensordot(a, b, dims_a, dims_b)  # type: ignore[attr-defined]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)
+
+07:01:45  INFO      Results written to /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility_results.json and /kaggle/working/SDFL/Results_New/E11/e11_privacy_results.json
+07:01:45  INFO      CSV results written to /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility_results.csv
+07:01:45  INFO      Markdown report generated at /kaggle/working/SDFL/Results_New/E11/E11_RESULTS.md
+07:01:45  WARNING   No completed runs to plot.
+07:01:45  INFO      ================================================================
+07:01:45  INFO      E11 Empirical Privacy-Utility Sweep Complete!
+07:01:45  INFO      ================================================================
