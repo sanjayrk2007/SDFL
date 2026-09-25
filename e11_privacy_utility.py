@@ -69,6 +69,46 @@ except ImportError as exc:
         "Opacus is required for E11. Install with: pip install opacus==1.4.0 (or latest)"
     ) from exc
 
+
+def _patch_opacus_empty_batch_collate() -> None:
+    """Work around a broken installed build of opacus.data_loader.
+
+    Some environments (observed on Kaggle) ship a build of
+    ``opacus.data_loader.wrap_collate_with_empty`` whose empty-batch branch
+    references a bare ``self`` that is never bound (it isn't inside a method),
+    e.g. ``for p in self.dataset[0].values()``. That branch only executes the
+    first time Opacus' Poisson sampler happens to draw an empty batch for a
+    given client -- which is random -- so a run can train for several rounds
+    before crashing with ``NameError: name 'self' is not defined``. This
+    reinstalls a correct, self-contained empty-batch collate function
+    (equivalent to the upstream 1.4.x implementation) directly onto the
+    opacus.data_loader module, so DPDataLoader.__init__ picks it up regardless
+    of which exact signature this installed build expects.
+    """
+    import opacus.data_loader as _opacus_dl
+
+    def _safe_wrap_collate_with_empty(
+        *, collate_fn, sample_empty_shapes, dtypes, **_ignored_kwargs
+    ):
+        def collate(batch):
+            if len(batch) > 0:
+                return collate_fn(batch)
+            return [
+                torch.zeros(shape, dtype=dtype)
+                for shape, dtype in zip(sample_empty_shapes, dtypes)
+            ]
+
+        return collate
+
+    _opacus_dl.wrap_collate_with_empty = _safe_wrap_collate_with_empty
+    logging.getLogger(__name__).info(
+        "Patched opacus.data_loader.wrap_collate_with_empty "
+        "(installed build's empty-batch branch is broken)."
+    )
+
+
+_patch_opacus_empty_batch_collate()
+
 # ---------------------------------------------------------------------------
 # Logging & Paths
 # ---------------------------------------------------------------------------
