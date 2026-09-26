@@ -1,6 +1,6 @@
 # E11 — Empirical Federated DP-SGD Privacy–Utility Sweep
 
-> **Completed:** 2026-09-25T07:01:45.256078+00:00  |  **Device:** `cuda:0`
+> **Completed:** 2026-09-26T07:05:07.381756+00:00  |  **Device:** `cuda:0`
 
 ## Executive Summary
 
@@ -30,10 +30,10 @@ The canonical synthetic hospital partition in this repository contains overlappi
 
 | $\sigma$ | $\epsilon$ (Worst-Case Sample) | $\delta$ | Test Dice | Test IoU | Precision | Recall | Training Time (s) | Privacy Regime |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---|
-| **0.5** | *Failed* | -- | -- | -- | -- | -- | -- | Run aborted (Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)) |
-| **1.0** | *Failed* | -- | -- | -- | -- | -- | -- | Run aborted (Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)) |
-| **1.5** | *Failed* | -- | -- | -- | -- | -- | -- | Run aborted (Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)) |
-| **2.0** | *Failed* | -- | -- | -- | -- | -- | -- | Run aborted (Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)) |
+| **0.5** | **119.0825** | 1e-05 | **0.5067** | **0.3743** | 0.5176 | 0.6369 | 5079.4s | Moderate privacy |
+| **1.0** | **18.7191** | 1e-05 | **0.4885** | **0.3576** | 0.5283 | 0.5876 | 4943.8s | Strict privacy bound |
+| **1.5** | **9.3100** | 1e-05 | **0.4923** | **0.3598** | 0.5319 | 0.5855 | 4976.6s | **Recommended SDFL Operating Point** |
+| **2.0** | **6.2026** | 1e-05 | **0.4819** | **0.3527** | 0.4764 | 0.6458 | 4992.1s | Strict privacy bound |
 
 ---
 
@@ -41,6 +41,10 @@ The canonical synthetic hospital partition in this repository contains overlappi
 
 | $\sigma$ | Client 0 $\epsilon$ | Client 1 $\epsilon$ | Client 2 $\epsilon$ | 1-Client Records $\epsilon$ (571 samples) | 2-Client Records $\epsilon$ (106 samples) | 3-Client Records $\epsilon$ (2 samples, Worst-Case) |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 0.5 | 58.8613 | 59.0725 | 59.2859 | **59.2859** | **91.5786** | **119.0825** |
+| 1.0 | 9.8179 | 9.8615 | 9.9057 | **9.9057** | **14.6976** | **18.7191** |
+| 1.5 | 4.9544 | 4.9760 | 4.9974 | **4.9974** | **7.3706** | **9.3100** |
+| 2.0 | 3.3322 | 3.3465 | 3.3608 | **3.3608** | **4.9332** | **6.2026** |
 
 ---
 
@@ -48,6 +52,10 @@ The canonical synthetic hospital partition in this repository contains overlappi
 
 | $\sigma$ | $\epsilon$ (Worst-Case) | Hospital 0 Dice | Hospital 1 Dice | Hospital 2 Dice | Combined Test Dice |
 |:---:|:---:|:---:|:---:|:---:|:---:|
+| 0.5 | 119.0825 | 0.3731 | 0.5951 | 0.5573 | **0.5067** |
+| 1.0 | 18.7191 | 0.3572 | 0.5744 | 0.5394 | **0.4885** |
+| 1.5 | 9.3100 | 0.3628 | 0.5857 | 0.5328 | **0.4923** |
+| 2.0 | 6.2026 | 0.3491 | 0.5649 | 0.5379 | **0.4819** |
 
 ---
 

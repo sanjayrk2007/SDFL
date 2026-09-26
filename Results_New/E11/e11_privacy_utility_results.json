@@ -1,7 +1,7 @@
 {
   "experiment": "E11 Empirical Federated DP-SGD Privacy-Utility Sweep (Overlap-Aware)",
-  "timestamp_start": "2026-09-25T04:33:27.545483+00:00",
-  "completed_at": "2026-09-25T07:01:45.256078+00:00",
+  "timestamp_start": "2026-09-26T01:31:27.125867+00:00",
+  "completed_at": "2026-09-26T07:05:07.381756+00:00",
   "device": "cuda:0",
   "configuration": {
     "sigmas": [
@@ -36,23 +36,887 @@
   "rows": [
     {
       "sigma": 0.5,
-      "status": "failed",
-      "error": "Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)"
+      "seed": 92,
+      "clipping_norm_C": 2.0,
+      "delta": 1e-05,
+      "rounds": 20,
+      "local_epochs": 3,
+      "batch_size": 8,
+      "learning_rate": 0.0001,
+      "training_time_seconds": 5079.43,
+      "privacy_accounting": {
+        "privacy_unit": "sample-level (individual patient polyp record)",
+        "federated_composition_note": "Synthetic hospital partitions contain 108 overlapping records across clients. Sequential RDP composition is applied across participating clients for overlapping records. The worst-case sample-level epsilon accounts for records participating in all 3 client mechanisms.",
+        "worst_case_sample_epsilon": 119.0825,
+        "delta": 1e-05,
+        "tiers": {
+          "records_in_1_client": {
+            "count": 571,
+            "epsilon": 59.2859
+          },
+          "records_in_2_clients": {
+            "count": 106,
+            "epsilon": 91.5786,
+            "pairwise": {
+              "H0_H1": 91.2211,
+              "H0_H2": 91.4008,
+              "H1_H2": 91.5786
+            }
+          },
+          "records_in_3_clients": {
+            "count": 2,
+            "epsilon": 119.0825
+          }
+        },
+        "per_client": {
+          "Client_0": {
+            "train_samples": 264,
+            "sampling_rate_q": 0.030303,
+            "batches_per_epoch": 33,
+            "total_steps_executed": 1980,
+            "steps_per_round_history": [
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99
+            ],
+            "epsilon_final": 58.8613,
+            "epsilon_per_round": [
+              14.8831,
+              19.0478,
+              22.3735,
+              25.3882,
+              28.0348,
+              30.6815,
+              33.0129,
+              35.2399,
+              37.4669,
+              39.6939,
+              41.8818,
+              43.7696,
+              45.6574,
+              47.5452,
+              49.4329,
+              51.3207,
+              53.2085,
+              55.0963,
+              56.9841,
+              58.8613
+            ]
+          },
+          "Client_1": {
+            "train_samples": 263,
+            "sampling_rate_q": 0.030418,
+            "batches_per_epoch": 33,
+            "total_steps_executed": 1980,
+            "steps_per_round_history": [
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99
+            ],
+            "epsilon_final": 59.0725,
+            "epsilon_per_round": [
+              14.9185,
+              19.1038,
+              22.4411,
+              25.4616,
+              28.1266,
+              30.7916,
+              33.1189,
+              35.361,
+              37.6031,
+              39.8453,
+              42.0205,
+              43.9208,
+              45.8212,
+              47.7216,
+              49.622,
+              51.5223,
+              53.4227,
+              55.3231,
+              57.2235,
+              59.0725
+            ]
+          },
+          "Client_2": {
+            "train_samples": 262,
+            "sampling_rate_q": 0.030534,
+            "batches_per_epoch": 33,
+            "total_steps_executed": 1980,
+            "steps_per_round_history": [
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99
+            ],
+            "epsilon_final": 59.2859,
+            "epsilon_per_round": [
+              14.9542,
+              19.1604,
+              22.5094,
+              25.5359,
+              28.2194,
+              30.9029,
+              33.226,
+              35.4834,
+              37.7408,
+              39.9983,
+              42.1605,
+              44.0736,
+              45.9867,
+              47.8998,
+              49.813,
+              51.7261,
+              53.6392,
+              55.5523,
+              57.4654,
+              59.2859
+            ]
+          }
+        }
+      },
+      "empirical_test_metrics": {
+        "combined_test": {
+          "dice": 0.5067,
+          "iou": 0.3743,
+          "precision": 0.5176,
+          "recall": 0.6369
+        },
+        "per_hospital_test": {
+          "Hospital_0": {
+            "dice": 0.3731,
+            "iou": 0.2564,
+            "precision": 0.3321,
+            "recall": 0.6484
+          },
+          "Hospital_1": {
+            "dice": 0.5951,
+            "iou": 0.4572,
+            "precision": 0.5935,
+            "recall": 0.6611
+          },
+          "Hospital_2": {
+            "dice": 0.5573,
+            "iou": 0.4136,
+            "precision": 0.6406,
+            "recall": 0.597
+          }
+        }
+      },
+      "checkpoint_path": "/kaggle/working/SDFL/Results_New/E11/checkpoints/e11_sigma_0p5.pth",
+      "status": "completed"
     },
     {
       "sigma": 1.0,
-      "status": "failed",
-      "error": "Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)"
+      "seed": 142,
+      "clipping_norm_C": 2.0,
+      "delta": 1e-05,
+      "rounds": 20,
+      "local_epochs": 3,
+      "batch_size": 8,
+      "learning_rate": 0.0001,
+      "training_time_seconds": 4943.78,
+      "privacy_accounting": {
+        "privacy_unit": "sample-level (individual patient polyp record)",
+        "federated_composition_note": "Synthetic hospital partitions contain 108 overlapping records across clients. Sequential RDP composition is applied across participating clients for overlapping records. The worst-case sample-level epsilon accounts for records participating in all 3 client mechanisms.",
+        "worst_case_sample_epsilon": 18.7191,
+        "delta": 1e-05,
+        "tiers": {
+          "records_in_1_client": {
+            "count": 571,
+            "epsilon": 9.9057
+          },
+          "records_in_2_clients": {
+            "count": 106,
+            "epsilon": 14.6976,
+            "pairwise": {
+              "H0_H1": 14.6313,
+              "H0_H2": 14.6647,
+              "H1_H2": 14.6976
+            }
+          },
+          "records_in_3_clients": {
+            "count": 2,
+            "epsilon": 18.7191
+          }
+        },
+        "per_client": {
+          "Client_0": {
+            "train_samples": 264,
+            "sampling_rate_q": 0.030303,
+            "batches_per_epoch": 33,
+            "total_steps_executed": 1980,
+            "steps_per_round_history": [
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99
+            ],
+            "epsilon_final": 9.8179,
+            "epsilon_per_round": [
+              2.5614,
+              3.2569,
+              3.8373,
+              4.3516,
+              4.8214,
+              5.2566,
+              5.665,
+              6.0539,
+              6.424,
+              6.7791,
+              7.1218,
+              7.454,
+              7.7744,
+              8.0862,
+              8.3918,
+              8.6887,
+              8.9793,
+              9.2648,
+              9.5435,
+              9.8179
+            ]
+          },
+          "Client_1": {
+            "train_samples": 263,
+            "sampling_rate_q": 0.030418,
+            "batches_per_epoch": 33,
+            "total_steps_executed": 1980,
+            "steps_per_round_history": [
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99
+            ],
+            "epsilon_final": 9.8615,
+            "epsilon_per_round": [
+              2.5699,
+              3.2685,
+              3.8522,
+              4.3689,
+              4.8405,
+              5.2783,
+              5.6884,
+              6.0793,
+              6.4505,
+              6.8074,
+              7.1517,
+              7.4852,
+              7.8082,
+              8.121,
+              8.4276,
+              8.7269,
+              9.0181,
+              9.3059,
+              9.5849,
+              9.8615
+            ]
+          },
+          "Client_2": {
+            "train_samples": 262,
+            "sampling_rate_q": 0.030534,
+            "batches_per_epoch": 33,
+            "total_steps_executed": 1980,
+            "steps_per_round_history": [
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99
+            ],
+            "epsilon_final": 9.9057,
+            "epsilon_per_round": [
+              2.5786,
+              3.2803,
+              3.8674,
+              4.3865,
+              4.8597,
+              5.2995,
+              5.7121,
+              6.1042,
+              6.4774,
+              6.836,
+              7.1818,
+              7.5168,
+              7.8423,
+              8.1563,
+              8.4638,
+              8.7654,
+              9.0573,
+              9.3474,
+              9.6269,
+              9.9057
+            ]
+          }
+        }
+      },
+      "empirical_test_metrics": {
+        "combined_test": {
+          "dice": 0.4885,
+          "iou": 0.3576,
+          "precision": 0.5283,
+          "recall": 0.5876
+        },
+        "per_hospital_test": {
+          "Hospital_0": {
+            "dice": 0.3572,
+            "iou": 0.245,
+            "precision": 0.3355,
+            "recall": 0.5948
+          },
+          "Hospital_1": {
+            "dice": 0.5744,
+            "iou": 0.4392,
+            "precision": 0.6061,
+            "recall": 0.603
+          },
+          "Hospital_2": {
+            "dice": 0.5394,
+            "iou": 0.3925,
+            "precision": 0.6572,
+            "recall": 0.5622
+          }
+        }
+      },
+      "checkpoint_path": "/kaggle/working/SDFL/Results_New/E11/checkpoints/e11_sigma_1p0.pth",
+      "status": "completed"
     },
     {
       "sigma": 1.5,
-      "status": "failed",
-      "error": "Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)"
+      "seed": 192,
+      "clipping_norm_C": 2.0,
+      "delta": 1e-05,
+      "rounds": 20,
+      "local_epochs": 3,
+      "batch_size": 8,
+      "learning_rate": 0.0001,
+      "training_time_seconds": 4976.58,
+      "privacy_accounting": {
+        "privacy_unit": "sample-level (individual patient polyp record)",
+        "federated_composition_note": "Synthetic hospital partitions contain 108 overlapping records across clients. Sequential RDP composition is applied across participating clients for overlapping records. The worst-case sample-level epsilon accounts for records participating in all 3 client mechanisms.",
+        "worst_case_sample_epsilon": 9.31,
+        "delta": 1e-05,
+        "tiers": {
+          "records_in_1_client": {
+            "count": 571,
+            "epsilon": 4.9974
+          },
+          "records_in_2_clients": {
+            "count": 106,
+            "epsilon": 7.3706,
+            "pairwise": {
+              "H0_H1": 7.3375,
+              "H0_H2": 7.3541,
+              "H1_H2": 7.3706
+            }
+          },
+          "records_in_3_clients": {
+            "count": 2,
+            "epsilon": 9.31
+          }
+        },
+        "per_client": {
+          "Client_0": {
+            "train_samples": 264,
+            "sampling_rate_q": 0.030303,
+            "batches_per_epoch": 33,
+            "total_steps_executed": 1980,
+            "steps_per_round_history": [
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99
+            ],
+            "epsilon_final": 4.9544,
+            "epsilon_per_round": [
+              1.1069,
+              1.5104,
+              1.835,
+              2.1171,
+              2.3703,
+              2.6029,
+              2.8195,
+              3.0235,
+              3.2171,
+              3.402,
+              3.5795,
+              3.7504,
+              3.9155,
+              4.0759,
+              4.2312,
+              4.3828,
+              4.5306,
+              4.6751,
+              4.8163,
+              4.9544
+            ]
+          },
+          "Client_1": {
+            "train_samples": 263,
+            "sampling_rate_q": 0.030418,
+            "batches_per_epoch": 33,
+            "total_steps_executed": 1980,
+            "steps_per_round_history": [
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99
+            ],
+            "epsilon_final": 4.976,
+            "epsilon_per_round": [
+              1.111,
+              1.5163,
+              1.8426,
+              2.1259,
+              2.3803,
+              2.6138,
+              2.8314,
+              3.0362,
+              3.2307,
+              3.4165,
+              3.5948,
+              3.7665,
+              3.9323,
+              4.0932,
+              4.2494,
+              4.4017,
+              4.5502,
+              4.6951,
+              4.837,
+              4.976
+            ]
+          },
+          "Client_2": {
+            "train_samples": 262,
+            "sampling_rate_q": 0.030534,
+            "batches_per_epoch": 33,
+            "total_steps_executed": 1980,
+            "steps_per_round_history": [
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99
+            ],
+            "epsilon_final": 4.9974,
+            "epsilon_per_round": [
+              1.1151,
+              1.5223,
+              1.8502,
+              2.1347,
+              2.3902,
+              2.6247,
+              2.8433,
+              3.0491,
+              3.2444,
+              3.4311,
+              3.61,
+              3.7825,
+              3.9493,
+              4.1107,
+              4.2678,
+              4.4208,
+              4.5697,
+              4.7153,
+              4.8578,
+              4.9974
+            ]
+          }
+        }
+      },
+      "empirical_test_metrics": {
+        "combined_test": {
+          "dice": 0.4923,
+          "iou": 0.3598,
+          "precision": 0.5319,
+          "recall": 0.5855
+        },
+        "per_hospital_test": {
+          "Hospital_0": {
+            "dice": 0.3628,
+            "iou": 0.2492,
+            "precision": 0.3335,
+            "recall": 0.5964
+          },
+          "Hospital_1": {
+            "dice": 0.5857,
+            "iou": 0.4462,
+            "precision": 0.6249,
+            "recall": 0.6052
+          },
+          "Hospital_2": {
+            "dice": 0.5328,
+            "iou": 0.3868,
+            "precision": 0.65,
+            "recall": 0.5512
+          }
+        }
+      },
+      "checkpoint_path": "/kaggle/working/SDFL/Results_New/E11/checkpoints/e11_sigma_1p5.pth",
+      "status": "completed"
     },
     {
       "sigma": 2.0,
-      "status": "failed",
-      "error": "Expected all tensors to be on the same device, but found at least two devices, cuda:0 and cpu! (when checking argument for argument mat2 in method wrapper_CUDA_mm)"
+      "seed": 242,
+      "clipping_norm_C": 2.0,
+      "delta": 1e-05,
+      "rounds": 20,
+      "local_epochs": 3,
+      "batch_size": 8,
+      "learning_rate": 0.0001,
+      "training_time_seconds": 4992.07,
+      "privacy_accounting": {
+        "privacy_unit": "sample-level (individual patient polyp record)",
+        "federated_composition_note": "Synthetic hospital partitions contain 108 overlapping records across clients. Sequential RDP composition is applied across participating clients for overlapping records. The worst-case sample-level epsilon accounts for records participating in all 3 client mechanisms.",
+        "worst_case_sample_epsilon": 6.2026,
+        "delta": 1e-05,
+        "tiers": {
+          "records_in_1_client": {
+            "count": 571,
+            "epsilon": 3.3608
+          },
+          "records_in_2_clients": {
+            "count": 106,
+            "epsilon": 4.9332,
+            "pairwise": {
+              "H0_H1": 4.9117,
+              "H0_H2": 4.9225,
+              "H1_H2": 4.9332
+            }
+          },
+          "records_in_3_clients": {
+            "count": 2,
+            "epsilon": 6.2026
+          }
+        },
+        "per_client": {
+          "Client_0": {
+            "train_samples": 264,
+            "sampling_rate_q": 0.030303,
+            "batches_per_epoch": 33,
+            "total_steps_executed": 1980,
+            "steps_per_round_history": [
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99
+            ],
+            "epsilon_final": 3.3322,
+            "epsilon_per_round": [
+              0.7088,
+              0.9953,
+              1.2206,
+              1.415,
+              1.5889,
+              1.7465,
+              1.894,
+              2.0326,
+              2.1639,
+              2.289,
+              2.4089,
+              2.5243,
+              2.6355,
+              2.7433,
+              2.8479,
+              2.9496,
+              3.0486,
+              3.1454,
+              3.2397,
+              3.3322
+            ]
+          },
+          "Client_1": {
+            "train_samples": 263,
+            "sampling_rate_q": 0.030418,
+            "batches_per_epoch": 33,
+            "total_steps_executed": 1980,
+            "steps_per_round_history": [
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99
+            ],
+            "epsilon_final": 3.3465,
+            "epsilon_per_round": [
+              0.7117,
+              0.9995,
+              1.2256,
+              1.421,
+              1.5957,
+              1.7538,
+              1.9019,
+              2.0411,
+              2.1729,
+              2.2987,
+              2.419,
+              2.5349,
+              2.6467,
+              2.755,
+              2.86,
+              2.9621,
+              3.0616,
+              3.1587,
+              3.2535,
+              3.3465
+            ]
+          },
+          "Client_2": {
+            "train_samples": 262,
+            "sampling_rate_q": 0.030534,
+            "batches_per_epoch": 33,
+            "total_steps_executed": 1980,
+            "steps_per_round_history": [
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99,
+              99
+            ],
+            "epsilon_final": 3.3608,
+            "epsilon_per_round": [
+              0.7146,
+              1.0035,
+              1.2306,
+              1.4271,
+              1.6027,
+              1.7611,
+              1.9099,
+              2.0497,
+              2.1821,
+              2.3083,
+              2.4293,
+              2.5456,
+              2.658,
+              2.7667,
+              2.8721,
+              2.9748,
+              3.0747,
+              3.1722,
+              3.2675,
+              3.3608
+            ]
+          }
+        }
+      },
+      "empirical_test_metrics": {
+        "combined_test": {
+          "dice": 0.4819,
+          "iou": 0.3527,
+          "precision": 0.4764,
+          "recall": 0.6458
+        },
+        "per_hospital_test": {
+          "Hospital_0": {
+            "dice": 0.3491,
+            "iou": 0.2391,
+            "precision": 0.3009,
+            "recall": 0.6555
+          },
+          "Hospital_1": {
+            "dice": 0.5649,
+            "iou": 0.4276,
+            "precision": 0.547,
+            "recall": 0.6611
+          },
+          "Hospital_2": {
+            "dice": 0.5379,
+            "iou": 0.3961,
+            "precision": 0.594,
+            "recall": 0.618
+          }
+        }
+      },
+      "checkpoint_path": "/kaggle/working/SDFL/Results_New/E11/checkpoints/e11_sigma_2p0.pth",
+      "status": "completed"
     }
   ]
 }

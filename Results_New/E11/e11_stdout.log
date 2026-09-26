@@ -730,3 +730,159 @@ RuntimeError: Expected all tensors to be on the same device, but found at least 
 07:01:45  INFO      ================================================================
 07:01:45  INFO      E11 Empirical Privacy-Utility Sweep Complete!
 07:01:45  INFO      ================================================================
+01:29:44  INFO      Executing Smoke Test configuration...
+01:29:44  INFO      Loading hospital training datasets and held-out test dataset...
+01:29:44  INFO      ================================================================
+01:29:44  INFO      E11 EXPERIMENTAL CONFIGURATION & DATASET AUDIT PRE-FLIGHT
+01:29:44  INFO      ================================================================
+01:29:44  INFO        Sigmas to evaluate     : [1.0]
+01:29:44  INFO        Federated rounds       : 1
+01:29:44  INFO        Local epochs per round : 1
+01:29:44  INFO        Participating clients  : 3
+01:29:44  INFO        Batch size             : 8
+01:29:44  INFO        Clipping norm (C)      : 2.0
+01:29:44  INFO        DP Target delta        : 1e-05
+01:29:44  INFO        Learning rate          : 0.0001
+01:29:44  INFO        Compute Device         : cuda (CUDA available: True)
+01:29:44  INFO        --- Dataset Partition & Overlap Audit ---
+01:29:44  INFO          - Hospital 0 Train Samples: 264 (33 batches/epoch, q=0.0303)
+01:29:44  INFO          - Hospital 1 Train Samples: 263 (33 batches/epoch, q=0.0304)
+01:29:44  INFO          - Hospital 2 Train Samples: 262 (33 batches/epoch, q=0.0305)
+01:29:44  INFO          - Pairwise Overlaps       : H0-H1=35, H0-H2=38, H1-H2=39
+01:29:44  INFO          - Total Unique Records    : 679
+01:29:44  INFO          - Records in 1 Client     : 571 (84.1%)
+01:29:44  INFO          - Records in 2 Clients    : 106 (15.6%)
+01:29:44  INFO          - Records in 3 Clients    : 2 (0.3%)
+01:29:44  INFO          - Test Split Overlap      : 0 (STRICTLY DISJOINT)
+01:29:44  INFO        Combined Test Samples  : 107
+01:29:44  INFO        Expected DP Steps/Client: 33
+01:29:44  INFO        Privacy Accounting     : Dynamic Overlap-Aware RDP Composition (Worst-Case on 3-Client Records)
+01:29:44  INFO        Save Checkpoints       : False
+01:29:44  INFO      ================================================================
+01:29:44  INFO      ================================================================
+01:29:44  INFO      Starting Federated DP-SGD Training for Sigma = 1.00 (Seed: 142)
+01:29:44  INFO      ================================================================
+01:31:11  INFO        [Round 01/01]  Sigma: 1.00  |  Avg Train Loss: 0.7321
+01:31:11  INFO      Training completed for Sigma = 1.00 in 85.74s
+01:31:11  INFO      Evaluating trained model (Sigma = 1.00) on combined held-out test set...
+01:31:14  INFO        Results (Sigma=1.00): Dice=0.2033, IoU=0.1213, Precision=0.2372, Recall=0.2405
+01:31:15  INFO        DP Accounting (delta=1e-05):
+01:31:15  INFO          - Per-Client Epsilon       : H0=1.9473, H1=1.9525, H2=1.9577
+01:31:15  INFO          - 1-Client Records (N=571) : eps = 1.9577
+01:31:15  INFO          - 2-Client Records (N=106) : eps = 2.2916
+01:31:15  INFO          - 3-Client Records (N=2)   : eps = 2.5700 (WORST-CASE)
+01:31:15  INFO          - Federation Worst-Case Epsilon : 2.5700
+01:31:15  INFO      Results written to /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility_results.json and /kaggle/working/SDFL/Results_New/E11/e11_privacy_results.json
+01:31:15  INFO      CSV results written to /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility_results.csv
+01:31:15  INFO      Markdown report generated at /kaggle/working/SDFL/Results_New/E11/E11_RESULTS.md
+01:31:19  INFO      Figures saved to /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility.png and /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility.pdf
+01:31:19  INFO      ================================================================
+01:31:19  INFO      E11 Empirical Privacy-Utility Sweep Complete!
+01:31:19  INFO      ================================================================
+01:31:27  INFO      Loading hospital training datasets and held-out test dataset...
+01:31:27  INFO      ================================================================
+01:31:27  INFO      E11 EXPERIMENTAL CONFIGURATION & DATASET AUDIT PRE-FLIGHT
+01:31:27  INFO      ================================================================
+01:31:27  INFO        Sigmas to evaluate     : [0.5, 1.0, 1.5, 2.0]
+01:31:27  INFO        Federated rounds       : 20
+01:31:27  INFO        Local epochs per round : 3
+01:31:27  INFO        Participating clients  : 3
+01:31:27  INFO        Batch size             : 8
+01:31:27  INFO        Clipping norm (C)      : 2.0
+01:31:27  INFO        DP Target delta        : 1e-05
+01:31:27  INFO        Learning rate          : 0.0001
+01:31:27  INFO        Compute Device         : cuda:0 (CUDA available: True)
+01:31:27  INFO        --- Dataset Partition & Overlap Audit ---
+01:31:27  INFO          - Hospital 0 Train Samples: 264 (33 batches/epoch, q=0.0303)
+01:31:27  INFO          - Hospital 1 Train Samples: 263 (33 batches/epoch, q=0.0304)
+01:31:27  INFO          - Hospital 2 Train Samples: 262 (33 batches/epoch, q=0.0305)
+01:31:27  INFO          - Pairwise Overlaps       : H0-H1=35, H0-H2=38, H1-H2=39
+01:31:27  INFO          - Total Unique Records    : 679
+01:31:27  INFO          - Records in 1 Client     : 571 (84.1%)
+01:31:27  INFO          - Records in 2 Clients    : 106 (15.6%)
+01:31:27  INFO          - Records in 3 Clients    : 2 (0.3%)
+01:31:27  INFO          - Test Split Overlap      : 0 (STRICTLY DISJOINT)
+01:31:27  INFO        Combined Test Samples  : 107
+01:31:27  INFO        Expected DP Steps/Client: 1980
+01:31:27  INFO        Privacy Accounting     : Dynamic Overlap-Aware RDP Composition (Worst-Case on 3-Client Records)
+01:31:27  INFO        Save Checkpoints       : True
+01:31:27  INFO      ================================================================
+01:31:27  INFO      ================================================================
+01:31:27  INFO      Starting Federated DP-SGD Training for Sigma = 0.50 (Seed: 92)
+01:31:27  INFO      ================================================================
+01:35:50  INFO        [Round 01/20]  Sigma: 0.50  |  Avg Train Loss: 0.6389
+01:53:06  INFO        [Round 05/20]  Sigma: 0.50  |  Avg Train Loss: 0.5208
+02:14:26  INFO        [Round 10/20]  Sigma: 0.50  |  Avg Train Loss: 0.4884
+02:35:19  INFO        [Round 15/20]  Sigma: 0.50  |  Avg Train Loss: 0.4774
+02:56:06  INFO        [Round 20/20]  Sigma: 0.50  |  Avg Train Loss: 0.4646
+02:56:06  INFO      Training completed for Sigma = 0.50 in 5079.43s
+02:56:06  INFO      Evaluating trained model (Sigma = 0.50) on combined held-out test set...
+02:56:10  INFO        Results (Sigma=0.50): Dice=0.5067, IoU=0.3743, Precision=0.5176, Recall=0.6369
+02:56:17  INFO        DP Accounting (delta=1e-05):
+02:56:17  INFO          - Per-Client Epsilon       : H0=58.8613, H1=59.0725, H2=59.2859
+02:56:17  INFO          - 1-Client Records (N=571) : eps = 59.2859
+02:56:17  INFO          - 2-Client Records (N=106) : eps = 91.5786
+02:56:17  INFO          - 3-Client Records (N=2)   : eps = 119.0825 (WORST-CASE)
+02:56:17  INFO          - Federation Worst-Case Epsilon : 119.0825
+02:56:17  INFO        Checkpoint saved to /kaggle/working/SDFL/Results_New/E11/checkpoints/e11_sigma_0p5.pth
+02:56:18  INFO      ================================================================
+02:56:18  INFO      Starting Federated DP-SGD Training for Sigma = 1.00 (Seed: 142)
+02:56:18  INFO      ================================================================
+03:00:21  INFO        [Round 01/20]  Sigma: 1.00  |  Avg Train Loss: 0.6675
+03:16:51  INFO        [Round 05/20]  Sigma: 1.00  |  Avg Train Loss: 0.5530
+03:37:12  INFO        [Round 10/20]  Sigma: 1.00  |  Avg Train Loss: 0.5258
+03:58:03  INFO        [Round 15/20]  Sigma: 1.00  |  Avg Train Loss: 0.5100
+04:18:41  INFO        [Round 20/20]  Sigma: 1.00  |  Avg Train Loss: 0.4920
+04:18:41  INFO      Training completed for Sigma = 1.00 in 4943.78s
+04:18:41  INFO      Evaluating trained model (Sigma = 1.00) on combined held-out test set...
+04:18:45  INFO        Results (Sigma=1.00): Dice=0.4885, IoU=0.3576, Precision=0.5283, Recall=0.5876
+04:18:48  INFO        DP Accounting (delta=1e-05):
+04:18:48  INFO          - Per-Client Epsilon       : H0=9.8179, H1=9.8615, H2=9.9057
+04:18:48  INFO          - 1-Client Records (N=571) : eps = 9.9057
+04:18:48  INFO          - 2-Client Records (N=106) : eps = 14.6976
+04:18:48  INFO          - 3-Client Records (N=2)   : eps = 18.7191 (WORST-CASE)
+04:18:48  INFO          - Federation Worst-Case Epsilon : 18.7191
+04:18:48  INFO        Checkpoint saved to /kaggle/working/SDFL/Results_New/E11/checkpoints/e11_sigma_1p0.pth
+04:18:48  INFO      ================================================================
+04:18:48  INFO      Starting Federated DP-SGD Training for Sigma = 1.50 (Seed: 192)
+04:18:48  INFO      ================================================================
+04:22:55  INFO        [Round 01/20]  Sigma: 1.50  |  Avg Train Loss: 0.7569
+04:39:32  INFO        [Round 05/20]  Sigma: 1.50  |  Avg Train Loss: 0.5992
+05:00:12  INFO        [Round 10/20]  Sigma: 1.50  |  Avg Train Loss: 0.5470
+05:20:51  INFO        [Round 15/20]  Sigma: 1.50  |  Avg Train Loss: 0.5266
+05:41:45  INFO        [Round 20/20]  Sigma: 1.50  |  Avg Train Loss: 0.5130
+05:41:45  INFO      Training completed for Sigma = 1.50 in 4976.58s
+05:41:45  INFO      Evaluating trained model (Sigma = 1.50) on combined held-out test set...
+05:41:49  INFO        Results (Sigma=1.50): Dice=0.4923, IoU=0.3598, Precision=0.5319, Recall=0.5855
+05:41:50  INFO        DP Accounting (delta=1e-05):
+05:41:50  INFO          - Per-Client Epsilon       : H0=4.9544, H1=4.9760, H2=4.9974
+05:41:50  INFO          - 1-Client Records (N=571) : eps = 4.9974
+05:41:50  INFO          - 2-Client Records (N=106) : eps = 7.3706
+05:41:50  INFO          - 3-Client Records (N=2)   : eps = 9.3100 (WORST-CASE)
+05:41:50  INFO          - Federation Worst-Case Epsilon : 9.3100
+05:41:50  INFO        Checkpoint saved to /kaggle/working/SDFL/Results_New/E11/checkpoints/e11_sigma_1p5.pth
+05:41:50  INFO      ================================================================
+05:41:50  INFO      Starting Federated DP-SGD Training for Sigma = 2.00 (Seed: 242)
+05:41:50  INFO      ================================================================
+05:45:58  INFO        [Round 01/20]  Sigma: 2.00  |  Avg Train Loss: 0.7285
+06:02:38  INFO        [Round 05/20]  Sigma: 2.00  |  Avg Train Loss: 0.6131
+06:23:48  INFO        [Round 10/20]  Sigma: 2.00  |  Avg Train Loss: 0.5614
+06:44:41  INFO        [Round 15/20]  Sigma: 2.00  |  Avg Train Loss: 0.5452
+07:05:02  INFO        [Round 20/20]  Sigma: 2.00  |  Avg Train Loss: 0.5352
+07:05:02  INFO      Training completed for Sigma = 2.00 in 4992.07s
+07:05:02  INFO      Evaluating trained model (Sigma = 2.00) on combined held-out test set...
+07:05:06  INFO        Results (Sigma=2.00): Dice=0.4819, IoU=0.3527, Precision=0.4764, Recall=0.6458
+07:05:07  INFO        DP Accounting (delta=1e-05):
+07:05:07  INFO          - Per-Client Epsilon       : H0=3.3322, H1=3.3465, H2=3.3608
+07:05:07  INFO          - 1-Client Records (N=571) : eps = 3.3608
+07:05:07  INFO          - 2-Client Records (N=106) : eps = 4.9332
+07:05:07  INFO          - 3-Client Records (N=2)   : eps = 6.2026 (WORST-CASE)
+07:05:07  INFO          - Federation Worst-Case Epsilon : 6.2026
+07:05:07  INFO        Checkpoint saved to /kaggle/working/SDFL/Results_New/E11/checkpoints/e11_sigma_2p0.pth
+07:05:07  INFO      Results written to /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility_results.json and /kaggle/working/SDFL/Results_New/E11/e11_privacy_results.json
+07:05:07  INFO      CSV results written to /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility_results.csv
+07:05:07  INFO      Markdown report generated at /kaggle/working/SDFL/Results_New/E11/E11_RESULTS.md
+07:05:10  INFO      Figures saved to /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility.png and /kaggle/working/SDFL/Results_New/E11/e11_privacy_utility.pdf
+07:05:10  INFO      ================================================================
+07:05:10  INFO      E11 Empirical Privacy-Utility Sweep Complete!
+07:05:10  INFO      ================================================================
