@@ -87,6 +87,8 @@ def _patch_opacus_empty_batch_collate() -> None:
     """
     import opacus.data_loader as _opacus_dl
 
+    _empty_batch_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
     def _safe_wrap_collate_with_empty(
         *, collate_fn, sample_empty_shapes, dtypes, **_ignored_kwargs
     ):
@@ -94,7 +96,7 @@ def _patch_opacus_empty_batch_collate() -> None:
             if len(batch) > 0:
                 return collate_fn(batch)
             return [
-                torch.zeros(shape, dtype=dtype)
+                torch.zeros(shape, dtype=dtype, device=_empty_batch_device)
                 for shape, dtype in zip(sample_empty_shapes, dtypes)
             ]
 
@@ -107,7 +109,63 @@ def _patch_opacus_empty_batch_collate() -> None:
     )
 
 
+def _patch_opacus_empty_batch_device_bug() -> None:
+    """Work around a device-placement bug in Opacus 1.4.0's DPOptimizer.
+
+    In ``opacus.optimizers.optimizer.DPOptimizer.clip_and_accumulate``, the
+    empty-batch branch does ``per_sample_clip_factor = torch.zeros((0,))``
+    with no ``device=`` argument, so it always lands on CPU. When Opacus'
+    Poisson sampler draws a genuinely empty microbatch for a client (rare,
+    but expected -- see the comment in ``train_dp_hospital_client``), this
+    CPU tensor is later multiplied against the (CUDA) ``grad_sample``
+    tensors a few lines down, raising ``RuntimeError: Expected all tensors
+    to be on the same device, but found at least two devices, cuda:0 and
+    cpu!``. Since this only triggers on an empty batch, a run can complete
+    many rounds before hitting it -- it isn't a config or data problem.
+    This is a known upstream bug (github.com/pytorch/opacus issue 612),
+    fixed in Opacus 1.5 (PR #631). We stay pinned to opacus==1.4.0 for
+    reproducibility of the committed GradSampleModule-wrapping behavior, so
+    we patch the method in place instead of upgrading.
+    """
+    from opacus.optimizers.optimizer import DPOptimizer, _check_processed_flag, _mark_as_processed
+    from opt_einsum.contract import contract
+
+    def _patched_clip_and_accumulate(self) -> None:
+        if len(self.grad_samples[0]) == 0:
+            # Empty batch -- create on the same device as the model's grad_samples,
+            # not the default (CPU).
+            per_sample_clip_factor = torch.zeros((0,), device=self.grad_samples[0].device)
+        else:
+            per_param_norms = [
+                g.reshape(len(g), -1).norm(2, dim=-1) for g in self.grad_samples
+            ]
+            per_sample_norms = torch.stack(per_param_norms, dim=1).norm(2, dim=1)
+            per_sample_clip_factor = (
+                self.max_grad_norm / (per_sample_norms + 1e-6)
+            ).clamp(max=1.0)
+
+        for p in self.params:
+            _check_processed_flag(p.grad_sample)
+            grad_sample = self._get_flat_grad_sample(p)
+            grad = contract("i,i...", per_sample_clip_factor, grad_sample)
+
+            if p.summed_grad is not None:
+                p.summed_grad += grad
+            else:
+                p.summed_grad = grad
+
+            _mark_as_processed(p.grad_sample)
+
+    DPOptimizer.clip_and_accumulate = _patched_clip_and_accumulate
+    logging.getLogger(__name__).info(
+        "Patched opacus.optimizers.optimizer.DPOptimizer.clip_and_accumulate "
+        "(installed build's empty-batch branch creates a CPU tensor; issue 612, "
+        "fixed upstream in Opacus 1.5)."
+    )
+
+
 _patch_opacus_empty_batch_collate()
+_patch_opacus_empty_batch_device_bug()
 
 # ---------------------------------------------------------------------------
 # Logging & Paths
