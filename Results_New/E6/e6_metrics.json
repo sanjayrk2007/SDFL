@@ -1,0 +1,144 @@
+{
+  "experiment": "E6",
+  "method": "Client Input Sanitization (FedProx mu=0.001, DP-SGD sigma=1.5, C=2.0, SecAgg)",
+  "source": "reconstructed from Results_New/E6/e6_stdout.log (round-by-round aggregate_evaluate log lines), verified line-by-line against Results_New/E6/E6_RESULTS.md",
+  "config": {
+    "mu": 0.001,
+    "C": 2.0,
+    "sigma": 1.5,
+    "rounds": 20,
+    "clients": 3,
+    "starting_checkpoint": "checkpoints/e5_best.pth"
+  },
+  "round_history": [
+    {
+      "round": 1,
+      "val_loss": 0.513,
+      "val_dice": 0.4013,
+      "val_iou": 0.2871
+    },
+    {
+      "round": 2,
+      "val_loss": 0.5064,
+      "val_dice": 0.4203,
+      "val_iou": 0.3027
+    },
+    {
+      "round": 3,
+      "val_loss": 0.5019,
+      "val_dice": 0.4321,
+      "val_iou": 0.3125
+    },
+    {
+      "round": 4,
+      "val_loss": 0.4958,
+      "val_dice": 0.4508,
+      "val_iou": 0.3278
+    },
+    {
+      "round": 5,
+      "val_loss": 0.4896,
+      "val_dice": 0.454,
+      "val_iou": 0.3314
+    },
+    {
+      "round": 6,
+      "val_loss": 0.4838,
+      "val_dice": 0.4668,
+      "val_iou": 0.3431
+    },
+    {
+      "round": 7,
+      "val_loss": 0.4784,
+      "val_dice": 0.4765,
+      "val_iou": 0.3516
+    },
+    {
+      "round": 8,
+      "val_loss": 0.4741,
+      "val_dice": 0.482,
+      "val_iou": 0.3568
+    },
+    {
+      "round": 9,
+      "val_loss": 0.469,
+      "val_dice": 0.4864,
+      "val_iou": 0.3608
+    },
+    {
+      "round": 10,
+      "val_loss": 0.464,
+      "val_dice": 0.4977,
+      "val_iou": 0.371
+    },
+    {
+      "round": 11,
+      "val_loss": 0.4606,
+      "val_dice": 0.5049,
+      "val_iou": 0.3771
+    },
+    {
+      "round": 12,
+      "val_loss": 0.4579,
+      "val_dice": 0.5073,
+      "val_iou": 0.3792
+    },
+    {
+      "round": 13,
+      "val_loss": 0.4542,
+      "val_dice": 0.5076,
+      "val_iou": 0.3797
+    },
+    {
+      "round": 14,
+      "val_loss": 0.4521,
+      "val_dice": 0.5116,
+      "val_iou": 0.3828
+    },
+    {
+      "round": 15,
+      "val_loss": 0.45,
+      "val_dice": 0.517,
+      "val_iou": 0.3876
+    },
+    {
+      "round": 16,
+      "val_loss": 0.4476,
+      "val_dice": 0.5222,
+      "val_iou": 0.3919
+    },
+    {
+      "round": 17,
+      "val_loss": 0.4432,
+      "val_dice": 0.5228,
+      "val_iou": 0.3925
+    },
+    {
+      "round": 18,
+      "val_loss": 0.4418,
+      "val_dice": 0.5235,
+      "val_iou": 0.3935
+    },
+    {
+      "round": 19,
+      "val_loss": 0.4582,
+      "val_dice": 0.5265,
+      "val_iou": 0.3926
+    },
+    {
+      "round": 20,
+      "val_loss": 0.4404,
+      "val_dice": 0.498,
+      "val_iou": 0.3713
+    }
+  ],
+  "best_round": 19,
+  "best_val_dice": 0.5265,
+  "best_val_iou": 0.3926,
+  "final_round_val_dice": 0.498,
+  "final_round_val_iou": 0.3713,
+  "held_out_test_dice": null,
+  "epsilon": null,
+  "checkpoint": "checkpoints/e6_best.pth",
+  "notes": "This script's own end-of-run summary (`e6_server.py`) crashed with a tuple-unpacking ValueError immediately after training completed and the checkpoint was saved, before it could print/return final_dice, final_iou, or epsilon (all sourced from strategy.latest_metrics, never reached). The bug is fixed in the current e6_server.py (unpack now includes loss_val), but this file was reconstructed from the existing log rather than from a rerun, so held_out_test_dice and epsilon are left null -- they were never computed/logged for this run. final_round_val_dice/iou are round 20's aggregate_evaluate values (the last round run), not a held-out test-set evaluation."
+}

@@ -31,3 +31,10 @@
 | failure_detection_auc | 0.5051674245556015 |
 
 **Status:** Complete. Reproduced on `integration/sdfl-final-validation`.
+
+**Provenance note (2026-09-26):** The only `e8_stdout.log` currently committed for this experiment contains nothing but an
+environment crash (`AttributeError: np.float_ was removed in the NumPy 2.0 release`), despite `requirements.txt` pinning
+`numpy<2.0` -- something in that particular session had a newer numpy installed anyway. The metrics above come from the
+committed `e8_metrics.json` and `e8_final.pth`, which predate that crashed session; there is currently no clean log in the
+repo proving this exact run. Per team decision, these committed artifacts are being kept as authoritative rather than
+re-run. If reproducibility needs to be re-established later, pin numpy more strictly (e.g. `numpy==1.26.4`) before rerunning.

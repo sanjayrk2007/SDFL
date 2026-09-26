@@ -1,0 +1,17 @@
+\begin{table*}[t]
+\centering
+\small
+\begin{tabular}{lp{4cm}p{6cm}}
+\toprule
+Exp. & Title & Headline result \\
+\midrule
+E7 & Temporal security protocol -- verification suite & All hash/key-lifecycle/AAD tests passed (Tests A-F) \\
+E9 & Retrospective breach attack (5 conditions x 1000 trials) & 0/5000 successful plaintext recoveries (0.00\%) \\
+E10 & Temporal window (Tr) sweep -- simulated client latency & Tr=120s -> 100\% round completion; Tr>=300s recommended for operational margin \\
+E14 & Security-layer scalability (K=3,5,10,20 simulated clients) & K=3: 231.9ms total security latency | K=20: 903.6ms (roughly linear in K) \\
+E15 & Fault & late-client robustness (10 scenarios) & 10/10 scenarios passed \\
+\bottomrule
+\end{tabular}
+\caption{Security and robustness experiments. See \texttt{Results\_New/results/MASTER\_RESULTS\_SECURITY.json} for full provenance notes, including two open items flagged for author attention before submission: E9's confidence-interval methodology (pooled vs. per-condition) should be picked as one consistent number, and E10's committed log does not currently evidence the committed result (numbers are retained from the JSON as authoritative per project decision, but no clean re-run log exists).}
+\label{tab:master-results-security}
+\end{table*}

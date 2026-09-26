@@ -2,6 +2,7 @@
   {
     "experiment": "E1",
     "method": "Centralized baseline",
+    "split": "test",
     "dice": 0.8182,
     "iou": 0.7402,
     "precision": 0.8532,
@@ -13,6 +14,7 @@
   {
     "experiment": "E2",
     "method": "FedAvg (3 clients, 20 rounds)",
+    "split": "test",
     "dice": 0.7791,
     "iou": 0.6905,
     "precision": 0.8181,
@@ -24,17 +26,19 @@
   {
     "experiment": "E3",
     "method": "FedProx (mu=0.01, 20 rounds)",
-    "dice": "",
-    "iou": "",
-    "precision": "",
-    "recall": "",
+    "split": "test",
+    "dice": 0.4926,
+    "iou": 0.3614,
+    "precision": 0.5808,
+    "recall": 0.5538,
     "best_val_dice": 0.8569,
     "epsilon": "",
-    "notes": "best round 20; val_iou 0.7767"
+    "notes": "best round 20; val_iou 0.7767. Val Dice (0.8569) and test Dice (0.4926) are both real, correctly-labeled numbers from the same run -- not a conflict. See Results_New/E3_RESULTS.md."
   },
   {
     "experiment": "E4",
     "method": "DP-SGD (C=2.0, sigma=1.0)",
+    "split": "test",
     "dice": 0.2947,
     "iou": 0.1916,
     "precision": "",
@@ -46,6 +50,7 @@
   {
     "experiment": "E5",
     "method": "SecAgg (AES-GCM) on E4 best config",
+    "split": "test",
     "dice": 0.2576,
     "iou": 0.1656,
     "precision": "",
@@ -53,5 +58,77 @@
     "best_val_dice": 0.2576,
     "epsilon": 0.9793,
     "notes": "1 round"
+  },
+  {
+    "experiment": "E6",
+    "method": "Client Input Sanitization (FedProx mu=0.001, DP-SGD sigma=1.5, SecAgg) on E5 best config",
+    "split": "val (no held-out test eval available for this run)",
+    "dice": "",
+    "iou": "",
+    "precision": "",
+    "recall": "",
+    "best_val_dice": 0.5265,
+    "epsilon": "",
+    "notes": "best round 19 of 20 (val_iou 0.3926); held-out test Dice and epsilon unavailable -- see Results_New/E6/e6_metrics.json and Known Issues in E6_RESULTS.md"
+  },
+  {
+    "experiment": "E8",
+    "method": "Full SDFL (DP-SGD + SecAgg + temporal security), 20 rounds",
+    "split": "test",
+    "dice": 0.4145,
+    "iou": 0.2994,
+    "precision": 0.4405,
+    "recall": 0.5267,
+    "best_val_dice": "",
+    "epsilon": 2.772,
+    "notes": "in-distribution; OOD dice=0.4869, iou=0.3477 (generalisation gap: -0.072 dice). See Results_New/E8/e8_metrics.json. NOTE: Results_New/E8/e8_stdout.log only contains an environment crash (numpy 2.0 removed np.float_); these numbers are taken from the committed e8_metrics.json/checkpoint, which predate that crashed session -- no clean log currently backs this exact run."
+  },
+  {
+    "experiment": "E12",
+    "method": "Leave-one-client-out generalisation (macro mean across 3 folds)",
+    "split": "held-out client",
+    "dice": 0.219,
+    "iou": 0.1453,
+    "precision": 0.642,
+    "recall": 0.3284,
+    "best_val_dice": "",
+    "epsilon": "",
+    "notes": "worst client: dice=0.1579, iou=0.0988. 1-round synthetic-client protocol, not full 20-round training -- see Results_New/E12/e12_unseen_results.json"
+  },
+  {
+    "experiment": "E13-FedAvg",
+    "method": "Multi-seed (5 seeds: 42-46) robustness, FedAvg(E2) checkpoint",
+    "split": "test",
+    "dice": 0.7698,
+    "iou": "",
+    "precision": "",
+    "recall": "",
+    "best_val_dice": "",
+    "epsilon": "",
+    "notes": "mean +/- std across 5 seeds: 0.7698 +/- 0.0026 (computed directly from per-seed values in e13_multiseed_results.json)"
+  },
+  {
+    "experiment": "E13-FedProx",
+    "method": "Multi-seed (5 seeds: 42-46) robustness, FedProx(E3 best) checkpoint",
+    "split": "test",
+    "dice": 0.4891,
+    "iou": "",
+    "precision": "",
+    "recall": "",
+    "best_val_dice": "",
+    "epsilon": "",
+    "notes": "mean +/- std: 0.4891 +/- 0.0137. Cross-validates E3's single-seed test dice of 0.4926."
+  },
+  {
+    "experiment": "E13-SDFL",
+    "method": "Multi-seed (5 seeds: 42-46) robustness, Full SDFL(E8/E11) checkpoint",
+    "split": "test",
+    "dice": 0.4341,
+    "iou": "",
+    "precision": "",
+    "recall": "",
+    "best_val_dice": "",
+    "epsilon": "",
+    "notes": "mean +/- std: 0.4341 +/- 0.0164"
   }
 ]

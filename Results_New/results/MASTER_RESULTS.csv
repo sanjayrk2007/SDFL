@@ -1,6 +1,12 @@
-experiment,method,dice,iou,precision,recall,best_val_dice,epsilon,notes
-E1,Centralized baseline,0.8182,0.7402,0.8532,0.8492,0.8599,,"50 epochs, single model"
-E2,"FedAvg (3 clients, 20 rounds)",0.7791,0.6905,0.8181,0.8208,0.86,,best round 16
-E3,"FedProx (mu=0.01, 20 rounds)",,,,,0.8569,,best round 20; val_iou 0.7767
-E4,"DP-SGD (C=2.0, sigma=1.0)",0.2947,0.1916,,,0.2947,2.141,delta=1e-5
-E5,SecAgg (AES-GCM) on E4 best config,0.2576,0.1656,,,0.2576,0.9793,1 round
+experiment,method,split,dice,iou,precision,recall,best_val_dice,epsilon,notes
+E1,Centralized baseline,test,0.8182,0.7402,0.8532,0.8492,0.8599,,"50 epochs, single model"
+E2,"FedAvg (3 clients, 20 rounds)",test,0.7791,0.6905,0.8181,0.8208,0.86,,best round 16
+E3,"FedProx (mu=0.01, 20 rounds)",test,0.4926,0.3614,0.5808,0.5538,0.8569,,"best round 20; val_iou 0.7767. Val Dice (0.8569) and test Dice (0.4926) are both real, correctly-labeled numbers from the same run -- not a conflict. See Results_New/E3_RESULTS.md."
+E4,"DP-SGD (C=2.0, sigma=1.0)",test,0.2947,0.1916,,,0.2947,2.141,delta=1e-5
+E5,SecAgg (AES-GCM) on E4 best config,test,0.2576,0.1656,,,0.2576,0.9793,1 round
+E6,"Client Input Sanitization (FedProx mu=0.001, DP-SGD sigma=1.5, SecAgg) on E5 best config",val (no held-out test eval available for this run),,,,,0.5265,,best round 19 of 20 (val_iou 0.3926); held-out test Dice and epsilon unavailable -- see Results_New/E6/e6_metrics.json and Known Issues in E6_RESULTS.md
+E8,"Full SDFL (DP-SGD + SecAgg + temporal security), 20 rounds",test,0.4145,0.2994,0.4405,0.5267,,2.772,"in-distribution; OOD dice=0.4869, iou=0.3477 (generalisation gap: -0.072 dice). See Results_New/E8/e8_metrics.json. NOTE: Results_New/E8/e8_stdout.log only contains an environment crash (numpy 2.0 removed np.float_); these numbers are taken from the committed e8_metrics.json/checkpoint, which predate that crashed session -- no clean log currently backs this exact run."
+E12,Leave-one-client-out generalisation (macro mean across 3 folds),held-out client,0.219,0.1453,0.642,0.3284,,,"worst client: dice=0.1579, iou=0.0988. 1-round synthetic-client protocol, not full 20-round training -- see Results_New/E12/e12_unseen_results.json"
+E13-FedAvg,"Multi-seed (5 seeds: 42-46) robustness, FedAvg(E2) checkpoint",test,0.7698,,,,,,mean +/- std across 5 seeds: 0.7698 +/- 0.0026 (computed directly from per-seed values in e13_multiseed_results.json)
+E13-FedProx,"Multi-seed (5 seeds: 42-46) robustness, FedProx(E3 best) checkpoint",test,0.4891,,,,,,mean +/- std: 0.4891 +/- 0.0137. Cross-validates E3's single-seed test dice of 0.4926.
+E13-SDFL,"Multi-seed (5 seeds: 42-46) robustness, Full SDFL(E8/E11) checkpoint",test,0.4341,,,,,,mean +/- std: 0.4341 +/- 0.0164

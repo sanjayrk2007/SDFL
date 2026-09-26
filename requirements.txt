@@ -15,8 +15,18 @@ cryptography==42.0.5
 opencv-python==4.9.0.80
 Pillow==10.3.0
 albumentations==1.4.4
-numpy<2.0
+numpy==1.26.4
 scikit-learn==1.4.2
 medpy==0.4.0
 tqdm==4.66.4
 matplotlib==3.8.4
+iterators
+
+# NOTE (2026-09-26): the two pins above were tightened after E8/E10 stdout logs showed:
+#   - E8: AttributeError: np.float_ was removed in the NumPy 2.0 release (despite the
+#     old "numpy<2.0" pin, something in that session had numpy>=2.0 installed anyway;
+#     pinning the exact version rather than a ceiling closes that gap)
+#   - E10: ModuleNotFoundError: No module named 'iterators' (an undeclared transitive
+#     dependency of flwr[simulation]==1.8.0's gRPC bidi backend)
+# Neither run was redone after these fixes -- see the provenance notes in
+# Results_New/E8/E8_RESULTS.md and Results_New/E10/E10_RESULTS.md.

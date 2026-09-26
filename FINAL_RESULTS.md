@@ -16,6 +16,13 @@ The experimental suite systematically evaluates the core thesis of SDFL: **combi
 
 ---
 
+> **Note (2026-09-26):** Several numbers in the matrix below are stale or unlabeled (val vs. test Dice) relative to the
+> currently committed data under `Results_New/`. For example, E3's "Val Dice: 0.4924" below is actually the *test*-set Dice
+> (val Dice for the same run is 0.8569), and E9's "≤0.060%" CI bound uses pooled-n=5000 rule-of-three, while the committed
+> `e9_breach_results.json` itself reports 0.3% (per-condition n=1000) -- pick one before publication. Rather than hand-patch
+> this table, use `Results_New/results/MASTER_RESULTS.{csv,json,tex}` and `MASTER_RESULTS_SECURITY.{csv,json,tex}` as the
+> authoritative, cross-checked source for the paper; this file is kept for narrative/qualitative context only.
+
 ## Master Experiment Matrix (E3–E15)
 
 | Experiment | Title / Objective | Key Deliverable Files | Primary Quantitative Finding | Status |

@@ -5,7 +5,9 @@
   "iou": 0.3614,
   "precision": 0.5808,
   "recall": 0.5538,
+  "dice_field_meaning": "held-out TEST-set Dice (dice/iou/precision/recall above are all test-set metrics for the best config, mu=0.01)",
   "best_val_dice": 0.8569,
+  "best_val_dice_field_meaning": "VALIDATION-set Dice from the training round with the best validation score (round 20); this is a different, larger number than the test-set 'dice' field above because it's a different split -- not a typo or a different config",
   "epsilon": "",
-  "notes": "best round 20; val_iou 0.7767"
+  "notes": "best round 20; val_iou 0.7767. Cross-checked against Results_New/E13/e13_multiseed_results.json's independent 5-seed FedProx(E3) test-set evaluation: mean=0.4891, std=0.0137 -- consistent with this single-seed test dice of 0.4926."
 }

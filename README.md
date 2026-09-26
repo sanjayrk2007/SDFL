@@ -43,6 +43,13 @@ We conducted 8 incremental ablation experiments (E1 to E8) to benchmark utility,
 
 ### Experiment Configurations & Metrics
 
+> **Note (2026-09-26):** The numbers in this table are from an early/quick-test pass and are stale in several places relative to
+> the full, final runs -- e.g. E4's row above shows σ = 1.5 and ε = 0.9793, but ε = 0.9793 is actually E5's epsilon; E4's own
+> (σ = 1.0) run gives ε = 2.141. Rather than hand-patch this table cell-by-cell, the authoritative, cross-checked numbers for
+> all 15 experiments now live in `Results_New/results/MASTER_RESULTS.{csv,json,tex}` (model-accuracy experiments, E1-E13) and
+> `Results_New/results/MASTER_RESULTS_SECURITY.{csv,json,tex}` (E7, E9, E10, E14, E15); E11 has its own table under
+> `Results_New/E11/`. Please use those for anything going into the paper.
+
 | Exp | Description | Focus Metric | Results / Performance | Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **E1** | Centralized Baseline | Target Dice | **Dice: 0.7937** \| **IoU: 0.7159** (Upper Bound) | Complete |

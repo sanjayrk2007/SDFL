@@ -41,7 +41,7 @@
 
 ## Known Issues
 
-- Rounds 17, 18, 37, 38, 39, 40 aggregated from 2/3 clients instead of 3/3, due to an intermittent `RuntimeError: Expected all tensors to be on the same device` inside Opacus (traced to `set_parameters()` in `e2_server.py`; a defensive fix has since been applied, but this run predates or may still exhibit it).
-- The script's own end-of-run summary loop (`for rnd, dice, iou in strategy.round_history`) throws a `ValueError` due to a tuple-unpacking mismatch; this happens after the checkpoint is saved and does not affect the results above, which were parsed directly from the round-by-round log.
+- Rounds 17 and 18 aggregated from 2/3 clients instead of 3/3, due to an intermittent `RuntimeError: Expected all tensors to be on the same device` inside Opacus (traced to `set_parameters()` in `e2_server.py`; a defensive fix has since been applied, but this run predates or may still exhibit it). (Note: an earlier version of this note also referenced rounds 37-40, which don't exist in this 20-round run -- that was a copy-paste error and has been removed.)
+- The script's own end-of-run summary loop (`for rnd, dice, iou in strategy.round_history`) previously threw a `ValueError` due to a tuple-unpacking mismatch (the tuples carry 4 fields, not 3); this happened after the checkpoint was saved and did not affect the round-by-round results above, which were parsed directly from the log. The bug is now fixed in `e6_server.py`. The final-metrics fields that never got printed in this run (held-out test Dice, epsilon) were not recoverable after the fact and are recorded as unavailable in `e6_metrics.json` rather than being backfilled.
 
 **Status:** Complete. Reproduced on `integration/sdfl-final-validation`.

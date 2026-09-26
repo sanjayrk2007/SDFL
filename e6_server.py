@@ -329,8 +329,8 @@ def run_e6_simulation():
 
     # Print val_dice per round
     print("\n--- Val Dice Per Round ---")
-    for rnd, dice, iou in strategy.round_history:
-        print(f"Round {rnd:2d} | val_dice: {dice:.4f} | val_iou: {iou:.4f}")
+    for rnd, dice, iou, loss_val in strategy.round_history:
+        print(f"Round {rnd:2d} | val_loss: {loss_val:.4f} | val_dice: {dice:.4f} | val_iou: {iou:.4f}")
 
     # Print final val_dice, val_iou, epsilon
     final_dice = strategy.latest_metrics.get("val_dice", 0.0)

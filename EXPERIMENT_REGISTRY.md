@@ -1,8 +1,14 @@
 ﻿# SDFL Experiment Registry
 
-> **Branch:** `mukesh/sdfl-completion`
-> **Last updated:** 2026-09-12
+> **Branch:** `mukesh/sdfl-completion` (original); numeric corrections below reconciled against `integration/sdfl-final-validation`'s `Results_New/` on 2026-09-26.
+> **Last updated:** 2026-09-12 (see 2026-09-26 corrections in the table below)
 > **Owners:** Mukesh (ML/DP/Security), Sanjay (Crypto/Temporal), Sameer (Segmentation baseline)
+>
+> **Note (2026-09-26):** This table had several copy-paste errors between rows (E2 had E8's numbers, E3 had E13's number,
+> E13's std values were fabricated as ±0.0000, E14's numbers were stale). The specific errors found have been corrected
+> in place below. For the complete, cross-checked set of numbers across all 15 experiments, use
+> `Results_New/results/MASTER_RESULTS.{csv,json,tex}` and `MASTER_RESULTS_SECURITY.{csv,json,tex}` instead of this table.
+> `SDFL_Preflight_Audit.md`, referenced in the old E3 row, does not exist on `integration/sdfl-final-validation`.
 
 ---
 
@@ -11,8 +17,8 @@
 | Exp ID | Title | Owner | Script | Results | Status | Key Numbers |
 |--------|-------|-------|--------|---------|--------|-------------|
 | E1 | Dataset preparation & splits | Sameer | `scripts/dataset.py` | `hospital_splits.json` | DONE | 3 hospitals, Kvasir-SEG (612 train) |
-| E2 | FedAvg baseline | Sameer | `e2_server.py` | `results/e2_metrics.json` | DONE | Dice 0.4145 (in-dist), 0.4869 (OOD) |
-| E3 | FedProx μ sweep | Mukesh | `e3_fedprox.py` | `results/e3_results.json` | DONE — **result file not present in repo; regenerate from `e3_fedprox.py` and reconcile against README.md/FINAL_RESULTS.md's conflicting E3 numbers (see SDFL_Preflight_Audit.md, Section 9)** | Best μ=0.0, Dice ~0.7718 |
+| E2 | FedAvg baseline | Sameer | `e2_server.py` | `Results_New/results/e2_metrics.json` | DONE | Test Dice 0.7791 (the "0.4145 in-dist / 0.4869 OOD" previously listed here are E8's numbers, not E2's -- corrected) |
+| E3 | FedProx μ sweep | Mukesh | `e3_fedprox.py` | `Results_New/results/e3_metrics.json`, `Results_New/E3_RESULTS.md` | DONE | Best μ=0.01: val Dice 0.8569, test Dice 0.4926 (the "~0.7718" previously listed here was E13's FedAvg multi-seed mean, not an E3 number -- corrected) |
 | E5 | DP-SGD integration | Mukesh | `e4_dpsgd.py` | `results/e4_dpsgd_results.json` | DONE | ε=2.772, δ=1e-5 at σ=1.5 |
 | E7 | Temporal security protocol | Sanjay | `e7_temporal.py` | `results/e8_metrics.json` | DONE | 0% post-expiry decrypt success |
 | E8 | Full SDFL server eval | Shared | `e8_server.py` | `results/e8_metrics.json` | DONE | Combined DP+temporal+crypto |
@@ -21,8 +27,8 @@
 | E10 | Temporal window sweep | Mukesh | `e10_window_sweep.py` | `results/e10_window_results.json` | DONE | Tr=120s → 100% round completion |
 | E11 | Privacy-utility sweep (σ grid) | Mukesh | `e11_empirical_sweep.py` | `results/e11_training_results.json` | DONE | σ=1.5: ε=4.91 (nominal) / 0.91 (executed) |
 | E12 | Leave-one-client-out generalisation | Mukesh | `e12_unseen_hospital.py` | `results/e12_unseen_results.json` | DONE | Macro Mean Dice 0.2190; Worst 0.1579 |
-| E13 | Multi-seed robustness | Mukesh | `e13_multiseed.py` | `results/e13_multiseed_results.json` | DONE | FedAvg 0.7718±0.0000; SDFL 0.4370±0.0000 |
-| E14 | Security layer scalability (K clients) | Mukesh | `e14_scalability.py` | `results/e14_scalability_results.json` | DONE | K=3→179 ms; K=20→752 ms (linear) |
+| E13 | Multi-seed robustness | Mukesh | `e13_multiseed.py` | `Results_New/E13/e13_multiseed_results.json` | DONE | FedAvg 0.7698±0.0026; FedProx 0.4891±0.0137; SDFL 0.4341±0.0164 (5 seeds: 42-46; the "±0.0000" previously listed here was wrong -- these are computed directly from the per-seed values already in the committed JSON, not a rerun) |
+| E14 | Security layer scalability (K clients) | Mukesh | `e14_scalability.py` | `Results_New/E14/e14_scalability_results.json` | DONE | K=3→231.9 ms; K=20→903.6 ms, roughly linear (the "179/752 ms" previously listed here were stale, from an earlier run on `mukesh/sdfl-completion` -- corrected to match the currently committed `Results_New` run) |
 | E15 | Fault & late-client robustness | Mukesh | `e15_fault_robustness.py` | `results/e15_fault_results.json` | DONE | 10/10 scenarios PASSED |
 
 ---

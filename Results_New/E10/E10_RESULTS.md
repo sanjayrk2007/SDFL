@@ -27,3 +27,10 @@
 Note: the two headline numbers above are hardcoded constants in the script's output rather than computed live from this specific sweep -- worth confirming with the team whether that's intentional.
 
 **Status:** Complete. Reproduced on `integration/sdfl-final-validation`.
+
+**Provenance note (2026-09-26):** The only `e10_stdout.log` currently committed for this experiment contains nothing but an
+environment crash (`ModuleNotFoundError: No module named 'iterators'`, a transitive dependency of `flwr[simulation]==1.8.0`'s
+gRPC backend that isn't declared in `requirements.txt`) -- it never reaches the sweep code. The metrics above come from the
+committed `e10_window_results.json` (timestamped 2026-09-05), which predates that crashed session; there is currently no
+clean log in the repo proving this exact run. Per team decision, these committed artifacts are being kept as authoritative
+rather than re-run. If reproducibility needs to be re-established later, add `iterators` to `requirements.txt` first.

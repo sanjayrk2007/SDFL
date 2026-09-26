@@ -1,0 +1,37 @@
+[
+  {
+    "experiment": "E7",
+    "title": "Temporal security protocol -- verification suite",
+    "headline": "All hash/key-lifecycle/AAD tests passed (Tests A-F)",
+    "source": "Results_New/E7/E7_RESULTS.md",
+    "notes": "Test-only mode (--test_only); not a full 20-round training run."
+  },
+  {
+    "experiment": "E9",
+    "title": "Retrospective breach attack (5 conditions x 1000 trials)",
+    "headline": "0/5000 successful plaintext recoveries (0.00%)",
+    "source": "Results_New/E9/e9_breach_results.json",
+    "notes": "File's own reported 95% CI upper bound is 0.3% (rule-of-three on n=1000 per-condition, conservative/worst-case). FINAL_RESULTS.md separately claims <=0.060% (rule-of-three on pooled n=5000) -- both are valid interpretations of the same 0/5000 result depending on whether the 5 attack conditions are pooled; they are not contradictory results, just two different statistical framings that should be reconciled to one before publication."
+  },
+  {
+    "experiment": "E10",
+    "title": "Temporal window (Tr) sweep -- simulated client latency",
+    "headline": "Tr=120s -> 100% round completion; Tr>=300s recommended for operational margin",
+    "source": "Results_New/E10/e10_window_results.json",
+    "notes": "Monte Carlo simulation over modeled latency distributions (execution_time_seconds=1.61), not a live multi-host network run. Results_New/E10/e10_stdout.log only contains an environment crash (missing 'iterators' package, a flwr[simulation] transitive dependency); these numbers are taken from the committed JSON (timestamped 2026-09-05), which predates that crashed session -- no clean log currently backs this exact run."
+  },
+  {
+    "experiment": "E14",
+    "title": "Security-layer scalability (K=3,5,10,20 simulated clients)",
+    "headline": "K=3: 231.9ms total security latency | K=20: 903.6ms (roughly linear in K)",
+    "source": "Results_New/E14/e14_scalability_results.json / e14_stdout.log",
+    "notes": "EXPERIMENT_REGISTRY.md previously cited K=3->179ms, K=20->752ms -- stale numbers from a different/earlier run on another branch (mukesh/sdfl-completion); corrected here to match the currently committed Results_New data."
+  },
+  {
+    "experiment": "E15",
+    "title": "Fault & late-client robustness (10 scenarios)",
+    "headline": "10/10 scenarios passed",
+    "source": "Results_New/E15/e15_fault_results.json",
+    "notes": ""
+  }
+]
