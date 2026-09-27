@@ -12,6 +12,6 @@ E14 & Security-layer scalability (K=3,5,10,20 simulated clients) & K=3: 231.9ms 
 E15 & Fault & late-client robustness (10 scenarios) & 10/10 scenarios passed \\
 \bottomrule
 \end{tabular}
-\caption{Security and robustness experiments. See \texttt{Results\_New/results/MASTER\_RESULTS\_SECURITY.json} for full provenance notes, including two open items flagged for author attention before submission: E9's confidence-interval methodology (pooled vs. per-condition) should be picked as one consistent number, and E10's committed log does not currently evidence the committed result (numbers are retained from the JSON as authoritative per project decision, but no clean re-run log exists).}
+\caption{Security and robustness experiments. See \texttt{Results\_New/results/MASTER\_RESULTS\_SECURITY.json} for full provenance notes. E9's confidence-interval methodology has been resolved (2026-09-26): report the per-condition bound ($\le 0.30\%$, rule-of-three, $n=1000$ per attack condition), not the pooled $n=5000$ figure. One item remains open for author attention before submission: E10's committed log does not currently evidence the committed result (numbers are retained from the JSON as authoritative per project decision, but no clean re-run log exists).}
 \label{tab:master-results-security}
 \end{table*}

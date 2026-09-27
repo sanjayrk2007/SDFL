@@ -11,7 +11,7 @@
     "title": "Retrospective breach attack (5 conditions x 1000 trials)",
     "headline": "0/5000 successful plaintext recoveries (0.00%)",
     "source": "Results_New/E9/e9_breach_results.json",
-    "notes": "File's own reported 95% CI upper bound is 0.3% (rule-of-three on n=1000 per-condition, conservative/worst-case). FINAL_RESULTS.md separately claims <=0.060% (rule-of-three on pooled n=5000) -- both are valid interpretations of the same 0/5000 result depending on whether the 5 attack conditions are pooled; they are not contradictory results, just two different statistical framings that should be reconciled to one before publication."
+    "notes": "RESOLVED (2026-09-26): reporting the per-condition 95% CI upper bound of 0.3% (rule-of-three, n=1000 per attack condition), matching the file's own primary output. The pooled n=5000 framing (<=0.060%) has been dropped from FINAL_RESULTS.md -- pooling across 5 distinct attack conditions as repeated trials of one attack is not a statistically sound use of rule-of-three here."
   },
   {
     "experiment": "E10",

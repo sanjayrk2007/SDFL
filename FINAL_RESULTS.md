@@ -12,16 +12,20 @@
 
 This document synthesizes the authoritative experimental outcomes across the entire **Self-Destructing Federated Learning (SDFL)** roadmap (Experiments E3 through E15). 
 
-The experimental suite systematically evaluates the core thesis of SDFL: **combining ephemeral AEAD encryption, coordinator-signed timestamp certificates, bounded temporal aggregation windows ($T_r$), in-memory key destruction, and Renyi Differential Privacy (RDP) provides provable forward secrecy against retrospective post-breach adversaries without sacrificing segmentation utility or scalability.**
+The experimental suite systematically evaluates the core thesis of SDFL: **combining ephemeral AEAD encryption, coordinator-signed timestamp certificates, bounded temporal aggregation windows ($T_r$), in-memory key destruction, and Renyi Differential Privacy (RDP) makes federated model updates cryptographically unrecoverable to a retrospective post-breach adversary once the round key is destroyed — at a measured, non-trivial cost to segmentation utility (Full SDFL retains roughly 54–56% of matched FedAvg Dice) and to aggregation-side latency (roughly 235–345% overhead vs. matched plain FedAvg, K=3–20). This is reported here as a security/systems contribution with a disclosed privacy–utility trade-off, not as a claim of clinically useful segmentation or of formally proven forward secrecy.**
 
 ---
 
-> **Note (2026-09-26):** Several numbers in the matrix below are stale or unlabeled (val vs. test Dice) relative to the
+> **Note (2026-09-26):** Several numbers in the matrix below were stale or unlabeled (val vs. test Dice) relative to the
 > currently committed data under `Results_New/`. For example, E3's "Val Dice: 0.4924" below is actually the *test*-set Dice
-> (val Dice for the same run is 0.8569), and E9's "≤0.060%" CI bound uses pooled-n=5000 rule-of-three, while the committed
-> `e9_breach_results.json` itself reports 0.3% (per-condition n=1000) -- pick one before publication. Rather than hand-patch
-> this table, use `Results_New/results/MASTER_RESULTS.{csv,json,tex}` and `MASTER_RESULTS_SECURITY.{csv,json,tex}` as the
-> authoritative, cross-checked source for the paper; this file is kept for narrative/qualitative context only.
+> (val Dice for the same run is 0.8569). E9's confidence-interval framing has been resolved: this table now reports the
+> **per-condition** Rule-of-Three bound (≤0.30%, n=1,000 per attack condition), matching `e9_breach_attack.py`'s own
+> primary output and `Results_New/E9/E9_RESULTS.md`. The previous "≤0.060%" pooled-n=5000 figure has been dropped —
+> pooling across 5 qualitatively different attack conditions as if they were repeated trials of one attack
+> understates the bound per condition and is not a statistically sound use of Rule-of-Three here. Rather than
+> hand-patch every number in this table individually, use `Results_New/results/MASTER_RESULTS.{csv,json,tex}` and
+> `MASTER_RESULTS_SECURITY.{csv,json,tex}` as the authoritative, cross-checked source for the paper; this file is
+> kept for narrative/qualitative context only.
 
 ## Master Experiment Matrix (E3–E15)
 
@@ -33,7 +37,7 @@ The experimental suite systematically evaluates the core thesis of SDFL: **combi
 | **E6** | Client Input Sanitization | `e6_server.py`, `checkpoints/e6_best.pth` | Outlier filtering & spatial mask pre-validation | ✅ COMPLETE |
 | **E7** | Temporal Window Protocol | `e7_temporal.py`, `checkpoints/e7_best.pth` | Ephemeral key lifecycle, $T_r$ expiry, and AAD transaction binding | ✅ COMPLETE |
 | **E8** | Full SDFL 20-Round FL Run | `e8_server.py`, `results/e8_metrics.json` | 20-round end-to-end clinical simulation (Val Dice: **0.4145**) | ✅ COMPLETE |
-| **E9** | Retrospective Breach Attack | `e9_breach_attack.py`, `results/e9_breach_results.json` | 0 / 5,000 successful breaches (**0.00%**, 95% CI upper bound $\le 0.060\%$) | ✅ COMPLETE |
+| **E9** | Retrospective Breach Attack | `e9_breach_attack.py`, `results/e9_breach_results.json` | 0/1,000 successful breaches per attack condition (**0.00%**, 95% CI upper bound $\le 0.30\%$, Rule-of-Three, Hanley & Lippman-Hand 1983), across 5 distinct attack conditions (0/5,000 total) | ✅ COMPLETE |
 | **E9b** | Temporal-Security Ablation | `e9b_temporal_ablation.py`, `results/e9b_ablation_results.json` | Proves in-memory key destruction is the causal factor (Row E: 100% vs Row F: **0.0%**) | ✅ COMPLETE |
 | **E10** | Temporal Window Analysis ($T_r$) | `e10_window_sweep.py`, `results/e10_window_results.json` | $T_r = 120\text{s}$ achieves 100% quorum; recommended production $T_r = 300\text{s}$ | ✅ COMPLETE |
 | **E11** | Privacy–Utility Frontier | `e11_empirical_sweep.py`, `results/e11_training_results.json` | Reconciled DP accounting for the deployed protocol (1 local epoch/round, matching E8): $\varepsilon=2.772$ (client-level, authoritative — see `E11_ACCOUNTING.md`). The sweep's own 3-local-epoch runs report a separate worst-case record-level $\varepsilon=9.31$ under that longer protocol; not used as the headline figure. | ✅ COMPLETE |
