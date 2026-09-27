@@ -23,9 +23,9 @@
   {
     "experiment": "E14",
     "title": "Security-layer scalability (K=3,5,10,20 simulated clients)",
-    "headline": "K=3: 231.9ms total security latency | K=20: 903.6ms (roughly linear in K)",
+    "headline": "UNRESOLVED: two runs on file -- JSON (run A): K=3->179.96ms / K=20->752.79ms; stdout log (run B): K=3->231.88ms / K=20->903.64ms",
     "source": "Results_New/E14/e14_scalability_results.json / e14_stdout.log",
-    "notes": "EXPERIMENT_REGISTRY.md previously cited K=3->179ms, K=20->752ms -- stale numbers from a different/earlier run on another branch (mukesh/sdfl-completion); corrected here to match the currently committed Results_New data."
+    "notes": "UNRESOLVED DISCREPANCY (2026-09-27): e14_scalability_results.json and e14_stdout.log contain different total_security_latency_ms figures for the same committed run directory. The script overwrites its JSON at the end of each execution; stdout was captured from a separate session. Per-component JSON values sum correctly to their own totals; stdout aggregation values are internally consistent with their own totals. These almost certainly reflect two distinct hardware-state benchmark executions rather than a transcription error. Neither set has been dropped or declared authoritative. Do NOT cite E14 latency numbers for a paper without a fresh, confirmed run. See Results_New/E14/E14_RESULTS.md for both tables side-by-side."
   },
   {
     "experiment": "E15",
