@@ -26,7 +26,7 @@ To evaluate this trade-off realistically, client latencies were modeled based on
 
 ## 2. Authoritative Experimental Results Table
 
-All metrics below are drawn directly from [`results/e10_window_results.json`](file:///d:/resesrch22/Research11/results/e10_window_results.json):
+All metrics below are drawn directly from [`results/e10_window_results.json`](results/e10_window_results.json):
 
 | Window ($T_r$) | Round Completion Rate | Client Update Acceptance Rate | Straggler Rejection Rate | Mean Round Duration | Mean Vulnerability Exposure ($\bar{\tau}_{\text{exp}}$) | Accepted Clients / Round |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -60,6 +60,6 @@ All metrics below are drawn directly from [`results/e10_window_results.json`](fi
 ---
 
 ## 5. Artifacts Generated
-- **Experiment Script:** [`e10_window_sweep.py`](file:///d:/resesrch22/Research11/e10_window_sweep.py)
-- **Authoritative JSON:** [`results/e10_window_results.json`](file:///d:/resesrch22/Research11/results/e10_window_results.json)
-- **Round Trace Log:** [`results/e10_window_log.jsonl`](file:///d:/resesrch22/Research11/results/e10_window_log.jsonl)
+- **Experiment Script:** [`e10_window_sweep.py`](e10_window_sweep.py)
+- **Authoritative JSON:** [`results/e10_window_results.json`](results/e10_window_results.json)
+- **Round Trace Log:** [`results/e10_window_log.jsonl`](results/e10_window_log.jsonl)

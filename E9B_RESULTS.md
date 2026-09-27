@@ -79,6 +79,6 @@ The comparison between **Row E** and **Row F** provides the definitive empirical
 ---
 
 ## 7. Artifacts Generated
-- **Experiment Script:** [`e9b_temporal_ablation.py`](file:///d:/resesrch22/Research11/e9b_temporal_ablation.py)
-- **JSON Metrics Summary:** [`results/e9b_ablation_results.json`](file:///d:/resesrch22/Research11/results/e9b_ablation_results.json)
-- **Trace Audit Log:** [`results/e9b_ablation_log.jsonl`](file:///d:/resesrch22/Research11/results/e9b_ablation_log.jsonl)
+- **Experiment Script:** [`e9b_temporal_ablation.py`](e9b_temporal_ablation.py)
+- **JSON Metrics Summary:** [`results/e9b_ablation_results.json`](results/e9b_ablation_results.json)
+- **Trace Audit Log:** [`results/e9b_ablation_log.jsonl`](results/e9b_ablation_log.jsonl)
