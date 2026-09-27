@@ -37,8 +37,9 @@ def generate_mock_weights(seed=None):
 def compute_aad_bytes(cert, signature, uid, client_idx=0):
     """
     Delegates to the canonical, production e7_temporal.compute_aad() instead
-    of a bespoke {cert, signature, UID_r} scheme (see
-    SDFL_Preflight_Audit.md, Section 3/5). `signature` and `uid` are kept as
+    of a bespoke {cert, signature, UID_r} scheme (canonical AAD field set:
+    round_id, client_id, model_hash, key_context_id; see e7_temporal.compute_aad).
+    `signature` and `uid` are kept as
     parameters for call-site compatibility but are intentionally NOT part of
     the AAD, matching the production field set. `client_idx` selects which
     of cert["participants"] this AAD is bound to -- each client in a round

@@ -227,8 +227,12 @@ def decrypt_update(encrypted_data, round_key, associated_data):
     as safe as *every current and future caller* remembering never to pass
     a raw, unreconstructed payload with associated_data=None. That is a
     caller-discipline invariant, not a structural guarantee, and is exactly
-    the "AAD self-authenticates itself" anti-pattern from
-    SDFL_Preflight_Audit.md, Section 3 — it has been reintroduced twice
+    SDFL security review (AAD anti-pattern note): accepting an "associated_data"
+    key embedded inside the encrypted payload itself is an anti-pattern because
+    an attacker supplying the forged ciphertext can choose whatever AAD makes
+    it verify. The caller must always reconstruct expected AAD server-side
+    (e.g. via e7_temporal.compute_aad) and pass it in explicitly — it has been
+    reintroduced twice
     already. There is now exactly one path: pass the AAD you independently
     computed (e.g. via e7_temporal.compute_aad(...)) as `associated_data`,
     or pass associated_data=None explicitly for call sites that genuinely
@@ -324,8 +328,9 @@ def server_aggregate(list_of_ciphertexts, round_key, num_examples_list=None, ass
     SECURITY: this function must never fall back to trusting an
     "associated_data" key embedded inside `list_of_ciphertexts` itself — that
     is the untrusted payload being decrypted, and doing so lets an attacker
-    supply whichever AAD makes their forged/replayed ciphertext verify (see
-    SDFL_Preflight_Audit.md, Section 3). The caller is always responsible for
+    supply whichever AAD makes their forged/replayed ciphertext verify (AAD
+    self-authentication anti-pattern; noted in project security review). The
+    caller is always responsible for
     computing the expected AAD server-side and passing it in explicitly.
     """
     if associated_data_list is not None:

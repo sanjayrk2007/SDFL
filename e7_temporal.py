@@ -43,7 +43,8 @@ def get_coordinator_secret_key():
 
     SECURITY: this key must never be a literal committed to source control —
     anyone with read access to the repository could otherwise forge validly
-    signed certificates for any round (see SDFL_Preflight_Audit.md, Section 3).
+    signed certificates for any round (security invariant: always inject via
+    the SDFL_HMAC_SECRET_KEY environment variable in production deployments).
     The key is read from the SDFL_HMAC_SECRET_KEY environment variable
     (utf-8 encoded). A hardcoded fallback is retained ONLY so that existing
     unit tests / CPU smoke tests (`run_e7_tests`, `run_crypto_tests`, the
@@ -58,7 +59,8 @@ def get_coordinator_secret_key():
         "[SECURITY WARNING] SDFL_HMAC_SECRET_KEY is not set — falling back to "
         "the insecure, publicly-committed development key. Set "
         "SDFL_HMAC_SECRET_KEY before running anything whose certificates/"
-        "results are meant to be trusted (see SDFL_Preflight_Audit.md, Section 3).",
+        "results are meant to be trusted (security invariant: set "
+        "SDFL_HMAC_SECRET_KEY in the environment before any production run).",
         file=sys.stderr,
     )
     return b"sdfl_coordinator_signing_secret_key_32bytes"

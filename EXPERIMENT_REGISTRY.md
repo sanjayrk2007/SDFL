@@ -1,4 +1,4 @@
-﻿# SDFL Experiment Registry
+# SDFL Experiment Registry
 
 > **Branch:** `mukesh/sdfl-completion` (original); numeric corrections below reconciled against `integration/sdfl-final-validation`'s `Results_New/` on 2026-09-26.
 > **Last updated:** 2026-09-12 (see 2026-09-26 corrections in the table below)
@@ -8,7 +8,7 @@
 > E13's std values were fabricated as ±0.0000, E14's numbers were stale). The specific errors found have been corrected
 > in place below. For the complete, cross-checked set of numbers across all 15 experiments, use
 > `Results_New/results/MASTER_RESULTS.{csv,json,tex}` and `MASTER_RESULTS_SECURITY.{csv,json,tex}` instead of this table.
-> `SDFL_Preflight_Audit.md`, referenced in the old E3 row, does not exist on `integration/sdfl-final-validation`.
+> `SDFL_Preflight_Audit.md` is referenced in comments across `crypto.py`, `e7_temporal.py`, and several experiment scripts but was never committed to this repository on any branch. All references have been updated inline (2026-09-27) to self-contained summaries: (a) the HMAC key security invariant (must be injected via `SDFL_HMAC_SECRET_KEY` env var, not hardcoded); (b) the AAD anti-pattern note (do not read `associated_data` from the encrypted payload — always reconstruct server-side via `e7_temporal.compute_aad`); (c) the environment/provenance notes now live in `requirements.txt` comments and the individual `E*/E*_RESULTS.md` files.
 
 ---
 

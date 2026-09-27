@@ -139,8 +139,8 @@ def run_scalability_benchmark():
                 # Generate unique transaction UID for replay protection
                 uid = str(uuid.uuid4())
                 # Canonical AAD (bound to this client's own identity), not the
-                # bespoke {cert, signature, UID_r} scheme -- see
-                # SDFL_Preflight_Audit.md, Section 3/5.
+                # bespoke {cert, signature, UID_r} scheme -- canonical field set:
+                # round_id, client_id, model_hash, key_context_id (see e7_temporal.compute_aad).
                 aad_bytes = compute_aad(
                     round_id=cert["round_id"],
                     client_id=participants[i],

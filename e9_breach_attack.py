@@ -52,8 +52,9 @@ def compute_aad_bytes(cert, signature, uid):
     Delegates to the canonical, production e7_temporal.compute_aad() instead
     of a bespoke {cert, signature, UID_r} scheme, so this attack harness's
     "breaches" count is measured against the real AAD/certificate binding
-    that e8_server.py's aggregate_fit path actually uses (see
-    SDFL_Preflight_Audit.md, Section 3/5). `signature` and `uid` are kept as
+    that e8_server.py's aggregate_fit path actually uses (canonical AAD field
+    set: round_id, client_id, model_hash, key_context_id; see
+    e7_temporal.compute_aad). `signature` and `uid` are kept as
     parameters for call-site compatibility but are intentionally NOT part of
     the AAD, matching the production field set (round_id, client_id,
     model_hash, key_context_id).

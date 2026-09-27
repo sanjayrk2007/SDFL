@@ -145,8 +145,8 @@ class MockSDFLAggregator:
             sig = sub["signature"]
             uid = sub["UID_r"]
             # Canonical AAD (bound to this client's own identity), not the
-            # bespoke {cert, signature, UID_r} scheme -- see
-            # SDFL_Preflight_Audit.md, Section 3/5.
+            # bespoke {cert, signature, UID_r} scheme -- canonical field set:
+            # round_id, client_id, model_hash, key_context_id (see e7_temporal.compute_aad).
             cert_obj = json.loads(cert_str)
             aad_bytes = compute_aad(
                 round_id=cert_obj["round_id"],
@@ -199,8 +199,9 @@ def create_client_update(client_id, template_weights, round_key, cert, sig, uid=
         aad_bytes = custom_aad
     else:
         # Canonical AAD (bound to this client's own identity), matching
-        # aggregate_submissions()'s server-side re-derivation -- see
-        # SDFL_Preflight_Audit.md, Section 3/5.
+        # aggregate_submissions()'s server-side re-derivation -- canonical
+        # field set: round_id, client_id, model_hash, key_context_id
+        # (see e7_temporal.compute_aad).
         aad_bytes = compute_aad(
             round_id=cert["round_id"],
             client_id=client_id,
