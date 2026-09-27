@@ -77,7 +77,7 @@
 | **E9b** | Temporal Causal Ablation | `e9b_temporal_ablation.py` | ✅ Yes | ✅ Yes | Historical | No (CPU) | Evaluates causal impact of key destruction (~2s). |
 | **E10** | Temporal Window Sweep | `e10_window_sweep.py` | ✅ Yes | ✅ Yes | Historical | No (CPU) | Parameterized latency simulation ($T_r \in [30\text{s}, 1200\text{s}]$). |
 | **E11** | Privacy–Utility Frontier | `e11_empirical_sweep.py` / `scripts/privacy_accounting.py` | ✅ Yes | ✅ Yes | Historical | Yes (GPU) for sweep | Sweep across $\sigma \in [0.3, 2.0]$; RDP accounting runs on CPU. |
-| **E12** | LOCO Generalization | `e12_unseen_hospital.py` | ✅ Yes | ✅ Yes | Historical | Yes (GPU) | 3-fold leave-one-centre-out training (~1.5h on GPU). |
+| **E12** | LOCO Generalization | `e12_unseen_hospital.py` | ✅ Yes | ✅ Yes | Historical | Yes (GPU) | 3-fold leave-one-centre-out training (~1.5h on GPU). *(Note: client assignments are synthetic overlapping subsets of Kvasir-SEG, not independently collected hospital cohorts — not genuine unseen-hospital generalization; see `E12_RESULTS.md`.)* |
 | **E13** | Multi-Seed Evaluation | `e13_multiseed.py` | ✅ Yes | ✅ Yes | Historical | Optional | 5 seeds ($42–46$) with 80% subsampling on existing checkpoints. |
 | **E14** | Cohort Scalability | `e14_scalability.py` | ✅ Yes | ✅ Yes | Historical | No (CPU/GPU) | Benchmarks $K \in \{3, 5, 10, 20\}$ clients (~10s). |
 | **E15** | Fault & Robustness Suite| `e15_fault_robustness.py` | ✅ Yes | ✅ Yes | Historical | No (CPU) | 10 fault & anomaly injection scenarios (~5s). |

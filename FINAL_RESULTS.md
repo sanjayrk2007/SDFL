@@ -41,7 +41,7 @@ The experimental suite systematically evaluates the core thesis of SDFL: **combi
 | **E9b** | Temporal-Security Ablation | `e9b_temporal_ablation.py`, `results/e9b_ablation_results.json` | Proves in-memory key destruction is the causal factor (Row E: 100% vs Row F: **0.0%**) | ✅ COMPLETE |
 | **E10** | Temporal Window Analysis ($T_r$) | `e10_window_sweep.py`, `results/e10_window_results.json` | $T_r = 120\text{s}$ achieves 100% quorum; recommended production $T_r = 300\text{s}$ | ✅ COMPLETE |
 | **E11** | Privacy–Utility Frontier | `e11_empirical_sweep.py`, `results/e11_training_results.json` | Reconciled DP accounting for the deployed protocol (1 local epoch/round, matching E8): $\varepsilon=2.772$ (client-level, authoritative — see `E11_ACCOUNTING.md`). The sweep's own 3-local-epoch runs report a separate worst-case record-level $\varepsilon=9.31$ under that longer protocol; not used as the headline figure. | ✅ COMPLETE |
-| **E12** | Leave-One-Centre-Out (LOCO) | `e12_unseen_hospital.py`, `results/e12_unseen_results.json` | Unseen client generalization: Macro Mean Dice **0.2190**, Worst **0.1579** | ✅ COMPLETE |
+| **E12** | Leave-One-Centre-Out (LOCO) | `e12_unseen_hospital.py`, `results/e12_unseen_results.json` | Unseen client generalization: Macro Mean Dice **0.2190**, Worst **0.1579** *(synthetic overlapping record assignments — not genuine unseen-hospital generalization; see `E12_RESULTS.md`)* | ✅ COMPLETE |
 | **E13** | Multi-Seed Robustness | `e13_multiseed.py`, `results/e13_multiseed_results.json` | Evaluation across seeds (42, 43, 44): FedAvg (0.7718), FedProx (0.4924), SDFL (**0.4370**) | ✅ COMPLETE |
 | **E14** | Client Scalability ($K$) | `e14_scalability.py`, `results/e14_scalability_results.json` | Security overhead scales linearly ($K=3$: 179.96 ms, $K=20$: **752.79 ms**) | ✅ COMPLETE |
 | **E15** | Fault & Late-Client Robustness | `e15_fault_robustness.py`, `results/e15_fault_results.json` | 10/10 operational & adversarial fault scenarios passed (**100%**) | ✅ COMPLETE |
@@ -90,7 +90,7 @@ Deterministic evaluation across random seeds (42, 43, 44) confirms minimal varia
 
 ## 3. Generalization & Scalability (E12, E14)
 
-### A. True Leave-One-Centre-Out Generalization (E12)
+### A. Leave-One-Centre-Out Generalization (E12)
 * E12 resolved the methodological limitation of E8 by strictly excluding all held-out client records from training, model selection, and threshold tuning.
 * **Macro Mean Unseen Dice:** **0.2190** (Worst Client: **0.1579**, Best Client C0: **0.3234**).
 * *Limitation:* The synthetic, size-biased dataset assignments present significant domain shift, clearly demonstrating the need for future Domain Generalization (DG) extensions.
