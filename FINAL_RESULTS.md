@@ -29,7 +29,7 @@ The experimental suite systematically evaluates the core thesis of SDFL: **combi
 |:---|:---|:---|:---|:---:|
 | **E3** | Non-IID FedProx Baseline | `e3_fedprox.py`, `checkpoints/e3_best.pth` | Best non-private proximal convergence ($\mu = 0.001$, Val Dice: **0.4924**) | ✅ COMPLETE |
 | **E4** | DP-SGD Client Integration | `e4_dpsgd.py`, `checkpoints/e4_best.pth` | GroupNorm(4) conversion & Opacus integration ($C = 2.0$) | ✅ COMPLETE |
-| **E5** | SecAgg Key Exchange | `crypto.py`, `checkpoints/e5_best.pth` | AES-256-GCM authenticated payload encapsulation | ✅ COMPLETE |
+| **E5** | Authenticated Update Encryption (not aggregator-oblivious SecAgg — see `E5_RESULTS.md`) | `crypto.py`, `checkpoints/e5_best.pth` | AES-256-GCM authenticated payload encapsulation | ✅ COMPLETE |
 | **E6** | Client Input Sanitization | `e6_server.py`, `checkpoints/e6_best.pth` | Outlier filtering & spatial mask pre-validation | ✅ COMPLETE |
 | **E7** | Temporal Window Protocol | `e7_temporal.py`, `checkpoints/e7_best.pth` | Ephemeral key lifecycle, $T_r$ expiry, and AAD transaction binding | ✅ COMPLETE |
 | **E8** | Full SDFL 20-Round FL Run | `e8_server.py`, `results/e8_metrics.json` | 20-round end-to-end clinical simulation (Val Dice: **0.4145**) | ✅ COMPLETE |

@@ -35,6 +35,10 @@ graph TD
 > The claims of rendering updates "cryptographically unrecoverable" and "mathematically unrecoverable" apply specifically to **post-breach retrospective attacks**. Once the ephemeral key is zeroed in volatile memory and individual ciphertexts are purged from disk, an attacker accessing the physical storage, server logs, or network traffic transcript post-facto cannot reconstruct the local model updates.
 > * **Out of Scope:** This mechanism does *not* protect against active runtime compromises during the training window (e.g., an attacker obtaining root access and executing real-time memory dumps/RAM copying while the key is active in volatile memory) or physical hardware side-channel attacks.
 
+> [!NOTE]
+> **Terminology: "Secure Aggregation" in this repo.**
+> References to "SecAgg" / "Secure Aggregation" (E5 onward, `e5_secagg.py`, `TemporalCheckpointingSecAgg`) describe **AES-GCM encrypted transport with aggregation-side decryption**, not a full aggregator-oblivious secure aggregation protocol (e.g., additive secret sharing). The coordinator decrypts each client's update individually inside the aggregation pipeline before averaging; it never persists individual plaintext updates, and ciphertexts become unrecoverable once the round key is destroyed, but the coordinator does see each plaintext update transiently during the live round. This distinction (already documented in `e5_secagg.py`) matters for the paper's security claims: SDFL's actual contribution is post-expiry temporal unrecoverability, not hiding updates from the coordinator during aggregation.
+
 ---
 
 ## 📊 Ablation Experiments & Key Results
@@ -82,7 +86,7 @@ The workspace is organized into a modular design mapping data splits, network co
 ├── E1_E2_RESULTS.md                  # Detailed metrics for centralized/federated runs
 ├── E3_RESULTS.md                     # FedProx proximal sweep results
 ├── E4_RESULTS.md                     # DP-SGD privacy budget trade-off sweeps
-├── E5_RESULTS.md                     # Secure Aggregation implementation & metrics
+├── E5_RESULTS.md                     # Authenticated update encryption (AES-GCM) implementation & metrics
 ├── E6_RESULTS.md                     # Sanitization pipeline execution logs
 ├── E7_RESULTS.md                     # Temporal verification security test logs
 ├── E8_RESULTS.md                     # Full stack final benchmark report
@@ -150,7 +154,7 @@ python e7_temporal.py --test_only
 ```
 
 ### 5. Running the Full SDFL Ray Simulation (E8)
-Execute the complete Ray/Flower simulation stack (DP-SGD, SecAgg, Sanitization, Temporal Expiry, and Uncertainty Head):
+Execute the complete Ray/Flower simulation stack (DP-SGD, authenticated update encryption, Sanitization, Temporal Expiry, and Uncertainty Head):
 ```bash
 # Run simulation for 5 rounds
 python e8_server.py --rounds 5

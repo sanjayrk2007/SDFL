@@ -69,7 +69,7 @@
 | **E2** | FedAvg Baseline | `e2_server.py` | ✅ Yes | ✅ Yes | Historical | Yes (GPU) | 20 rounds, 3 clients, `hospital_splits.json`. |
 | **E3** | FedProx Non-IID | `e3_fedprox.py` | ✅ Yes | ✅ Yes | Historical | Yes (GPU) | $\mu=0.001$, 20 rounds. |
 | **E4** | DP-SGD Integration | `e4_dpsgd.py` | ✅ Yes | ✅ Yes | Historical | Yes (GPU) | $C=2.0, \sigma=1.5$, GroupNorm conversion. |
-| **E5** | SecAgg Key Exchange | `e5_secagg.py` | ✅ Yes | ✅ Yes | Historical | Yes (GPU) | AES-256-GCM authenticated payload encapsulation. |
+| **E5** | Authenticated Update Encryption (not aggregator-oblivious SecAgg — see `E5_RESULTS.md`) | `e5_secagg.py` | ✅ Yes | ✅ Yes | Historical | Yes (GPU) | AES-256-GCM authenticated payload encapsulation. |
 | **E6** | Input Sanitization | `e6_server.py` | ✅ Yes | ✅ Yes | Historical | Yes (GPU) | Outlier rejection & mask pre-validation. |
 | **E7** | Temporal Checkpointing | `e7_temporal.py` | ✅ Yes | ✅ Yes (Tier-1) | Historical | Optional | `--test_only` runs on CPU (0.9s); full training requires GPU. |
 | **E8** | Full SDFL Production FL | `e8_server.py` | ✅ Yes | ✅ Yes (Tier-2) | Historical | Yes (GPU) | 20 rounds, requires `checkpoints/e7_best.pth` (or `e6_best.pth`). |
