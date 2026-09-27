@@ -83,13 +83,8 @@ The workspace is organized into a modular design mapping data splits, network co
 ```
 ├── E1_Baseline.ipynb                 # Centralized baseline model script
 ├── E8_Full_SDFL.ipynb                # Full Ray-based FL simulation notebook
-├── E1_E2_RESULTS.md                  # Detailed metrics for centralized/federated runs
-├── E3_RESULTS.md                     # FedProx proximal sweep results
-├── E4_RESULTS.md                     # DP-SGD privacy budget trade-off sweeps
-├── E5_RESULTS.md                     # Authenticated update encryption (AES-GCM) implementation & metrics
-├── E6_RESULTS.md                     # Sanitization pipeline execution logs
-├── E7_RESULTS.md                     # Temporal verification security test logs
-├── E8_RESULTS.md                     # Full stack final benchmark report
+├── Results_New/                      # Active consolidated experimental results (E1–E15)
+├── archive/pre-integration/          # Historical pre-integration results logs & trees
 ├── config.py                         # Single source of truth settings
 ├── model.py                          # ResUNet++ segmentation model definition
 ├── losses.py                         # DiceBCE custom loss function implementation

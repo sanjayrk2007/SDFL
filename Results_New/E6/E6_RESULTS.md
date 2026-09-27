@@ -4,14 +4,23 @@
 
 | Parameter | Value |
 |---|---|
-| **Model** | ResUNet++ |
-| **Framework** | Flower (flwr) + Ray simulation backend |
-| **Clients** | 3 |
+| **Model** | ResUNet++ with GroupNorm (num_groups=4) and non-inplace ReLU |
+| **Framework** | Flower (flwr) + Ray simulation backend + Opacus DP-SGD |
+| **Clients** | 3 (one per non-IID hospital split) |
 | **Rounds** | 20 |
-| **Starting checkpoint** | checkpoints/e5_best.pth |
+| **Local epochs per round** | 3 |
+| **Proximal term μ** | 0.001 |
+| **Clipping Norm (C)** | 2.0 |
+| **Noise Multiplier (σ)** | 1.5 |
+| **Symmetric Encryption** | AES-GCM (256-bit key) |
+| **Sanitization Pipeline** | CLAHE, Text Artifact Removal (Inpainting), Metadata Scrub |
+| **PHI Gate Threshold** | Inpaint ratio $\le$ 0.05 |
+| **Starting checkpoint** | `checkpoints/e5_best.pth` |
 | **Pipeline** | DP-SGD + SecAgg (AES-GCM) + PHI sanitization gate |
 
-## Round-by-Round Results
+---
+
+## Round-by-Round Results (Reproduced Run)
 
 | Round | Val Loss | Val Dice | Val IoU |
 |:---:|:---:|:---:|:---:|
@@ -36,8 +45,12 @@
 | 19 | 0.4582 | 0.5265 | 0.3926 |
 | 20 | 0.4404 | 0.4980 | 0.3713 |
 
-**Best round:** 19 (val_dice = 0.5265, val_iou = 0.3926)
-**Checkpoint saved:** checkpoints/e6_best.pth
+**Best round (Reproduced Run):** 19 (val_dice = 0.5265, val_iou = 0.3926)
+**Checkpoint saved:** `checkpoints/e6_best.pth`
+
+*Historical Initial Run (pre-integration): Best validation Dice = 0.5400, val_iou = 0.4081, with 4 skipped samples failing the PHI gate logged to `skipped_samples.log`.*
+
+---
 
 ## Known Issues
 
