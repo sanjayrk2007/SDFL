@@ -6,6 +6,8 @@
 
 This experiment implements an **actual empirical privacy–utility sweep** over differential privacy noise multipliers $\sigma \in \{0.3, 0.5, 0.8, 1.0, 1.5, 2.0\}$. Every Dice, IoU, Precision, and Recall score reported below is directly evaluated from an independently trained DP-SGD federated model on the held-out Kvasir-SEG test dataset. Cumulative privacy budgets ($\epsilon$) are dynamically calculated from the exact number of executed optimizer steps using Opacus `RDPAccountant` at cryptographic slack $\delta = 10^{-5}$, incorporating rigorous overlap-aware accounting.
 
+> **Step-count note:** This sweep trained with 3 local epochs/round (99 steps/round × 20 rounds = 1980 total steps per client), which is longer than the 1-local-epoch/round protocol (33 steps/round × 20 rounds = 660 total steps) that the deployed E8 pipeline actually uses. The epsilon values in this table therefore describe a different, longer training protocol, not the one E8/the paper deploys. **The paper's authoritative privacy guarantee for the deployed protocol is ε = 2.772 (client-level), established in `E11_ACCOUNTING.md`** using the correct 660-step accounting; the sigma=1.5 row below (ε=9.31, labeled "Recommended SDFL Operating Point") is this sweep's own utility-frontier exploration under its own (1980-step) protocol and should not be read as the paper's headline privacy number.
+
 ---
 
 ## Dataset Partition & Overlap Audit
@@ -32,7 +34,7 @@ The canonical synthetic hospital partition in this repository contains overlappi
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---|
 | **0.5** | **119.0825** | 1e-05 | **0.5067** | **0.3743** | 0.5176 | 0.6369 | 5079.4s | Moderate privacy |
 | **1.0** | **18.7191** | 1e-05 | **0.4885** | **0.3576** | 0.5283 | 0.5876 | 4943.8s | Strict privacy bound |
-| **1.5** | **9.3100** | 1e-05 | **0.4923** | **0.3598** | 0.5319 | 0.5855 | 4976.6s | **Recommended SDFL Operating Point** |
+| **1.5** | **9.3100** | 1e-05 | **0.4923** | **0.3598** | 0.5319 | 0.5855 | 4976.6s | Utility-frontier data point (this sweep's own 1980-step protocol; see step-count note above — not the paper's authoritative ε) |
 | **2.0** | **6.2026** | 1e-05 | **0.4819** | **0.3527** | 0.4764 | 0.6458 | 4992.1s | Strict privacy bound |
 
 ---

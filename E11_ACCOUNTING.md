@@ -54,3 +54,21 @@ print(eps)  # → 2.772
 ## Paper Statement
 
 > We train with DP-SGD (σ = 1.5, C = 2.0, q = 0.013, 20 rounds, 1 local epoch/round, δ = 10⁻⁵) achieving a cumulative privacy guarantee of **(ε, δ) = (2.772, 10⁻⁵)** under the Rényi Differential Privacy accountant (Opacus).
+
+---
+
+## Decision: Reported Privacy Budget for the Paper
+
+**The paper reports ε = 2.772 (client-level) as the headline DP guarantee.** This is a deliberate team decision, made with the overlap-aware worst-case figure known (see below) — not an oversight.
+
+For full disclosure, ~16% of training records (108 of 679) appear in more than one of the 3 simulated hospital clients (see `Results_New/E11/E11_RESULTS.md`, Dataset Partition & Overlap Audit). A record shared across clients accumulates privacy loss from each client it touches, so a strict per-record worst-case guarantee is higher than the single-client figure. Recomputing this at the **correct, E8-matched step count** (33 steps/round × 20 rounds = 660 total steps, using `scripts/privacy_accounting.py` — no retraining required, pure accounting math) gives:
+
+| Record overlap tier | Records | ε (corrected, 660-step accounting) |
+|---|---:|---:|
+| 1 client | 571 | ~2.63–2.65 (per-client) |
+| 2 clients | 106 | ~5.26–5.28 |
+| **3 clients (worst case)** | **2** | **~7.91** |
+
+This supersedes the original sweep's own worst-case figure of 9.31, which was computed under a mismatched 3-local-epoch (1980-step) protocol that E8 never actually uses — see `Results_New/E11/E11_RESULTS.md` for that caveat.
+
+**What goes in the paper:** ε = 2.772 as the primary reported guarantee, with one sentence in the limitations/privacy-accounting section disclosing that a stricter per-record worst-case bound (accounting for cross-client record overlap) is approximately 7.9, and that the client-level figure is reported because it matches the actual deployed one-epoch-per-round protocol. This keeps the headline number honest and defensible without overstating precision on the record-level figure.
