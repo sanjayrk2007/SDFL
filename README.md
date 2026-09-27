@@ -37,7 +37,7 @@ graph TD
 
 > [!NOTE]
 > **Terminology: "Secure Aggregation" in this repo.**
-> References to "SecAgg" / "Secure Aggregation" (E5 onward, `e5_secagg.py`, `TemporalCheckpointingSecAgg`) describe **AES-GCM encrypted transport with aggregation-side decryption**, not a full aggregator-oblivious secure aggregation protocol (e.g., additive secret sharing). The coordinator decrypts each client's update individually inside the aggregation pipeline before averaging; it never persists individual plaintext updates, and ciphertexts become unrecoverable once the round key is destroyed, but the coordinator does see each plaintext update transiently during the live round. This distinction (already documented in `e5_secagg.py`) matters for the paper's security claims: SDFL's actual contribution is post-expiry temporal unrecoverability, not hiding updates from the coordinator during aggregation.
+> References to "SecAgg" / "Secure Aggregation" (E5 onward, `e5_secagg.py`, `TemporalCheckpointingSecAgg`) describe **AES-GCM encrypted transport with aggregation-side decryption** (Jimale et al., 2022), not a full aggregator-oblivious secure aggregation protocol (e.g., additive secret sharing; see Mansouri et al., 2023). The coordinator decrypts each client's update individually inside the aggregation pipeline before averaging; it never persists individual plaintext updates, and ciphertexts become unrecoverable once the round key is destroyed, but the coordinator does see each plaintext update transiently during the live round. This distinction (already documented in `e5_secagg.py`) matters for the paper's security claims: SDFL's actual contribution is post-expiry temporal unrecoverability, not hiding updates from the coordinator during aggregation.
 
 ---
 
@@ -160,3 +160,10 @@ python e8_server.py --rounds 5
 ## 📄 License & Intellectual Property
 * This project is a working prototype of a **Patent Application (India)**.
 * Core systems mechanisms, temporal revocation models, and image-sanitization gates are protected under proprietary research agreements.
+
+---
+
+## 📚 References
+
+- Jimale, M. A., Z'aba, M. R., Kiah, M. L. B. M., Idris, M. Y. I., Jamil, N., Mohamad, M. S., & Rohmad, M. S. (2022). Authenticated encryption schemes: A systematic review. *IEEE Access*, 10, 14739–14766. https://doi.org/10.1109/ACCESS.2022.3147201
+- Mansouri, M., Önen, M., Ben Jaballah, W., & Conti, M. (2023). SoK: Secure aggregation based on cryptographic schemes for federated learning. *Proceedings on Privacy Enhancing Technologies*, 2023(1), 140–157. https://doi.org/10.56553/popets-2023-0009
