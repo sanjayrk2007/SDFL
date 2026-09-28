@@ -91,9 +91,9 @@ Deterministic evaluation across random seeds (42, 43, 44) confirms minimal varia
 ## 3. Generalization & Scalability (E12, E14)
 
 ### A. Leave-One-Centre-Out Generalization (E12)
-* E12 resolved the methodological limitation of E8 by strictly excluding all held-out client records from training, model selection, and threshold tuning.
+* E12 excludes the held-out client's assigned records from training, model selection, and threshold tuning in each fold; because client assignments are synthetic and overlapping (all three clients draw from the same Kvasir-SEG pool), this is a synthetic client-holdout ablation, not an unseen-hospital generalization test. A hard runtime assertion in `e12_unseen_hospital.py` guarantees zero record-level overlap between training loaders and the held-out test set within any given fold (see `E12_LOCO_INTEGRITY.md`); the overlap caveat applies at the dataset-construction level (the same physical images can be assigned to multiple synthetic clients), not to the fold-level exclusion logic.
 * **Macro Mean Unseen Dice:** **0.2190** (Worst Client: **0.1579**, Best Client C0: **0.3234**).
-* *Limitation:* The synthetic, size-biased dataset assignments present significant domain shift, clearly demonstrating the need for future Domain Generalization (DG) extensions.
+* *Limitation:* Because clients are synthetic, overlapping subsets of a single-source dataset, the result measures within-dataset cross-partition generalization under the SDFL privacy stack, not cross-institution transfer. Future work should use genuinely independently collected hospital cohorts.
 
 ### B. Computational & Communication Scalability (E14)
 * Benchmarked across cohort sizes $K \in \{3, 5, 10, 20\}$:
