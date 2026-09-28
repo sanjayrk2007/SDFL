@@ -56,7 +56,7 @@ We conducted 8 incremental ablation experiments (E1 to E8) to benchmark utility,
 
 | Exp | Description | Focus Metric | Results / Performance | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **E1** | Centralized Baseline | Target Dice | **Dice: 0.7937** \| **IoU: 0.7159** (Upper Bound) | Complete |
+| **E1** | Centralized Baseline | Target Dice | **Dice: 0.8182** \| **IoU: 0.7402** (Upper Bound) | Complete |
 | **E2** | Federated Baseline (FedAvg) | Non-IID client split | **Dice: 0.7712** \| **IoU: 0.6818** (Utility Drop) | Complete |
 | **E3** | FedProx Integration | Proximal term (μ) | **Dice: 0.5782** \| **IoU: 0.4533** (Best: μ = 0.001, Round 1) | Complete |
 | **E4** | DP-SGD Integration | Privacy Budget (ε) | **Dice: 0.4312** \| **ε = 0.9793** at δ = 10⁻⁵ (C = 2.0, σ = 1.5, Round 1) | Complete |

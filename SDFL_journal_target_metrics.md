@@ -6,6 +6,13 @@
 
 # SDFL journal target metrics
 
+> **Note (2026-09-28):** The "Current" column in the tables of this document predates the reproduced
+> results under `Results_New/` and should not be used for paper submission. The authoritative numbers
+> are in `Results_New/results/MASTER_RESULTS.csv` — in particular: Centralized baseline Dice **0.8182**
+> (IoU 0.7402), FedAvg Dice **0.7791** single-run / **0.7698 ± 0.0026** five-seed (seeds 42–46),
+> Full SDFL Dice **0.4145** (E8). All other target ranges and literature comparisons in this document
+> remain valid as planning guidance.
+
 ## Executive conclusion
 
 The current SDFL results are not yet ready to support a strong journal claim. The main problem is not that the model is below colorectal-segmentation state of the art; it is that the full SDFL model currently retains only about **53.8% of the FedAvg Dice** and has an absolute Dice loss of **0.3567**. For a standard in-domain test, Full SDFL Dice of **0.4145** is weak. A Dice value in the 0.40–0.50 range can be defensible only if the experiment is explicitly framed as a severe privacy or out-of-domain stress test, the less-private ablations show the expected trade-off, and the temporal-security evidence is unusually strong.

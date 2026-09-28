@@ -60,8 +60,8 @@ Validation metrics (Dice and IoU) and privacy spending ($\epsilon$) for 1 round 
 
 ## Technical Discussion & Analysis
 
-### 1. Analysis of the Accuracy Drop (0.79 Baseline / 0.57 FedProx → 0.29–0.43 DP-SGD)
-The centralized baseline achieves a Dice score of 0.7937, whereas adding DP-SGD drops the validation Dice score substantially. This drop is driven by the following factors:
+### 1. Analysis of the Accuracy Drop (0.82 Baseline / 0.57 FedProx → 0.29–0.43 DP-SGD)
+The centralized baseline achieves a Dice score of 0.8182, whereas adding DP-SGD drops the validation Dice score substantially. This drop is driven by the following factors:
 * **Gradient Clipping Norm Mismatch ($C = 2.0$):** Typical gradients in a deep ResUNet++ segmentation network have relatively small norms. A clipping threshold of $C = 2.0$ is excessively high, meaning virtually no gradients are clipped. However, in DP-SGD, the injected Gaussian noise scales *linearly* with the clipping norm ($\sigma \times C$). As a result, setting $C = 2.0$ injects a disproportionately large amount of absolute noise ($\sigma \times C = 2.0$ to $3.0$ standard deviation) relative to the actual gradient magnitudes, destroying the gradient signal (severe signal-to-noise ratio degradation).
 * **Small Client Batch Size ($B = 8$):** The noise added to the aggregated batch gradient is scaled by $\frac{\sigma C}{B}$. With a batch size of only 8, there are not enough samples in a batch to average out the injected noise, further exacerbating the corruption of learning signals.
 * **Single-Round Sudden Perturbation:** Because Experiment E4 was evaluated as a single-round sweep (starting from the E3 checkpoint), the model was exposed to a massive noise injection for just 3 local epochs with no subsequent rounds to recover or adapt, causing an immediate, severe drop in Dice score.
