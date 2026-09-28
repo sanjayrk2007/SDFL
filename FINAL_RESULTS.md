@@ -12,7 +12,7 @@
 
 This document synthesizes the authoritative experimental outcomes across the entire **Self-Destructing Federated Learning (SDFL)** roadmap (Experiments E3 through E15). 
 
-The experimental suite systematically evaluates the core thesis of SDFL: **combining ephemeral AEAD encryption, coordinator-signed timestamp certificates, bounded temporal aggregation windows ($T_r$), in-memory key destruction, and Renyi Differential Privacy (RDP) makes federated model updates cryptographically unrecoverable to a retrospective post-breach adversary once the round key is destroyed — at a measured, non-trivial cost to segmentation utility (Full SDFL retains roughly 54–56% of matched FedAvg Dice) and to aggregation-side latency (roughly 235–345% overhead vs. matched plain FedAvg, K=3–20). This is reported here as a security/systems contribution with a disclosed privacy–utility trade-off, not as a claim of clinically useful segmentation or of formally proven forward secrecy.**
+The experimental suite systematically evaluates the core thesis of SDFL: **combining ephemeral AEAD encryption, coordinator-signed timestamp certificates, bounded temporal aggregation windows ($T_r$), in-memory key destruction, and Renyi Differential Privacy (RDP) makes federated model updates cryptographically unrecoverable to a retrospective post-breach adversary once the round key is destroyed — at a measured, non-trivial cost to segmentation utility (Full SDFL retains roughly 54–56% of matched FedAvg Dice) and to aggregation-side latency (a substantial aggregation-side latency overhead vs. matched plain FedAvg, K=3–20; magnitude pending reconciliation of two conflicting E14 measurements — see Results_New/E14/E14_RESULTS.md). This is reported here as a security/systems contribution with a disclosed privacy–utility trade-off, not as a claim of clinically useful segmentation or of formally proven forward secrecy.**
 
 ---
 
@@ -99,7 +99,7 @@ Deterministic evaluation across random seeds (42, 43, 44) confirms minimal varia
 * Benchmarked across cohort sizes $K \in \{3, 5, 10, 20\}$:
   - **Client Encryption Latency:** $49 - 62\text{ ms}$ (independent of cohort size).
   - **Coordinator Verification:** $< 0.05\text{ ms}$ per client.
-  - **Total Security Round Latency:** Scales linearly from **179.96 ms** ($K=3$) to **752.79 ms** ($K=20$).
+  - **Total Security Round Latency:** Scales linearly from **179.96 ms** ($K=3$) to **752.79 ms** ($K=20$) (two unreconciled figure sets exist for this experiment — a second run recorded K=3→231.88 ms, K=20→903.64 ms; see Results_New/E14/E14_RESULTS.md; do not cite specific ms values without a fresh confirmed run).
   - **Storage Overhead:** Transitory ciphertext retention is strictly bounded to $O(K \cdot |W|)$ during $T_r$ and drops to zero immediately upon round closure.
 
 ---
