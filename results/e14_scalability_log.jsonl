@@ -1,22 +1,22 @@
-{"benchmark_rounds": 5, "client_counts": [3, 5, 10, 20], "event": "e14_started", "timestamp": "2026-09-12T09:41:03.724642+00:00"}
-{"agg_ms": 127.2379000147339, "event": "benchmark_round_done", "k": 3, "latency_ms": 203.3817333576735, "round": 1, "timestamp": "2026-09-12T09:41:04.834472+00:00"}
-{"agg_ms": 125.75509998714551, "event": "benchmark_round_done", "k": 3, "latency_ms": 200.42463330901228, "round": 2, "timestamp": "2026-09-12T09:41:05.706838+00:00"}
-{"agg_ms": 127.60379997780547, "event": "benchmark_round_done", "k": 3, "latency_ms": 184.81939999037422, "round": 3, "timestamp": "2026-09-12T09:41:06.553986+00:00"}
-{"agg_ms": 105.89370000525378, "event": "benchmark_round_done", "k": 3, "latency_ms": 157.90106664644554, "round": 4, "timestamp": "2026-09-12T09:41:07.330515+00:00"}
-{"agg_ms": 99.09659999539144, "event": "benchmark_round_done", "k": 3, "latency_ms": 153.25233332502344, "round": 5, "timestamp": "2026-09-12T09:41:08.155124+00:00"}
-{"agg_ms": 189.58470001234673, "event": "benchmark_round_done", "k": 5, "latency_ms": 242.7567800565157, "round": 1, "timestamp": "2026-09-12T09:41:09.440917+00:00"}
-{"agg_ms": 160.61719998833723, "event": "benchmark_round_done", "k": 5, "latency_ms": 213.0819799785968, "round": 2, "timestamp": "2026-09-12T09:41:10.713121+00:00"}
-{"agg_ms": 177.7635000180453, "event": "benchmark_round_done", "k": 5, "latency_ms": 232.50338000361808, "round": 3, "timestamp": "2026-09-12T09:41:12.012341+00:00"}
-{"agg_ms": 161.8698999809567, "event": "benchmark_round_done", "k": 5, "latency_ms": 211.67767997831106, "round": 4, "timestamp": "2026-09-12T09:41:13.239788+00:00"}
-{"agg_ms": 163.79309998592362, "event": "benchmark_round_done", "k": 5, "latency_ms": 218.5884400154464, "round": 5, "timestamp": "2026-09-12T09:41:14.516767+00:00"}
-{"agg_ms": 384.5959999889601, "event": "benchmark_round_done", "k": 10, "latency_ms": 434.4998199871043, "round": 1, "timestamp": "2026-09-12T09:41:17.009924+00:00"}
-{"agg_ms": 318.14920000033453, "event": "benchmark_round_done", "k": 10, "latency_ms": 369.68455001479015, "round": 2, "timestamp": "2026-09-12T09:41:19.490868+00:00"}
-{"agg_ms": 323.20569999865256, "event": "benchmark_round_done", "k": 10, "latency_ms": 373.4250799869187, "round": 3, "timestamp": "2026-09-12T09:41:21.928398+00:00"}
-{"agg_ms": 305.7056000106968, "event": "benchmark_round_done", "k": 10, "latency_ms": 356.0965299984673, "round": 4, "timestamp": "2026-09-12T09:41:24.375213+00:00"}
-{"agg_ms": 293.9777999999933, "event": "benchmark_round_done", "k": 10, "latency_ms": 341.60648002580274, "round": 5, "timestamp": "2026-09-12T09:41:26.758504+00:00"}
-{"agg_ms": 802.2738999861758, "event": "benchmark_round_done", "k": 20, "latency_ms": 850.7760799868265, "round": 1, "timestamp": "2026-09-12T09:41:31.755778+00:00"}
-{"agg_ms": 670.1604000118095, "event": "benchmark_round_done", "k": 20, "latency_ms": 718.8368349932716, "round": 2, "timestamp": "2026-09-12T09:41:36.617036+00:00"}
-{"agg_ms": 659.0058000001591, "event": "benchmark_round_done", "k": 20, "latency_ms": 708.1684450080502, "round": 3, "timestamp": "2026-09-12T09:41:41.505172+00:00"}
-{"agg_ms": 679.4719999888912, "event": "benchmark_round_done", "k": 20, "latency_ms": 730.1075699608191, "round": 4, "timestamp": "2026-09-12T09:41:46.438654+00:00"}
-{"agg_ms": 705.4168999893591, "event": "benchmark_round_done", "k": 20, "latency_ms": 756.0709599783877, "round": 5, "timestamp": "2026-09-12T09:41:51.439349+00:00"}
-{"event": "e14_completed", "output_json": "D:\\resesrch22\\Research11\\results\\e14_scalability_results.json", "timestamp": "2026-09-12T09:41:51.440350+00:00"}
+{"benchmark_rounds": 5, "client_counts": [3, 5, 10, 20], "event": "e14_started", "timestamp": "2026-10-04T15:21:38.195860+00:00"}
+{"agg_ms": 343.66460001911037, "event": "benchmark_round_done", "k": 3, "latency_ms": 519.8227000267556, "round": 1, "timestamp": "2026-10-04T15:21:40.611368+00:00"}
+{"agg_ms": 264.917599997716, "event": "benchmark_round_done", "k": 3, "latency_ms": 413.3034666786747, "round": 2, "timestamp": "2026-10-04T15:21:42.479068+00:00"}
+{"agg_ms": 209.7111000039149, "event": "benchmark_round_done", "k": 3, "latency_ms": 313.24030000056763, "round": 3, "timestamp": "2026-10-04T15:21:44.153206+00:00"}
+{"agg_ms": 176.10989999957383, "event": "benchmark_round_done", "k": 3, "latency_ms": 279.4067666691262, "round": 4, "timestamp": "2026-10-04T15:21:45.730571+00:00"}
+{"agg_ms": 187.1091999928467, "event": "benchmark_round_done", "k": 3, "latency_ms": 280.5504666660757, "round": 5, "timestamp": "2026-10-04T15:21:47.243286+00:00"}
+{"agg_ms": 349.8947999905795, "event": "benchmark_round_done", "k": 5, "latency_ms": 451.15991999045946, "round": 1, "timestamp": "2026-10-04T15:21:49.849770+00:00"}
+{"agg_ms": 319.4497999793384, "event": "benchmark_round_done", "k": 5, "latency_ms": 413.039119966561, "round": 2, "timestamp": "2026-10-04T15:21:52.400919+00:00"}
+{"agg_ms": 290.780299983453, "event": "benchmark_round_done", "k": 5, "latency_ms": 384.78453996940516, "round": 3, "timestamp": "2026-10-04T15:21:54.917268+00:00"}
+{"agg_ms": 296.5146999922581, "event": "benchmark_round_done", "k": 5, "latency_ms": 394.2040000052657, "round": 4, "timestamp": "2026-10-04T15:21:57.411158+00:00"}
+{"agg_ms": 300.51850000745617, "event": "benchmark_round_done", "k": 5, "latency_ms": 393.6526000034064, "round": 5, "timestamp": "2026-10-04T15:21:59.932705+00:00"}
+{"agg_ms": 877.8528999828268, "event": "benchmark_round_done", "k": 10, "latency_ms": 976.0701299557695, "round": 1, "timestamp": "2026-10-04T15:22:05.230842+00:00"}
+{"agg_ms": 657.890700007556, "event": "benchmark_round_done", "k": 10, "latency_ms": 758.3217200124636, "round": 2, "timestamp": "2026-10-04T15:22:10.364055+00:00"}
+{"agg_ms": 565.9613000170793, "event": "benchmark_round_done", "k": 10, "latency_ms": 658.7081399775343, "round": 3, "timestamp": "2026-10-04T15:22:15.279475+00:00"}
+{"agg_ms": 563.9957999810576, "event": "benchmark_round_done", "k": 10, "latency_ms": 656.6600099700736, "round": 4, "timestamp": "2026-10-04T15:22:20.150894+00:00"}
+{"agg_ms": 589.0659000142477, "event": "benchmark_round_done", "k": 10, "latency_ms": 681.6091500193579, "round": 5, "timestamp": "2026-10-04T15:22:25.125766+00:00"}
+{"agg_ms": 1419.9420000077225, "event": "benchmark_round_done", "k": 20, "latency_ms": 1512.6252200221643, "round": 1, "timestamp": "2026-10-04T15:22:35.352839+00:00"}
+{"agg_ms": 1295.7508999970742, "event": "benchmark_round_done", "k": 20, "latency_ms": 1390.5890799913323, "round": 2, "timestamp": "2026-10-04T15:22:45.352457+00:00"}
+{"agg_ms": 1178.8218999863602, "event": "benchmark_round_done", "k": 20, "latency_ms": 1270.8318849807256, "round": 3, "timestamp": "2026-10-04T15:22:55.290998+00:00"}
+{"agg_ms": 1131.0715000145137, "event": "benchmark_round_done", "k": 20, "latency_ms": 1224.8822600056883, "round": 4, "timestamp": "2026-10-04T15:23:05.259204+00:00"}
+{"agg_ms": 1166.1355000105686, "event": "benchmark_round_done", "k": 20, "latency_ms": 1259.9629650110728, "round": 5, "timestamp": "2026-10-04T15:23:15.188402+00:00"}
+{"event": "e14_completed", "output_json": "D:\\resesrch22\\Research11\\results\\e14_scalability_results.json", "timestamp": "2026-10-04T15:23:15.206132+00:00"}

@@ -1,4 +1,4 @@
-﻿"""
+"""
 scripts/privacy_accounting.py
 -------------------------------
 Mukesh TASK 2 -- Standalone privacy accounting utility.
@@ -64,10 +64,10 @@ def compute_epsilon(sigma, clip, q, steps, rounds, delta):
 
 
 SWEEP_SIGMAS = [0.3, 0.5, 0.8, 1.0, 1.5, 2.0]
-SWEEP_CLIPS  = [0.5, 1.0]
+SWEEP_CLIPS  = [0.5, 1.0, 2.0]
 SWEEP_ROUNDS = [20]
-SWEEP_Q      = 8 / 612
-SWEEP_STEPS  = 76
+SWEEP_Q      = 8 / 262  # Per-client sampling ratio (largest hospital split ~262)
+SWEEP_STEPS  = 33       # Local epoch per round (~262/8 = 33 batches)
 SWEEP_DELTA  = 1e-5
 
 
@@ -101,9 +101,11 @@ def run_sweep(out_dir="results"):
 def main():
     p = argparse.ArgumentParser(description="SDFL Privacy Accounting")
     p.add_argument("--sigma",  type=float, default=1.5)
-    p.add_argument("--clip",   type=float, default=1.0)
-    p.add_argument("--q",      type=float, default=8/612)
-    p.add_argument("--steps",  type=int,   default=76)
+    p.add_argument("--clip",   type=float, default=2.0)
+    p.add_argument("--q",      type=float, default=8/262,
+                   help="Per-client sampling ratio q = batch / N_client (default: 8/262)")
+    p.add_argument("--steps",  type=int,   default=33,
+                   help="Steps per round (default: 33 batches = 1 local epoch)")
     p.add_argument("--rounds", type=int,   default=20)
     p.add_argument("--delta",  type=float, default=1e-5)
     p.add_argument("--sweep",  action="store_true")

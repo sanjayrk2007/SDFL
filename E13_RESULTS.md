@@ -1,8 +1,12 @@
-﻿# E13 — Multi-Seed Robustness Evaluation (Final)
+# E13 — Multi-Seed Test-Variability Evaluation
 
-> **Corrected run:** 5 seeds (42–46), seed-controlled 80% random subsampling per seed.
-> Previous run (3 seeds, ±0.0) was invalid — the seed had no effect on deterministic evaluation.
-> This run uses genuine per-seed subsample variation, producing real variance.
+> Entry-point: `e13_multiseed.py` | Branch: `mukesh/sdfl-completion`
+
+---
+
+## Protocol Disclosure
+
+> **Methodology Note:** This experiment evaluates **test-set sampling variance** of fixed trained checkpoints across 5 seeds — it is **not** an independent 5-run retraining study. The same model weights (`e2_round_20.pth`, `e3_best.pth`, `e11_best.pth`) are loaded for every seed. Each seed controls which random 80% subsample of the test set is evaluated. The resulting mean ± SD reflects variation in test-set composition, providing a bounded estimate of checkpoint evaluation stability. This is reported as a test-variability study, not as error bars over model training variance.
 
 ---
 
@@ -11,10 +15,9 @@
 | Parameter | Value |
 |-----------|-------|
 | Seeds | 42, 43, 44, 45, 46 |
-| Test subsample per seed | 80% random draw (seed-controlled) |
-| Models evaluated | FedAvg (E2), FedProx (E3 Best), Full SDFL (E8/E11) |
-| Metrics | Dice, IoU, Precision, Recall, HD95 |
-| Threshold | 0.5 (fixed, no tuning) |
+| Test subsample per seed | 80% random draw (seed-controlled via `random.Random(seed)`) |
+| Models evaluated | FedAvg (E2 `e2_round_20.pth`), FedProx (E3 `e3_best.pth`), Full SDFL (`e11_best.pth`) |
+| Metric | Dice (threshold = 0.5, fixed, no tuning) |
 
 ---
 
