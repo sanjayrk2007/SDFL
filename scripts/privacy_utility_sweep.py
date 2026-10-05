@@ -1,4 +1,4 @@
-"""
+﻿"""
 scripts/privacy_utility_sweep.py
 ---------------------------------
 Mukesh TASK 2/3 -- Privacy-utility sweep wrapper.
@@ -43,7 +43,6 @@ def build_table(data):
                    or entry.get("best_val_dice", float("nan")))
         epsilon = (entry.get("epsilon_final")
                    or entry.get("epsilon")
-                   or (entry.get("accounting_regimes", {}).get("executed_empirical", {}).get("epsilon_20_round"))
                    or entry.get("final_epsilon", float("nan")))
         delta   = entry.get("delta", 1e-5)
         rows.append({
@@ -96,7 +95,7 @@ def main():
     data = load_e11_results()
     # Handle list or dict-with-list
     if isinstance(data, dict):
-        data = data.get("rows") or data.get("results") or data.get("sweep") or list(data.values())
+        data = data.get("results") or data.get("sweep") or list(data.values())
     if not data:
         print("[ERROR] No entries found in e11_training_results.json")
         sys.exit(1)

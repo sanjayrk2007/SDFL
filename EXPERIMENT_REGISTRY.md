@@ -1,101 +1,73 @@
-# SDFL Experiment Registry
+# SDFL Experiment Registry — E1 to E15
 
-> **Branch:** `mukesh/sdfl-completion` (original); numeric corrections below reconciled against `integration/sdfl-final-validation`'s `Results_New/` on 2026-09-26.
-> **Last updated:** 2026-09-12 (see 2026-09-26 corrections in the table below)
-> **Owners:** Mukesh (ML/DP/Security), Sanjay (Crypto/Temporal), Sameer (Segmentation baseline)
->
-> **Note (2026-09-26):** This table had several copy-paste errors between rows (E2 had E8's numbers, E3 had E13's number,
-> E13's std values were fabricated as ±0.0000, E14's numbers were stale). The specific errors found have been corrected
-> in place below. For the complete, cross-checked set of numbers across all 15 experiments, use
-> `Results_New/results/MASTER_RESULTS.{csv,json,tex}` and `MASTER_RESULTS_SECURITY.{csv,json,tex}` instead of this table.
-> `SDFL_Preflight_Audit.md` is referenced in comments across `crypto.py`, `e7_temporal.py`, and several experiment scripts but was never committed to this repository on any branch. All references have been updated inline (2026-09-27) to self-contained summaries: (a) the HMAC key security invariant (must be injected via `SDFL_HMAC_SECRET_KEY` env var, not hardcoded); (b) the AAD anti-pattern note (do not read `associated_data` from the encrypted payload — always reconstruct server-side via `e7_temporal.compute_aad`); (c) the environment/provenance notes now live in `requirements.txt` comments and the individual `E*/E*_RESULTS.md` files.
+> **Last Updated:** 2026-10-04
+> **Canonical Branch:** `mukesh/sdfl-completion` (Mukesh) | `origin/integration/sdfl-final-validation` (full team)
 
 ---
 
-## Registry
+## Ownership Policy
 
-| Exp ID | Title | Owner | Script | Results | Status | Key Numbers |
-|--------|-------|-------|--------|---------|--------|-------------|
-| E1 | Dataset preparation & splits | Sameer | `scripts/dataset.py` | `hospital_splits.json` | DONE | 3 hospitals, Kvasir-SEG (612 train) |
-| E2 | FedAvg baseline | Sameer | `e2_server.py` | `Results_New/results/e2_metrics.json` | DONE | Test Dice 0.7791 (the "0.4145 in-dist / 0.4869 OOD" previously listed here are E8's numbers, not E2's -- corrected) |
-| E3 | FedProx μ sweep | Mukesh | `e3_fedprox.py` | `Results_New/results/e3_metrics.json`, `Results_New/E3_RESULTS.md` | DONE | Best μ=0.01: val Dice 0.8569, test Dice 0.4926 (the "~0.7718" previously listed here was E13's FedAvg multi-seed mean, not an E3 number -- corrected) |
-| E5 | DP-SGD integration | Mukesh | `e4_dpsgd.py` | `results/e4_dpsgd_results.json` (file not present in Results_New; historical path only) | DONE | ε=2.772, δ=1e-5 at σ=1.5 |
-| E7 | Temporal security protocol | Sanjay | `e7_temporal.py` | `Results_New/E8/e8_metrics.json` (stdout log only in Results_New/E7; metrics shared with E8) | DONE | 0% post-expiry decrypt success |
-| E8 | Full SDFL server eval | Shared | `e8_server.py` | `Results_New/E8/e8_metrics.json` | DONE | Combined DP+temporal+crypto |
-| E9 | Breach attack simulation | Mukesh | `e9_breach_attack.py` | `Results_New/E9/e9_breach_results.json` | DONE | 0/5000 breaches succeeded |
-| E9b | Temporal ablation (key destruction) | Sanjay | `e9b_temporal_ablation.py` | `Results_New/E9b/e9b_ablation_results.json` | DONE | Row E: 100% success; Row F: 0% |
-| E10 | Temporal window sweep | Mukesh | `e10_window_sweep.py` | `Results_New/E10/e10_window_results.json` | DONE | Tr=120s → 100% round completion |
-| E11 | Privacy-utility sweep (σ grid) | Mukesh | `e11_empirical_sweep.py` | `Results_New/E11/e11_privacy_results.json` | DONE | σ=1.5: ε=4.91 (nominal) / 0.91 (executed) |
-| E12 | Leave-one-client-out generalisation | Mukesh | `e12_unseen_hospital.py` | `Results_New/E12/e12_unseen_results.json` | DONE | Macro Mean Dice 0.2190; Worst 0.1579 |
-| E13 | Multi-seed robustness | Mukesh | `e13_multiseed.py` | `Results_New/E13/e13_multiseed_results.json` | DONE | FedAvg 0.7698±0.0026; FedProx 0.4891±0.0137; SDFL 0.4341±0.0164 (5 seeds: 42-46; the "±0.0000" previously listed here was wrong -- these are computed directly from the per-seed values already in the committed JSON, not a rerun) |
-| E14 | Security layer scalability (K clients) | Mukesh | `e14_scalability.py` | `Results_New/E14/e14_scalability_results.json` | DONE | K=3→231.9 ms; K=20→903.6 ms, roughly linear (the "179/752 ms" previously listed here were stale, from an earlier run on `mukesh/sdfl-completion` -- corrected to match the currently committed `Results_New` run) |
-| E15 | Fault & late-client robustness | Mukesh | `e15_fault_robustness.py` | `Results_New/E15/e15_fault_results.json` | DONE | 10/10 scenarios PASSED |
+| Owner | Files Owned |
+|-------|-------------|
+| **Sanjay** | `crypto.py`, `e7_temporal.py`, `e8_server.py`, `test_e8_integration.py` |
+| **Mukesh** | `e4_dpsgd.py`, `e11_empirical_sweep.py`, `e12_unseen_hospital.py`, `e13_multiseed.py`, `e14_scalability.py`, `e15_fault_robustness.py`, `scripts/privacy_accounting.py`, `scripts/privacy_utility_sweep.py`, `scripts/cross_centre_evaluation.py`, `scripts/multiseed_runner.py` |
+| **Sameer** | `scripts/sanitize.py`, `scripts/experiment_runner.py`, `scripts/temporal_window_experiment.py`, `scripts/scalability_experiment.py`, `scripts/fault_injection.py`, `sdfl-demo/` |
+| **Shared (do not modify without team approval)** | `model.py`, `config.py`, `scripts/dataset.py`, `scripts/joint_transforms.py`, `hospital_splits.json`, `splits.json` |
 
 ---
 
-## Mukesh Deliverables
+## Full Experiment Status
+
+| Exp | Title | Owner | Script | Status | Paper-Ready | Key Result |
+|-----|-------|-------|--------|--------|-------------|------------|
+| **E1** | Centralized Baseline | Sameer | `e1_centralized.py` | ✅ Complete | ✅ YES | Dice = **0.8182** (50 epochs, Kvasir-SEG) |
+| **E2** | FedAvg Baseline | Sameer | `e2_server.py` | ✅ Complete | ✅ YES | Dice = **0.7718** (20 rounds, 3 clients) |
+| **E3** | FedProx Non-IID Sweep | Mukesh | `e3_fedprox.py` | ✅ Complete | ✅ YES | Best μ=0.001, Dice = **0.5782** (Round 1) |
+| **E4** | DP-SGD Integration | Mukesh | `e4_dpsgd.py` | ✅ Complete | ✅ YES | σ=1.5, C=2.0, GroupNorm conversion |
+| **E5** | Authenticated Update Encryption | Sameer | `e5_secagg.py` | ✅ Complete | ✅ YES | AES-256-GCM; lossless parameter transport |
+| **E6** | Input Sanitization | Sanjay | `e6_server.py` | ✅ Complete | ✅ YES | CLAHE + Telea inpainting; 5% area threshold |
+| **E7** | Temporal Checkpointing | Sanjay | `e7_temporal.py` | ✅ Complete | ✅ YES | All 7 temporal protocol tests passed |
+| **E8** | Full SDFL Production FL | Shared | `e8_server.py` | ✅ Complete | ✅ YES | Dice(ID)=0.4145, Dice(OOD)=0.4869, ε=2.772 |
+| **E9** | Retrospective Breach Attack | Mukesh | `e9_breach_attack.py` | ✅ Complete | ✅ YES | 0/5,000 breaches; per-condition UB < 0.3% |
+| **E9b** | Temporal Causal Ablation | Sanjay | `e9b_temporal_ablation.py` | ✅ Complete | ✅ YES | Row E breach=1.0, Row F breach=0.0 (key destruction essential) |
+| **E10** | Temporal Window Sweep | Mukesh | `e10_window_sweep.py` | ✅ Complete | ✅ YES | Tr=120s → 100% availability |
+| **E11** | Privacy–Utility Frontier | Mukesh | `e11_empirical_sweep.py` | ✅ Complete | ✅ YES | σ=1.5, **ε=2.772** (q=8/262), Dice=0.4408 |
+| **E12** | Synthetic Client-Holdout Ablation | Mukesh | `e12_unseen_hospital.py` | ✅ Complete | ✅ YES (Disclosed) | Macro Dice=**0.2190** (plain FedAvg, 3-fold LOCO) |
+| **E13** | Multi-Seed Test Variability | Mukesh | `e13_multiseed.py` | ✅ Complete | ✅ YES (Disclosed) | FedAvg 0.7698±0.0026; SDFL 0.4341±0.0164 (5 seeds, 80% subsample) |
+| **E14** | Client Scalability Benchmark | Mukesh | `e14_scalability.py` | ✅ Complete | ✅ YES (Disclosed) | Linear O(K) scaling, 361ms→1332ms (AMD64 CPU) |
+| **E15** | Fault & Robustness Suite | Mukesh/Sameer | `e15_fault_robustness.py` | ✅ Complete | ✅ YES | 10/10 fault scenarios passed |
+
+---
+
+## Mukesh Deliverables Summary (All Complete ✅)
 
 | Deliverable | File | Status |
 |-------------|------|--------|
-| DP-SGD implementation | `e4_dpsgd.py` | DONE |
-| Privacy accounting utility | `scripts/privacy_accounting.py` | DONE |
-| Privacy-utility sweep | `scripts/privacy_utility_sweep.py` | DONE |
-| Cross-centre evaluator | `scripts/cross_centre_evaluation.py` | DONE |
-| Multi-seed runner | `scripts/multiseed_runner.py` | DONE |
-| E9 breach attack | `e9_breach_attack.py` | DONE |
-| E10 window sweep | `e10_window_sweep.py` | DONE |
-| E11 empirical sweep | `e11_empirical_sweep.py` | DONE |
-| E12 LOCO generalisation | `e12_unseen_hospital.py` | DONE |
-| E13 multi-seed eval | `e13_multiseed.py` | DONE |
-| E14 scalability bench | `e14_scalability.py` | DONE |
-| E15 fault robustness | `e15_fault_robustness.py` | DONE |
-| Final synthesis | `FINAL_RESULTS.md` | DONE |
+| DP-SGD client implementation | `e4_dpsgd.py` | ✅ Complete |
+| Privacy accounting utility | `scripts/privacy_accounting.py` | ✅ Complete (q=8/262 corrected) |
+| Privacy-utility sweep wrapper | `scripts/privacy_utility_sweep.py` | ✅ Complete |
+| Cross-centre evaluation | `scripts/cross_centre_evaluation.py` | ✅ Complete |
+| Multi-seed runner | `scripts/multiseed_runner.py` | ✅ Complete |
+| E10 Window Sweep | `e10_window_sweep.py` | ✅ Complete |
+| E11 Privacy Sweep | `e11_empirical_sweep.py` | ✅ Complete |
+| E11 Accounting (corrected) | `E11_ACCOUNTING.md` | ✅ Complete (q=8/262, ε=2.772) |
+| E12 LOCO Ablation | `e12_unseen_hospital.py` + `E12_LOCO_INTEGRITY.md` | ✅ Complete |
+| E13 Test Variability | `e13_multiseed.py` (5 seeds, 80% subsample) | ✅ Complete |
+| E14 Scalability (with hardware spec) | `e14_scalability.py` + `E14_RESULTS.md` | ✅ Complete |
+| E15 Fault Robustness | `e15_fault_robustness.py` | ✅ Complete |
+| Experiment Registry | `EXPERIMENT_REGISTRY.md` | ✅ This file |
 
 ---
 
-## Common/Shared Deliverables
+## Known Disclosures (Must Appear in Paper)
 
-| Deliverable | File | Owner | Status |
-|-------------|------|-------|--------|
-| Experiment registry | `EXPERIMENT_REGISTRY.md` | Shared (Mukesh created) | DONE |
-| Dataset splits | `hospital_splits.json` | Sameer | DONE |
-| Dataset loader | `scripts/dataset.py` | Sameer | DONE |
-| Joint transforms | `scripts/joint_transforms.py` | Sameer | DONE |
-| Crypto module | `crypto.py` | Sanjay | DONE |
-| Temporal security | `e7_temporal.py` | Sanjay | DONE |
-| Config | `config.py` | Shared | DONE |
-
----
-
-## File Ownership Policy
-
-```
-DO NOT casually edit (shared files):
-    model.py  config.py  scripts/dataset.py
-    scripts/joint_transforms.py  hospital_splits.json  e8_server.py
-
-Sanjay owns:  crypto.py  e7_temporal.py
-Mukesh owns:  e4_dpsgd.py  scripts/privacy_accounting.py
-              scripts/privacy_utility_sweep.py
-              scripts/cross_centre_evaluation.py
-              scripts/multiseed_runner.py
-              e9_breach_attack.py  e10_window_sweep.py
-              e11_empirical_sweep.py  e12_unseen_hospital.py
-              e13_multiseed.py  e14_scalability.py  e15_fault_robustness.py
-```
-
----
-
-## Branch Info
-
-```
-Branch  : mukesh/sdfl-completion
-Commits : 37f3ad2  Final Reconciliation: E3-E15 synthesis
-          3e3ae30  E15: Fault robustness (10 scenarios)
-          e3283eb  E14: Scalability benchmark
-          d0602d9  E13: Multi-seed robustness
-          a230b70  E12: LOCO generalisation
-          812ed6a  E11: Privacy-utility sweep
-          b0bc20f  E10: Temporal window analysis
-          ab5c1bf  E9b: Temporal ablation
-```
+| Topic | Disclosure Required |
+|-------|-------------------|
+| FedProx + Opacus | Proximal term $\frac{\mu}{2}\|w-w_t\|^2$ is dropped by Opacus per-sample hooks during `optimizer.step()`. Effective μ = 0.0 in all DP stages. |
+| ε scope | ε = 2.772 applies to the 20-round E8 federated phase only. Backbone warm-started from non-private E3/E7 exploration. |
+| ε sampling rate | q = 8/262 (per-client local batch sampling), not q = 8/612 (pooled dataset). |
+| E9 attack substrate | Synthetic float32 tensors, not real gradients. A5 is a noisy-vector proxy. 0.3% bound is per-condition, not pooled. |
+| E9b utility constants | Dice/IoU for Rows B–F are pre-computed constants from E7/E8 campaign; only security properties are live-measured. |
+| E12 client type | Synthetic overlapping subsets of Kvasir-SEG, not independently collected hospital data. |
+| E13 methodology | Test-set subsampling variance across fixed checkpoints, not independent full retraining. |
+| E14 latency | Hardware-dependent; communication/storage numbers are hardware-independent. |

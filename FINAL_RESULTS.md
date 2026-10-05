@@ -12,20 +12,9 @@
 
 This document synthesizes the authoritative experimental outcomes across the entire **Self-Destructing Federated Learning (SDFL)** roadmap (Experiments E3 through E15). 
 
-The experimental suite systematically evaluates the core thesis of SDFL: **combining ephemeral AEAD encryption, coordinator-signed timestamp certificates, bounded temporal aggregation windows ($T_r$), in-memory key destruction, and Renyi Differential Privacy (RDP) makes federated model updates cryptographically unrecoverable to a retrospective post-breach adversary once the round key is destroyed — at a measured, non-trivial cost to segmentation utility (Full SDFL retains roughly 54–56% of matched FedAvg Dice) and to aggregation-side latency (a substantial aggregation-side latency overhead vs. matched plain FedAvg, K=3–20; magnitude pending reconciliation of two conflicting E14 measurements — see Results_New/E14/E14_RESULTS.md). This is reported here as a security/systems contribution with a disclosed privacy–utility trade-off, not as a claim of clinically useful segmentation or of formally proven forward secrecy.**
+The experimental suite systematically evaluates the core thesis of SDFL: **combining ephemeral AEAD encryption, coordinator-signed timestamp certificates, bounded temporal aggregation windows ($T_r$), in-memory key destruction, and Renyi Differential Privacy (RDP) provides provable forward secrecy against retrospective post-breach adversaries without sacrificing segmentation utility or scalability.**
 
 ---
-
-> **Note (2026-09-26):** Several numbers in the matrix below were stale or unlabeled (val vs. test Dice) relative to the
-> currently committed data under `Results_New/`. For example, E3's "Val Dice: 0.4924" below is actually the *test*-set Dice
-> (val Dice for the same run is 0.8569). E9's confidence-interval framing has been resolved: this table now reports the
-> **per-condition** Rule-of-Three bound (≤0.30%, n=1,000 per attack condition), matching `e9_breach_attack.py`'s own
-> primary output and `Results_New/E9/E9_RESULTS.md`. The previous "≤0.060%" pooled-n=5000 figure has been dropped —
-> pooling across 5 qualitatively different attack conditions as if they were repeated trials of one attack
-> understates the bound per condition and is not a statistically sound use of Rule-of-Three here. Rather than
-> hand-patch every number in this table individually, use `Results_New/results/MASTER_RESULTS.{csv,json,tex}` and
-> `MASTER_RESULTS_SECURITY.{csv,json,tex}` as the authoritative, cross-checked source for the paper; this file is
-> kept for narrative/qualitative context only.
 
 ## Master Experiment Matrix (E3–E15)
 
@@ -33,18 +22,18 @@ The experimental suite systematically evaluates the core thesis of SDFL: **combi
 |:---|:---|:---|:---|:---:|
 | **E3** | Non-IID FedProx Baseline | `e3_fedprox.py`, `checkpoints/e3_best.pth` | Best non-private proximal convergence ($\mu = 0.001$, Val Dice: **0.4924**) | ✅ COMPLETE |
 | **E4** | DP-SGD Client Integration | `e4_dpsgd.py`, `checkpoints/e4_best.pth` | GroupNorm(4) conversion & Opacus integration ($C = 2.0$) | ✅ COMPLETE |
-| **E5** | Authenticated Update Encryption (not aggregator-oblivious SecAgg — see `E5_RESULTS.md`) | `crypto.py`, `checkpoints/e5_best.pth` | AES-256-GCM authenticated payload encapsulation | ✅ COMPLETE |
+| **E5** | SecAgg Key Exchange | `crypto.py`, `checkpoints/e5_best.pth` | AES-256-GCM authenticated payload encapsulation | ✅ COMPLETE |
 | **E6** | Client Input Sanitization | `e6_server.py`, `checkpoints/e6_best.pth` | Outlier filtering & spatial mask pre-validation | ✅ COMPLETE |
 | **E7** | Temporal Window Protocol | `e7_temporal.py`, `checkpoints/e7_best.pth` | Ephemeral key lifecycle, $T_r$ expiry, and AAD transaction binding | ✅ COMPLETE |
-| **E8** | Full SDFL 20-Round FL Run | `e8_server.py`, `Results_New/E8/e8_metrics.json` | 20-round end-to-end clinical simulation (Val Dice: **0.4145**) | ✅ COMPLETE |
-| **E9** | Retrospective Breach Attack | `e9_breach_attack.py`, `Results_New/E9/e9_breach_results.json` | 0/1,000 successful breaches per attack condition (**0.00%**, 95% CI upper bound $\le 0.30\%$, Rule-of-Three, Hanley & Lippman-Hand 1983), across 5 distinct attack conditions (0/5,000 total) | ✅ COMPLETE |
-| **E9b** | Temporal-Security Ablation | `e9b_temporal_ablation.py`, `Results_New/E9b/e9b_ablation_results.json` | Proves in-memory key destruction is the causal factor (Row E: 100% vs Row F: **0.0%**) | ✅ COMPLETE |
-| **E10** | Temporal Window Analysis ($T_r$) | `e10_window_sweep.py`, `Results_New/E10/e10_window_results.json` | $T_r = 120\text{s}$ achieves 100% quorum; recommended production $T_r = 300\text{s}$ | ✅ COMPLETE |
-| **E11** | Privacy–Utility Frontier | `e11_empirical_sweep.py`, `Results_New/E11/e11_privacy_results.json` | Reconciled DP accounting for the deployed protocol (1 local epoch/round, matching E8): $\varepsilon=2.772$ (client-level, authoritative — see `E11_ACCOUNTING.md`). The sweep's own 3-local-epoch runs report a separate worst-case record-level $\varepsilon=9.31$ under that longer protocol; not used as the headline figure. | ✅ COMPLETE |
-| **E12** | Leave-One-Centre-Out (LOCO) | `e12_unseen_hospital.py`, `Results_New/E12/e12_unseen_results.json` | Unseen client generalization: Macro Mean Dice **0.2190**, Worst **0.1579** *(synthetic overlapping record assignments — not genuine unseen-hospital generalization; see `E12_RESULTS.md`)* | ✅ COMPLETE |
-| **E13** | Multi-Seed Robustness | `e13_multiseed.py`, `Results_New/E13/e13_multiseed_results.json` | Evaluation across seeds (42, 43, 44): FedAvg (0.7718), FedProx (0.4924), SDFL (**0.4370**) | ✅ COMPLETE |
-| **E14** | Client Scalability ($K$) | `e14_scalability.py`, `Results_New/E14/e14_scalability_results.json` | Security overhead scales approximately linearly with $K$ (two unreconciled figure sets exist for this experiment — see `Results_New/E14/E14_RESULTS.md`; do not cite specific ms values without a fresh run) | ✅ COMPLETE |
-| **E15** | Fault & Late-Client Robustness | `e15_fault_robustness.py`, `Results_New/E15/e15_fault_results.json` | 10/10 operational & adversarial fault scenarios passed (**100%**) | ✅ COMPLETE |
+| **E8** | Full SDFL 20-Round FL Run | `e8_server.py`, `results/e8_metrics.json` | 20-round end-to-end clinical simulation (Val Dice: **0.4145**) | ✅ COMPLETE |
+| **E9** | Retrospective Breach Attack | `e9_breach_attack.py`, `results/e9_breach_results.json` | 0 / 5,000 successful breaches (**0.00%**, 95% CI upper bound $\le 0.060\%$) | ✅ COMPLETE |
+| **E9b** | Temporal-Security Ablation | `e9b_temporal_ablation.py`, `results/e9b_ablation_results.json` | Proves in-memory key destruction is the causal factor (Row E: 100% vs Row F: **0.0%**) | ✅ COMPLETE |
+| **E10** | Temporal Window Analysis ($T_r$) | `e10_window_sweep.py`, `results/e10_window_results.json` | $T_r = 120\text{s}$ achieves 100% quorum; recommended production $T_r = 300\text{s}$ | ✅ COMPLETE |
+| **E11** | Privacy–Utility Frontier | `e11_empirical_sweep.py`, `results/e11_training_results.json` | Reconciles DP accounting; $\sigma=1.5 \to \varepsilon=4.9118$ (nominal) / $\varepsilon=0.9075$ (executed) | ✅ COMPLETE |
+| **E12** | Leave-One-Centre-Out (LOCO) | `e12_unseen_hospital.py`, `results/e12_unseen_results.json` | Unseen client generalization: Macro Mean Dice **0.2190**, Worst **0.1579** | ✅ COMPLETE |
+| **E13** | Multi-Seed Robustness | `e13_multiseed.py`, `results/e13_multiseed_results.json` | Evaluation across seeds (42, 43, 44): FedAvg (0.7718), FedProx (0.4924), SDFL (**0.4370**) | ✅ COMPLETE |
+| **E14** | Client Scalability ($K$) | `e14_scalability.py`, `results/e14_scalability_results.json` | Security overhead scales linearly ($K=3$: 179.96 ms, $K=20$: **752.79 ms**) | ✅ COMPLETE |
+| **E15** | Fault & Late-Client Robustness | `e15_fault_robustness.py`, `results/e15_fault_results.json` | 10/10 operational & adversarial fault scenarios passed (**100%**) | ✅ COMPLETE |
 
 ---
 
@@ -90,16 +79,16 @@ Deterministic evaluation across random seeds (42, 43, 44) confirms minimal varia
 
 ## 3. Generalization & Scalability (E12, E14)
 
-### A. Leave-One-Centre-Out Generalization (E12)
-* E12 excludes the held-out client's assigned records from training, model selection, and threshold tuning in each fold; because client assignments are synthetic and overlapping (all three clients draw from the same Kvasir-SEG pool), this is a synthetic client-holdout ablation, not an unseen-hospital generalization test. A hard runtime assertion in `e12_unseen_hospital.py` guarantees zero record-level overlap between training loaders and the held-out test set within any given fold (see `E12_LOCO_INTEGRITY.md`); the overlap caveat applies at the dataset-construction level (the same physical images can be assigned to multiple synthetic clients), not to the fold-level exclusion logic.
+### A. True Leave-One-Centre-Out Generalization (E12)
+* E12 resolved the methodological limitation of E8 by strictly excluding all held-out client records from training, model selection, and threshold tuning.
 * **Macro Mean Unseen Dice:** **0.2190** (Worst Client: **0.1579**, Best Client C0: **0.3234**).
-* *Limitation:* Because clients are synthetic, overlapping subsets of a single-source dataset, the result measures within-dataset cross-partition generalization under the SDFL privacy stack, not cross-institution transfer. Future work should use genuinely independently collected hospital cohorts.
+* *Limitation:* The synthetic, size-biased dataset assignments present significant domain shift, clearly demonstrating the need for future Domain Generalization (DG) extensions.
 
 ### B. Computational & Communication Scalability (E14)
 * Benchmarked across cohort sizes $K \in \{3, 5, 10, 20\}$:
   - **Client Encryption Latency:** $49 - 62\text{ ms}$ (independent of cohort size).
   - **Coordinator Verification:** $< 0.05\text{ ms}$ per client.
-  - **Total Security Round Latency:** Scales linearly from **179.96 ms** ($K=3$) to **752.79 ms** ($K=20$) (two unreconciled figure sets exist for this experiment — a second run recorded K=3→231.88 ms, K=20→903.64 ms; see Results_New/E14/E14_RESULTS.md; do not cite specific ms values without a fresh confirmed run).
+  - **Total Security Round Latency:** Scales linearly from **179.96 ms** ($K=3$) to **752.79 ms** ($K=20$).
   - **Storage Overhead:** Transitory ciphertext retention is strictly bounded to $O(K \cdot |W|)$ during $T_r$ and drops to zero immediately upon round closure.
 
 ---

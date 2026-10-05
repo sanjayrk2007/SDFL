@@ -20,7 +20,7 @@ from crypto import (
     write_audit_log,
     server_aggregate
 )
-from e7_temporal import TemporalCheckpointingSecAgg, SECRET_KEY, compute_aad
+from e7_temporal import TemporalCheckpointingSecAgg
 
 class DummyFitRes:
     def __init__(self, metrics, num_examples=100):
@@ -34,24 +34,13 @@ def generate_mock_weights(seed=None):
     b1 = np.random.randn(16).astype(np.float32) * 0.01
     return [w1, b1]
 
-def compute_aad_bytes(cert, signature, uid, client_idx=0):
-    """
-    Delegates to the canonical, production e7_temporal.compute_aad() instead
-    of a bespoke {cert, signature, UID_r} scheme (canonical AAD field set:
-    round_id, client_id, model_hash, key_context_id; see e7_temporal.compute_aad).
-    `signature` and `uid` are kept as
-    parameters for call-site compatibility but are intentionally NOT part of
-    the AAD, matching the production field set. `client_idx` selects which
-    of cert["participants"] this AAD is bound to -- each client in a round
-    must get its OWN AAD, not all clients sharing participants[0].
-    """
-    client_id = cert["participants"][client_idx]
-    return compute_aad(
-        round_id=cert["round_id"],
-        client_id=client_id,
-        model_hash=cert["model_hash"],
-        key_context_id=cert["key_context_id"],
-    )
+def compute_aad_bytes(cert, signature, uid):
+    aad_data = {
+        "cert": cert,
+        "signature": signature,
+        "UID_r": uid
+    }
+    return json.dumps(aad_data, sort_keys=True).encode("utf-8")
 
 def sample_client_latency(client_id, seed=None):
     """
@@ -92,7 +81,7 @@ def run_e10_temporal_window_sweep(window_durations=[30, 60, 120, 300, 600, 1200]
     if os.path.exists(sweep_log_path):
         os.remove(sweep_log_path)
 
-    secret_key = SECRET_KEY  # imported from e7_temporal (env-var backed; see get_coordinator_secret_key)
+    secret_key = b"sdfl_coordinator_signing_secret_key_32bytes"
     start_time = time.time()
     sweep_results = {}
 
@@ -139,9 +128,9 @@ def run_e10_temporal_window_sweep(window_durations=[30, 60, 120, 300, 600, 1200]
 
                 # Client encryption
                 uid = str(uuid.uuid4())
-                aad_bytes = compute_aad_bytes(cert, sig, uid, client_idx=cid)
+                aad_bytes = compute_aad_bytes(cert, sig, uid)
                 weights = generate_mock_weights(seed=client_seed)
-                ct = client_encrypt(weights, round_key, associated_data=aad_bytes)
+                ct = client_encrypt(weights, round_key, aad=aad_bytes)
 
                 fit_res_metrics = {
                     "nonce_hex": ct["nonce"].hex(),
@@ -181,7 +170,7 @@ def run_e10_temporal_window_sweep(window_durations=[30, 60, 120, 300, 600, 1200]
                 list_of_cts = [{"nonce": ct["nonce"], "ciphertext": ct["ciphertext"]} for _, _, ct, _ in round_accepted_updates]
                 aad_list = [aad for _, _, _, aad in round_accepted_updates]
                 num_ex_list = [100] * len(list_of_cts)
-                _ = server_aggregate(list_of_cts, round_key, num_examples_list=num_ex_list, associated_data_list=aad_list)
+                _ = server_aggregate(list_of_cts, round_key, num_examples_list=num_ex_list, aad_list=aad_list)
             else:
                 round_latencies.append(float(window_sec))
                 if round_accepted_updates:

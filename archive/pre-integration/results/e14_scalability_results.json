@@ -1,7 +1,12 @@
 {
   "experiment": "E14 Security Layer Client Scalability",
+<<<<<<< HEAD:archive/pre-integration/results/e14_scalability_results.json
   "timestamp_start": "2026-09-12T09:41:03.723641+00:00",
   "completed_at": "2026-09-12T09:41:51.439349+00:00",
+=======
+  "timestamp_start": "2026-10-04T15:21:38.195860+00:00",
+  "completed_at": "2026-10-04T15:23:15.190400+00:00",
+>>>>>>> origin/mukesh/sdfl-completion:results/e14_scalability_results.json
   "benchmark_rounds_per_k": 5,
   "model_parameters_count": 6591841,
   "model_raw_bytes": 26367364,
@@ -9,6 +14,7 @@
     "3": {
       "client_count_K": 3,
       "client_encryption_ms": {
+<<<<<<< HEAD:archive/pre-integration/results/e14_scalability_results.json
         "mean": 62.579,
         "std": 10.304
       },
@@ -34,6 +40,33 @@
         "std": 20.933
       },
       "security_overhead_over_baseline_ms": 139.482,
+=======
+        "mean": 121.985,
+        "std": 27.733
+      },
+      "cert_signing_ms": {
+        "mean": 2.7953,
+        "std": 5.4296
+      },
+      "cert_verification_total_ms": {
+        "mean": 0.1816,
+        "std": 0.0197,
+        "per_client_ms": 0.0605
+      },
+      "server_aggregation_ms": {
+        "mean": 236.302,
+        "std": 61.799
+      },
+      "baseline_fedavg_aggregation_ms": {
+        "mean": 72.893,
+        "std": 15.551
+      },
+      "total_security_latency_ms": {
+        "mean": 361.265,
+        "std": 93.135
+      },
+      "security_overhead_over_baseline_ms": 288.372,
+>>>>>>> origin/mukesh/sdfl-completion:results/e14_scalability_results.json
       "communication": {
         "upload_bytes_per_client": 26370308,
         "upload_mb_per_client": 25.15,
@@ -48,6 +81,7 @@
     "5": {
       "client_count_K": 5,
       "client_encryption_ms": {
+<<<<<<< HEAD:archive/pre-integration/results/e14_scalability_results.json
         "mean": 52.8,
         "std": 1.823
       },
@@ -73,6 +107,33 @@
         "std": 12.034
       },
       "security_overhead_over_baseline_ms": 164.491,
+=======
+        "mean": 95.644,
+        "std": 3.09
+      },
+      "cert_signing_ms": {
+        "mean": 0.0776,
+        "std": 0.0142
+      },
+      "cert_verification_total_ms": {
+        "mean": 0.2145,
+        "std": 0.0381,
+        "per_client_ms": 0.0429
+      },
+      "server_aggregation_ms": {
+        "mean": 311.432,
+        "std": 21.503
+      },
+      "baseline_fedavg_aggregation_ms": {
+        "mean": 93.611,
+        "std": 1.941
+      },
+      "total_security_latency_ms": {
+        "mean": 407.368,
+        "std": 23.754
+      },
+      "security_overhead_over_baseline_ms": 313.757,
+>>>>>>> origin/mukesh/sdfl-completion:results/e14_scalability_results.json
       "communication": {
         "upload_bytes_per_client": 26370356,
         "upload_mb_per_client": 25.15,
@@ -87,6 +148,7 @@
     "10": {
       "client_count_K": 10,
       "client_encryption_ms": {
+<<<<<<< HEAD:archive/pre-integration/results/e14_scalability_results.json
         "mean": 49.703,
         "std": 1.273
       },
@@ -112,6 +174,33 @@
         "std": 31.76
       },
       "security_overhead_over_baseline_ms": 269.712,
+=======
+        "mean": 94.956,
+        "std": 3.302
+      },
+      "cert_signing_ms": {
+        "mean": 0.0801,
+        "std": 0.0089
+      },
+      "cert_verification_total_ms": {
+        "mean": 0.2847,
+        "std": 0.0527,
+        "per_client_ms": 0.0285
+      },
+      "server_aggregation_ms": {
+        "mean": 650.953,
+        "std": 118.446
+      },
+      "baseline_fedavg_aggregation_ms": {
+        "mean": 182.999,
+        "std": 13.452
+      },
+      "total_security_latency_ms": {
+        "mean": 746.274,
+        "std": 120.691
+      },
+      "security_overhead_over_baseline_ms": 563.275,
+>>>>>>> origin/mukesh/sdfl-completion:results/e14_scalability_results.json
       "communication": {
         "upload_bytes_per_client": 26370476,
         "upload_mb_per_client": 25.15,
@@ -126,6 +215,7 @@
     "20": {
       "client_count_K": 20,
       "client_encryption_ms": {
+<<<<<<< HEAD:archive/pre-integration/results/e14_scalability_results.json
         "mean": 49.116,
         "std": 0.908
       },
@@ -151,6 +241,33 @@
         "std": 51.518
       },
       "security_overhead_over_baseline_ms": 528.263,
+=======
+        "mean": 92.764,
+        "std": 1.106
+      },
+      "cert_signing_ms": {
+        "mean": 0.0912,
+        "std": 0.0108
+      },
+      "cert_verification_total_ms": {
+        "mean": 0.5783,
+        "std": 0.1543,
+        "per_client_ms": 0.0289
+      },
+      "server_aggregation_ms": {
+        "mean": 1238.344,
+        "std": 106.337
+      },
+      "baseline_fedavg_aggregation_ms": {
+        "mean": 354.934,
+        "std": 18.712
+      },
+      "total_security_latency_ms": {
+        "mean": 1331.778,
+        "std": 106.267
+      },
+      "security_overhead_over_baseline_ms": 976.844,
+>>>>>>> origin/mukesh/sdfl-completion:results/e14_scalability_results.json
       "communication": {
         "upload_bytes_per_client": 26370736,
         "upload_mb_per_client": 25.15,

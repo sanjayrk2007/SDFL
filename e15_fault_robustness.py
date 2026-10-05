@@ -17,9 +17,9 @@ Tests 10 distinct operational scenarios:
   10. Next-round recovery after failed / partial round -> FULL RECOVERY
 
 Outputs:
-  - Results_New/E15/e15_fault_results.json
-  - Results_New/E15/e15_fault_log.jsonl
-  - Results_New/E15/E15_RESULTS.md
+  - results/e15_fault_results.json
+  - results/e15_fault_log.jsonl
+  - E15_RESULTS.md
 """
 
 import os
@@ -49,13 +49,13 @@ from crypto import (
 )
 from e2_server import DEVICE, ResUNetPlusPlus, get_parameters, set_parameters
 from e4_dpsgd import fix_model_for_opacus
-from e7_temporal import compute_model_hash, SECRET_KEY, compute_aad
+from e7_temporal import compute_model_hash, SECRET_KEY
 
-RESULTS_DIR = ROOT_DIR / "Results_New" / "E15"
-RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+RESULTS_DIR = ROOT_DIR / "results"
+RESULTS_DIR.mkdir(exist_ok=True)
 OUT_JSON = RESULTS_DIR / "e15_fault_results.json"
 OUT_LOG = RESULTS_DIR / "e15_fault_log.jsonl"
-OUT_REPORT = RESULTS_DIR / "E15_RESULTS.md"
+OUT_REPORT = ROOT_DIR / "E15_RESULTS.md"
 
 def log_event(event, **data):
     data.update(event=event, timestamp=datetime.now(timezone.utc).isoformat())
@@ -144,16 +144,12 @@ class MockSDFLAggregator:
             cert_str = sub["certificate"]
             sig = sub["signature"]
             uid = sub["UID_r"]
-            # Canonical AAD (bound to this client's own identity), not the
-            # bespoke {cert, signature, UID_r} scheme -- canonical field set:
-            # round_id, client_id, model_hash, key_context_id (see e7_temporal.compute_aad).
-            cert_obj = json.loads(cert_str)
-            aad_bytes = compute_aad(
-                round_id=cert_obj["round_id"],
-                client_id=sub.get("client_id"),
-                model_hash=cert_obj["model_hash"],
-                key_context_id=cert_obj["key_context_id"],
-            )
+            aad_data = {
+                "cert": json.loads(cert_str),
+                "signature": sig,
+                "UID_r": uid
+            }
+            aad_bytes = json.dumps(aad_data, sort_keys=True).encode()
             aad_list.append(aad_bytes)
             self.consumed_uids.add(uid)
 
@@ -169,7 +165,7 @@ class MockSDFLAggregator:
                     valid_ciphertexts,
                     round_key,
                     num_examples_list=num_examples_list,
-                    associated_data_list=aad_list
+                    aad_list=aad_list
                 )
                 decryption_success = True
             except Exception as e:
@@ -198,19 +194,15 @@ def create_client_update(client_id, template_weights, round_key, cert, sig, uid=
     if custom_aad is not None:
         aad_bytes = custom_aad
     else:
-        # Canonical AAD (bound to this client's own identity), matching
-        # aggregate_submissions()'s server-side re-derivation -- canonical
-        # field set: round_id, client_id, model_hash, key_context_id
-        # (see e7_temporal.compute_aad).
-        aad_bytes = compute_aad(
-            round_id=cert["round_id"],
-            client_id=client_id,
-            model_hash=cert["model_hash"],
-            key_context_id=cert["key_context_id"],
-        )
+        aad_data = {
+            "cert": cert,
+            "signature": sig,
+            "UID_r": uid
+        }
+        aad_bytes = json.dumps(aad_data, sort_keys=True).encode()
 
     weights = [arr + np.random.normal(0, 1e-4, arr.shape).astype(arr.dtype) for arr in template_weights]
-    ct = client_encrypt(weights, round_key, associated_data=aad_bytes)
+    ct = client_encrypt(weights, round_key, aad=aad_bytes)
 
     return {
         "client_id": client_id,
@@ -516,7 +508,7 @@ def write_markdown_report(data):
         "2. **Cryptographic Replay Protection (SC-03):** Replayed or duplicate transaction IDs ($UID_r$) are recognized and rejected with reason code `replay_detected`.",
         "3. **HMAC & AAD Authenticity (SC-04, SC-06):** Forged coordinator signatures and tampered AAD metadata fail verification and AES-GCM decryption tag validation.",
         "4. **Fault Tolerance & Degraded Quorum (SC-07, SC-08):** Unresponsive or dropped clients do not stall the server; valid updates aggregate gracefully without corrupting model state.",
-        "5. **Post-Round Key Destruction (SC-09):** Decryption keys and ciphertext buffers are zeroed out immediately following round completion.",
+        "5. **Zero-Knowledge Key Destruction (SC-09):** Decryption keys and ciphertext buffers are zeroed out immediately following round completion.",
         "6. **Multi-Round Continuity (SC-10):** Fresh cryptographic contexts allow subsequent rounds to proceed with full quorum without session lockup.",
         ""
     ])
